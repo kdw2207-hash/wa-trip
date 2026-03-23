@@ -49,20 +49,17 @@ html,body{height:100%;background:var(--bg);font-family:var(--font);color:var(--t
 #day-strip::-webkit-scrollbar{display:none}
 .dc{
   flex-shrink:0;border:none;cursor:pointer;
-  padding:6px 13px;border-radius:999px;
+  padding:8px 14px;border-radius:999px;min-height:48px;
   font-size:12px;font-weight:600;line-height:1.3;
   background:var(--bg);color:var(--txt2);
-  transition:all .15s;white-space:nowrap;
+  transition:all .2s;white-space:nowrap;
   font-family:var(--font);text-align:center;
+  display:inline-flex;flex-direction:column;align-items:center;justify-content:center;
 }
-.dc .dc-wday{font-size:10px;font-weight:500;opacity:.8;display:block}
-.dc.active{background:var(--aqua);color:#fff}
-.dc.today-chip{position:relative}
-.dc.today-chip::after{
-  content:'';position:absolute;bottom:3px;left:50%;transform:translateX(-50%);
-  width:4px;height:4px;border-radius:50%;background:var(--aqua);
-}
-.dc.active.today-chip::after{background:rgba(255,255,255,.7)}
+.dc .dc-wday{font-size:10px;font-weight:500;opacity:.8;display:block;margin-bottom:1px}
+.dc.active{background:var(--aqua);color:#fff;box-shadow:0 2px 8px rgba(6,182,212,.35)}
+.dc.today-chip{outline:2px solid #10B981;outline-offset:1px}
+.dc.active.today-chip{outline-color:rgba(255,255,255,.6)}
 
 /* ── MAIN SCROLL ─────────────────────────── */
 #main{
@@ -70,6 +67,8 @@ html,body{height:100%;background:var(--bg);font-family:var(--font);color:var(--t
   padding-bottom:32px;
   min-height:100vh;
 }
+#main.day-fade{animation:dayFadeIn .25s ease}
+@keyframes dayFadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
 /* ── CARDS ───────────────────────────────── */
 .card{
@@ -104,9 +103,11 @@ html,body{height:100%;background:var(--bg);font-family:var(--font);color:var(--t
   content:'';position:absolute;inset:0;background:rgba(0,0,0,.18);
 }
 .hero-bg > *{position:relative}
-.hero-eyebrow{font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;opacity:.85;margin-bottom:4px}
-.hero-day{font-size:28px;font-weight:700;letter-spacing:-.5px;line-height:1.1}
-.hero-route{font-size:14px;opacity:.9;margin-top:4px}
+.hero-eyebrow{font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;opacity:.85;margin-bottom:6px;display:flex;align-items:center;gap:10px}
+.hero-progress-bar{flex:1;height:3px;background:rgba(255,255,255,.25);border-radius:999px;overflow:hidden}
+.hero-progress-fill{height:100%;background:#fff;border-radius:999px;transition:width .4s ease}
+.hero-day{font-size:30px;font-weight:700;letter-spacing:-.5px;line-height:1.1}
+.hero-route{font-size:14px;opacity:.9;margin-top:5px;font-weight:500}
 .hero-meta{
   display:flex;gap:16px;margin-top:14px;
 }
@@ -138,12 +139,12 @@ html,body{height:100%;background:var(--bg);font-family:var(--font);color:var(--t
 
 /* ── COUNTDOWN ───────────────────────────── */
 #countdown-card{background:linear-gradient(135deg,var(--aqua-d),var(--aqua));margin:0 16px 14px;border-radius:var(--r-lg);padding:24px 20px;color:#fff;box-shadow:var(--shadow-lg)}
-.cd-label{font-size:12px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;opacity:.85;margin-bottom:16px}
-.cd-row{display:flex;gap:12px}
-.cd-box{flex:1;background:rgba(255,255,255,.15);border-radius:var(--r-sm);padding:12px 8px;text-align:center}
-.cd-n{font-size:28px;font-weight:700;line-height:1}
-.cd-u{font-size:11px;font-weight:500;opacity:.8;margin-top:3px;text-transform:uppercase;letter-spacing:.5px}
-.cd-sub{font-size:13px;opacity:.8;margin-top:14px;text-align:center}
+.cd-label{font-size:12px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;opacity:.85;margin-bottom:18px}
+.cd-row{display:flex;gap:10px}
+.cd-box{flex:1;background:rgba(255,255,255,.15);border-radius:var(--r-sm);padding:16px 8px;text-align:center;backdrop-filter:blur(4px)}
+.cd-n{font-size:36px;font-weight:700;line-height:1;letter-spacing:-1px}
+.cd-u{font-size:10px;font-weight:600;opacity:.8;margin-top:5px;text-transform:uppercase;letter-spacing:.8px}
+.cd-sub{font-size:13px;opacity:.85;margin-top:16px;text-align:center;font-weight:500}
 
 /* ── QUOTE CARD ──────────────────────────── */
 .quote-text{
@@ -430,98 +431,98 @@ const DAYS = [
    food:"Lobster Shack Cervantes",foodUrl:"https://www.lobstershack.com.au",
    grad:"linear-gradient(135deg,#0891B2 0%,#06B6D4 100%)",
    lat:-30.306,lon:115.038,fromLat:-31.9505,fromLon:115.8605,bday:false,
-   note:"Campervans collected 9am from 2 Redcliffe Rd, Redcliffe. Adventure begins!"},
-  {day:2,date:"2026-03-29",wday:"Sun",lbl:"29 Mar",from:"Jurien Bay",to:"Jurien Bay",via:"",km:0,drv:"Rest day",
-   acc:"Jurien Bay Tourist Park",accUrl:"https://summerstar.com.au/caravan-parks/jurien-bay",
-   food:"Jurien Jetty Cafe",foodUrl:"https://www.google.com/maps/search/Jurien+Jetty+Cafe",
-   grad:"linear-gradient(135deg,#0E7490 0%,#22D3EE 100%)",
-   lat:-30.306,lon:115.038,fromLat:-30.306,fromLon:115.038,bday:false,
-   note:"Explore day — sea lions, dunes, and the jetty."},
-  {day:3,date:"2026-03-30",wday:"Mon",lbl:"30 Mar",from:"Jurien Bay",to:"Kalbarri",via:"Geraldton",km:360,drv:"4h",
-   acc:"Kalbarri Tudor Holiday Park",accUrl:"https://kalbarritudor.com.au",
+   note:"Campervans collected 9am from 2 Redcliffe Rd, Redcliffe. Adventure begins! Stop at the Pinnacles for photos."},
+  {day:2,date:"2026-03-29",wday:"Sun",lbl:"29 Mar",from:"Jurien Bay",to:"Kalbarri",via:"Geraldton",km:370,drv:"4h",
+   acc:"Kalbarri Holiday Park",accUrl:"https://www.google.com/maps/search/Kalbarri+Holiday+Park",
    food:"Finlay's Kalbarri",foodUrl:"https://finlaysbrewingco.com.au",
    grad:"linear-gradient(135deg,#B45309 0%,#F59E0B 50%,#EF4444 100%)",
    lat:-27.712,lon:114.163,fromLat:-30.306,fromLon:115.038,bday:false,
-   note:"Stop in Geraldton to see HMAS Sydney Memorial. Fill diesel here!"},
-  {day:4,date:"2026-03-31",wday:"Tue",lbl:"31 Mar",from:"Kalbarri",to:"Kalbarri",via:"",km:0,drv:"Explore day",
-   acc:"Kalbarri Tudor Holiday Park",accUrl:"https://kalbarritudor.com.au",
-   food:"The Gorges Cafe",foodUrl:"https://www.google.com/maps/search/Gorges+Cafe+Kalbarri",
-   grad:"linear-gradient(135deg,#DC2626 0%,#F59E0B 100%)",
-   lat:-27.712,lon:114.163,fromLat:-27.712,fromLon:114.163,bday:false,
-   note:"Full day exploring gorges. Start early — Skywalk opens 9am."},
-  {day:5,date:"2026-04-01",wday:"Wed",lbl:"1 Apr",from:"Kalbarri",to:"Denham",via:"Overlander Roadhouse",km:355,drv:"3h 45m",
-   acc:"Shark Bay Holiday Cottages",accUrl:"https://www.sharkbaycottages.com.au",
-   food:"Shark Bay Bakery",foodUrl:"https://www.google.com/maps/search/Shark+Bay+Bakery+Denham",
-   grad:"linear-gradient(135deg,#0E7490 0%,#06B6D4 80%,#22D3EE 100%)",
-   lat:-25.929,lon:113.537,fromLat:-27.712,fromLon:114.163,bday:false,
-   note:"⚠️ Overlander Roadhouse is the ONLY fuel stop between Kalbarri and Denham — don't miss it!"},
-  {day:6,date:"2026-04-02",wday:"Thu",lbl:"2 Apr",from:"Denham",to:"Denham",via:"Shark Bay",km:0,drv:"Explore day",
-   acc:"Shark Bay Holiday Cottages",accUrl:"https://www.sharkbaycottages.com.au",
+   note:"Stop in Geraldton to see HMAS Sydney Memorial & fill diesel! Sea lion tour 7am with Turquoise Safaris. Arrive Kalbarri for sunset."},
+  {day:3,date:"2026-03-30",wday:"Mon",lbl:"30 Mar",from:"Kalbarri",to:"Denham",via:"Overlander Roadhouse",km:400,drv:"4h 30m",
+   acc:"Denham Seaside Caravan Park",accUrl:"https://www.google.com/maps/search/Denham+Seaside+Caravan+Park+WA",
    food:"Old Pearler Restaurant",foodUrl:"https://www.google.com/maps/search/Old+Pearler+Restaurant+Denham",
-   grad:"linear-gradient(135deg,#0369A1 0%,#38BDF8 100%)",
-   lat:-25.929,lon:113.537,fromLat:-25.929,fromLon:113.537,bday:false,
-   note:"World Heritage Shark Bay — stromatolites, shell beach, little lagoon."},
-  {day:7,date:"2026-04-03",wday:"Fri",lbl:"3 Apr",from:"Denham",to:"Monkey Mia",via:"",km:26,drv:"20 min",
-   acc:"Monkey Mia Dolphin Resort",accUrl:"https://www.monkeymia.com.au",
-   food:"Monkey Mia Dolphin Resort Restaurant",foodUrl:"https://www.monkeymia.com.au/dining",
+   grad:"linear-gradient(135deg,#DC2626 0%,#F59E0B 100%)",
+   lat:-25.929,lon:113.537,fromLat:-27.712,fromLon:114.163,bday:false,
+   note:"🚨 Overlander Roadhouse is the ONLY fuel between Kalbarri and Denham — fill up! Kalbarri Skywalk at sunrise before leaving. World Heritage Shark Bay awaits."},
+  {day:4,date:"2026-03-31",wday:"Tue",lbl:"31 Mar",from:"Denham",to:"Monkey Mia",via:"",km:27,drv:"25 min",
+   acc:"RAC Monkey Mia Dolphin Resort",accUrl:"https://parksandresorts.rac.com.au/monkey-mia/",
+   food:"Boughshed Restaurant",foodUrl:"https://www.google.com/maps/search/Boughshed+Restaurant+Monkey+Mia",
    grad:"linear-gradient(135deg,#1D4ED8 0%,#38BDF8 100%)",
    lat:-25.793,lon:113.718,fromLat:-25.929,fromLon:113.537,bday:false,
-   note:"🐬 First dolphin interaction 7:45am sharp — don't be late!"},
-  {day:8,date:"2026-04-04",wday:"Sat",lbl:"4 Apr",from:"Monkey Mia",to:"Wooramel Station",via:"Carnarvon",km:240,drv:"2h 45m",
-   acc:"Wooramel Station",accUrl:"https://www.wooramel.com.au",
+   note:"🐬 Short 27km drive. Dolphins at 7:45am sharp — don't be late! Shell Beach & Hamelin Pool stromatolites en route. Dinner booked at Boughshed 6:30pm for 16."},
+  {day:5,date:"2026-04-01",wday:"Wed",lbl:"1 Apr",from:"Monkey Mia",to:"Wooramel Station",via:"Carnarvon",km:230,drv:"2h 30m",
+   acc:"Wooramel River Retreat",accUrl:"https://www.wooramel.com.au",
    food:"Artesian Bore Bath Dinner (BYO)",foodUrl:"https://www.wooramel.com.au",
    grad:"linear-gradient(135deg,#92400E 0%,#D97706 100%)",
    lat:-26.1,lon:114.7,fromLat:-25.793,fromLon:113.718,bday:false,
-   note:"Fill diesel in Carnarvon — remote ahead. Evening bore bath under the stars!"},
-  {day:9,date:"2026-04-05",wday:"Sun",lbl:"5 Apr",from:"Wooramel Station",to:"Coral Bay",via:"Minilya Junction",km:260,drv:"2h 50m",
-   acc:"Ningaloo Club",accUrl:"https://www.ningaloocoralbay.com",
-   food:"Fins Cafe Coral Bay",foodUrl:"https://www.ningaloocoralbay.com",
+   note:"🎭 APRIL FOOLS DAY! Fill diesel in Carnarvon — remote ahead. Evening artesian bore bath under the stars — absolutely stunning."},
+  {day:6,date:"2026-04-02",wday:"Thu",lbl:"2 Apr",from:"Wooramel Station",to:"Coral Bay",via:"Minilya Junction",km:300,drv:"3h 30m",
+   acc:"People's Park Coral Bay",accUrl:"https://www.google.com/maps/search/Peoples+Park+Coral+Bay",
+   food:"Bill's Bar & Restaurant",foodUrl:"https://www.google.com/maps/search/Bills+Bar+Restaurant+Coral+Bay",
    grad:"linear-gradient(135deg,#047857 0%,#10B981 80%,#34D399 100%)",
    lat:-23.142,lon:113.776,fromLat:-26.1,fromLon:114.7,bday:false,
-   note:"Reef snorkel straight off the beach this arvo — gear up!"},
-  {day:10,date:"2026-04-06",wday:"Mon",lbl:"6 Apr",from:"Coral Bay",to:"Coral Bay",via:"",km:0,drv:"Reef day",
-   acc:"Ningaloo Club",accUrl:"https://www.ningaloocoralbay.com",
-   food:"Sweet Ningaloo Gelato",foodUrl:"https://www.google.com/maps/search/Sweet+Ningaloo+Coral+Bay",
+   note:"⚠️ Minilya Roadhouse is your only fuel between Carnarvon and Coral Bay. Reef snorkel straight off the beach this arvo!"},
+  {day:7,date:"2026-04-03",wday:"Fri",lbl:"3 Apr",from:"Coral Bay",to:"Coral Bay",via:"",km:0,drv:"Good Friday",
+   acc:"People's Park Coral Bay",accUrl:"https://www.google.com/maps/search/Peoples+Park+Coral+Bay",
+   food:"Fins Café",foodUrl:"https://www.google.com/maps/search/Fins+Cafe+Coral+Bay",
    grad:"linear-gradient(135deg,#065F46 0%,#10B981 100%)",
    lat:-23.142,lon:113.776,fromLat:-23.142,fromLon:113.776,bday:false,
-   note:"Manta ray tour departs 8am. Book ahead via Coral Bay Adventures!"},
-  {day:11,date:"2026-04-07",wday:"Tue",lbl:"7 Apr",from:"Coral Bay",to:"Exmouth",via:"",km:130,drv:"1h 20m",
-   acc:"Exmouth Cape Holiday Park",accUrl:"https://parksandresorts.rac.com.au/exmouth/",
-   food:"Adrift Cafe",foodUrl:"https://www.adriftcafe.com.au",
-   grad:"linear-gradient(135deg,#0E7490 0%,#22D3EE 100%)",
-   lat:-21.934,lon:114.125,fromLat:-23.142,fromLon:113.776,bday:false,
-   note:"Arrive in time for arvo snorkel at Turquoise Bay — world class."},
-  {day:12,date:"2026-04-08",wday:"Wed",lbl:"8 Apr",from:"Exmouth",to:"Exmouth",via:"Cape Range NP",km:0,drv:"Big day out",
-   acc:"Exmouth Cape Holiday Park",accUrl:"https://parksandresorts.rac.com.au/exmouth/",
-   food:"The BBQ Father",foodUrl:"https://www.google.com/maps/search/BBQ+Father+Exmouth",
+   note:"🐟 Good Friday at the reef. Five Fingers Reef & manta ray snorkel. Happy Cowboy Café for brekkie!"},
+  {day:8,date:"2026-04-04",wday:"Sat",lbl:"4 Apr",from:"Coral Bay",to:"Exmouth",via:"",km:150,drv:"1h 45m",
+   acc:"Ningaloo Caravan & Holiday Resort",accUrl:"https://ningalooresort.com.au",
+   food:"Whalers Restaurant",foodUrl:"https://www.google.com/maps/search/Whalers+Restaurant+Exmouth",
    grad:"linear-gradient(135deg,#0891B2 0%,#06B6D4 60%,#0E7490 100%)",
+   lat:-21.934,lon:114.125,fromLat:-23.142,fromLon:113.776,bday:false,
+   note:"Arrive in time for arvo snorkel at Turquoise Bay — world class. Dinner booked at Whalers 7pm & 7:30pm for the group!"},
+  {day:9,date:"2026-04-05",wday:"Sun",lbl:"5 Apr",from:"Exmouth",to:"Exmouth",via:"",km:0,drv:"Easter Sunday",
+   acc:"Ningaloo Caravan & Holiday Resort",accUrl:"https://ningalooresort.com.au",
+   food:"Whalebone Brewing Co",foodUrl:"https://www.google.com/maps/search/Whalebone+Brewing+Exmouth",
+   grad:"linear-gradient(135deg,#047857 0%,#10B981 80%,#34D399 100%)",
    lat:-21.934,lon:114.125,fromLat:-21.934,fromLon:114.125,bday:false,
-   note:"Cape Range NP day pass $20. Whale shark swims depart 6am — book with Three Islands!"},
-  {day:13,date:"2026-04-09",wday:"Thu",lbl:"9 Apr",from:"Exmouth",to:"Quobba Station",via:"Carnarvon",km:380,drv:"4h 20m",
+   note:"🐣 Happy Easter! Yardie Creek gorge walk or whale shark swim (6am departure). Book with Three Islands!"},
+  {day:10,date:"2026-04-06",wday:"Mon",lbl:"6 Apr",from:"Exmouth",to:"Exmouth",via:"",km:0,drv:"Easter Monday",
+   acc:"Ningaloo Caravan & Holiday Resort",accUrl:"https://ningalooresort.com.au",
+   food:"Adrift Café",foodUrl:"https://www.adriftcafe.com.au",
+   grad:"linear-gradient(135deg,#0E7490 0%,#22D3EE 100%)",
+   lat:-21.934,lon:114.125,fromLat:-21.934,fromLon:114.125,bday:false,
+   note:"🏊 Turquoise Bay drift snorkel — arrive early for the best conditions. Manta ray booking request sent!"},
+  {day:11,date:"2026-04-07",wday:"Tue",lbl:"7 Apr",from:"Exmouth",to:"Exmouth",via:"Cape Range NP",km:0,drv:"Big day out",
+   acc:"Ningaloo Caravan & Holiday Resort",accUrl:"https://ningalooresort.com.au",
+   food:"Adrift Café",foodUrl:"https://www.adriftcafe.com.au",
+   grad:"linear-gradient(135deg,#0369A1 0%,#38BDF8 100%)",
+   lat:-21.934,lon:114.125,fromLat:-21.934,fromLon:114.125,bday:false,
+   note:"Cape Range NP day pass $20. Gorges, scenic flights, Bungalow Barista for coffee. Last full day at Ningaloo!"},
+  {day:12,date:"2026-04-08",wday:"Wed",lbl:"8 Apr",from:"Exmouth",to:"Quobba Station",via:"Carnarvon",km:295,drv:"3h 15m",
    acc:"Quobba Station Campsite",accUrl:"https://www.quobba.com.au",
    food:"Bush BBQ at Quobba",foodUrl:"https://www.quobba.com.au",
    grad:"linear-gradient(135deg,#4C1D95 0%,#7C3AED 60%,#8B5CF6 100%)",
    lat:-24.5,lon:113.4,fromLat:-21.934,fromLon:114.125,bday:false,
-   note:"⚠️ FILL DIESEL in Carnarvon — absolutely no fuel at Quobba. Dramatic coastline awaits!"},
-  {day:14,date:"2026-04-10",wday:"Fri",lbl:"10 Apr",from:"Quobba",to:"Horrocks",via:"Northampton",km:200,drv:"2h 30m",
-   acc:"Horrocks Beach Caravan Park",accUrl:"https://www.google.com/maps/search/Horrocks+Beach+Caravan+Park+WA",
-   food:"Galactic Espresso + Birthday Dinner",foodUrl:"https://www.google.com/maps/search/Galactic+Espresso+Northampton",
+   note:"🚨 FILL DIESEL in Carnarvon — absolutely no fuel at Quobba. Dramatic blowholes coastline awaits!"},
+  {day:13,date:"2026-04-09",wday:"Thu",lbl:"9 Apr",from:"Quobba",to:"Quobba",via:"",km:0,drv:"Explore day",
+   acc:"Quobba Station Campsite",accUrl:"https://www.quobba.com.au",
+   food:"Quobba Camp Dinner",foodUrl:"https://www.quobba.com.au",
+   grad:"linear-gradient(135deg,#7C3AED 0%,#8B5CF6 100%)",
+   lat:-24.5,lon:113.4,fromLat:-24.5,fromLon:113.4,bday:false,
+   note:"Blowholes, sunset exploring, and epic remote WA coastline. No power — pure wilderness. Stars are incredible here!"},
+  {day:14,date:"2026-04-10",wday:"Fri",lbl:"10 Apr",from:"Quobba",to:"Wooramel Station",via:"Carnarvon",km:250,drv:"3h",
+   acc:"Wooramel River Retreat",accUrl:"https://www.wooramel.com.au",
+   food:"Wooramel Station Dinner",foodUrl:"https://www.wooramel.com.au",
    grad:"linear-gradient(135deg,#DB2777 0%,#F472B6 60%,#FDE68A 100%)",
-   lat:-28.378,lon:114.421,fromLat:-24.5,fromLon:113.4,bday:true,
-   note:"🎂 ARIA'S 11TH BIRTHDAY! Make it magical!"},
-  {day:15,date:"2026-04-11",wday:"Sat",lbl:"11 Apr",from:"Horrocks",to:"Horrocks / Perth",via:"",km:0,drv:"Beach day",
+   lat:-26.1,lon:114.7,fromLat:-24.5,fromLon:113.4,bday:true,
+   note:"🎂 ARIA'S 11TH BIRTHDAY! Artesian bore bath, stargazing & birthday celebration dinner. Make it magical!"},
+  {day:15,date:"2026-04-11",wday:"Sat",lbl:"11 Apr",from:"Wooramel Station",to:"Horrocks",via:"Northampton",km:230,drv:"2h 30m",
    acc:"Horrocks Beach Caravan Park",accUrl:"https://www.google.com/maps/search/Horrocks+Beach+Caravan+Park+WA",
-   food:"BYO Beach Lunch",foodUrl:"",
+   food:"Galactic Espresso (Northampton)",foodUrl:"https://www.google.com/maps/search/Galactic+Espresso+Northampton",
    grad:"linear-gradient(135deg,#0E7490 0%,#06B6D4 100%)",
-   lat:-28.378,lon:114.421,fromLat:-28.378,fromLon:114.421,bday:false,
-   note:"🏠 Wilson family heads to Perth today — safe travels Wilsons! 👋 Pink lake is best at 10am–2pm. Reef snorkel off Horrocks beach for those staying."},
-  {day:16,date:"2026-04-12",wday:"Sun",lbl:"12 Apr",from:"Horrocks",to:"Cervantes",via:"Geraldton",km:410,drv:"4h 15m",
-   acc:"Cervantes Pinnacles Motel",accUrl:"https://www.google.com/maps/search/Cervantes+accommodation",
+   lat:-28.378,lon:114.421,fromLat:-26.1,fromLon:114.7,bday:false,
+   note:"🏠 Wilson family heads to Perth from Horrocks today — safe travels Wilsons! 👋 Lagoon & reef snorkel off Horrocks beach for those staying."},
+  {day:16,date:"2026-04-12",wday:"Sun",lbl:"12 Apr",from:"Horrocks",to:"Cervantes",via:"Geraldton",km:210,drv:"2h 15m",
+   acc:"Cervantes Holiday Park",accUrl:"https://www.google.com/maps/search/Cervantes+Holiday+Park+WA",
    food:"Lobster Shack",foodUrl:"https://www.lobstershack.com.au",
    grad:"linear-gradient(135deg,#B45309 0%,#F59E0B 100%)",
    lat:-30.506,lon:115.059,fromLat:-28.378,fromLon:114.421,bday:false,
-   note:"Last big dinner! Lobster Shack — celebrate an incredible trip 🦞"},
-  {day:17,date:"2026-04-13",wday:"Mon",lbl:"13 Apr",from:"Cervantes",to:"Perth",via:"",km:240,drv:"2h 30m",
+   note:"Last big dinner! Lobster Shack Cervantes — celebrate an incredible trip 🦞 Pinnacles at sunset!"},
+  {day:17,date:"2026-04-13",wday:"Mon",lbl:"13 Apr",from:"Cervantes",to:"Perth",via:"",km:200,drv:"2h",
    acc:"Home 🏠",accUrl:"",
    food:"Pit stop on the highway",foodUrl:"",
    grad:"linear-gradient(135deg,#06B6D4 0%,#0891B2 100%)",
@@ -603,53 +604,60 @@ const FUEL = {
     {name:"BP Wanneroo Road",brand:"BP",brandColor:"#006600",addr:"Multiple locations, Northern Perth",ph:"",url:"https://www.google.com/maps/search/BP+diesel+Wanneroo+Perth",imp:true,note:"Fill up here — best prices on route north"},
     {name:"Cervantes Service Station",brand:"Independent",brandColor:"#888",addr:"Cervantes Road, Cervantes",ph:"08 9652 7023",url:"https://www.google.com/maps/search/Cervantes+Service+Station",imp:false,note:"Top up if below half"}
   ]},
-  2:{warn:"Top up in Jurien Bay before heading north.",stops:[
-    {name:"Jurien Bay Caltex",brand:"Caltex",brandColor:"#e31837",addr:"Bashford Street, Jurien Bay",ph:"08 9652 1466",url:"https://www.google.com/maps/search/Caltex+Jurien+Bay+diesel",imp:true,note:"Fill up here"}
-  ]},
-  3:{warn:"⚠️ Fill in Geraldton — it's the last big city. Northampton is the final stop before Kalbarri.",stops:[
-    {name:"United Petroleum Geraldton",brand:"United",brandColor:"#1a1a6e",addr:"Marine Terrace, Geraldton",ph:"",url:"https://www.google.com/maps/search/diesel+fuel+Geraldton+WA",imp:true,note:"Fill up fully here"},
+  2:{warn:"⚠️ Fill in Geraldton — last big city before Kalbarri. Northampton is the final stop before town.",stops:[
+    {name:"Jurien Bay Caltex",brand:"Caltex",brandColor:"#e31837",addr:"Bashford Street, Jurien Bay",ph:"08 9652 1466",url:"https://www.google.com/maps/search/Caltex+Jurien+Bay+diesel",imp:false,note:"Top up as you head through"},
+    {name:"United Petroleum Geraldton",brand:"United",brandColor:"#1a1a6e",addr:"Marine Terrace, Geraldton",ph:"",url:"https://www.google.com/maps/search/diesel+fuel+Geraldton+WA",imp:true,note:"Fill up fully here — good prices"},
     {name:"Northampton Roadhouse",brand:"Roadhouse",brandColor:"#666",addr:"Midlands Road, Northampton",ph:"08 9934 1075",url:"https://www.google.com/maps/search/Northampton+Roadhouse",imp:true,note:"⛽ Last fuel before Kalbarri — 83km ahead"}
   ]},
-  4:{warn:"",stops:[
-    {name:"Kalbarri Service Station",brand:"Independent",brandColor:"#888",addr:"Porter Street, Kalbarri",ph:"08 9937 1203",url:"https://www.google.com/maps/search/Kalbarri+service+station+diesel",imp:false,note:"Top up before leaving town"}
-  ]},
-  5:{warn:"🚨 CRITICAL: Overlander Roadhouse is the ONLY fuel between Kalbarri and Denham (320km). Do not skip it.",stops:[
-    {name:"Overlander Roadhouse",brand:"Roadhouse",brandColor:"#666",addr:"North West Coastal Hwy, Overlander",ph:"08 9942 5916",url:"https://www.google.com/maps/search/Overlander+Roadhouse+WA",imp:true,note:"🚨 Cannot skip this stop — fill completely"},
+  3:{warn:"🚨 CRITICAL: Overlander Roadhouse is the ONLY fuel between Kalbarri and Denham (~320km). Do not skip it.",stops:[
+    {name:"Kalbarri Service Station",brand:"Independent",brandColor:"#888",addr:"Porter Street, Kalbarri",ph:"08 9937 1203",url:"https://www.google.com/maps/search/Kalbarri+service+station+diesel",imp:true,note:"Fill before leaving Kalbarri"},
+    {name:"Overlander Roadhouse",brand:"Roadhouse",brandColor:"#666",addr:"North West Coastal Hwy, Overlander",ph:"08 9942 5916",url:"https://www.google.com/maps/search/Overlander+Roadhouse+WA",imp:true,note:"🚨 Cannot skip this — fill completely"},
     {name:"Denham Service Station",brand:"Independent",brandColor:"#888",addr:"Knight Terrace, Denham",ph:"08 9948 1222",url:"https://www.google.com/maps/search/Denham+service+station",imp:false,note:"Top up on arrival"}
   ]},
-  6:{warn:"",stops:[
-    {name:"Denham Service Station",brand:"Independent",brandColor:"#888",addr:"Knight Terrace, Denham",ph:"08 9948 1222",url:"https://www.google.com/maps/search/Denham+service+station",imp:false,note:"Fill before Monkey Mia day"}
+  4:{warn:"Short 27km drive. Fill in Denham before leaving — remote roads ahead.",stops:[
+    {name:"Denham Service Station",brand:"Independent",brandColor:"#888",addr:"Knight Terrace, Denham",ph:"08 9948 1222",url:"https://www.google.com/maps/search/Denham+service+station",imp:true,note:"Fill before Monkey Mia — no fuel there"}
   ]},
-  7:{warn:"",stops:[
-    {name:"Denham Service Station",brand:"Independent",brandColor:"#888",addr:"Knight Terrace, Denham",ph:"08 9948 1222",url:"https://www.google.com/maps/search/Denham+service+station",imp:true,note:"Fill before leaving Shark Bay — remote roads ahead"}
-  ]},
-  8:{warn:"⚠️ Fill in Carnarvon on the way through — key diesel hub before heading further north.",stops:[
+  5:{warn:"⚠️ Fill in Carnarvon on the way through — key diesel hub before remote Wooramel.",stops:[
     {name:"BP Carnarvon",brand:"BP",brandColor:"#006600",addr:"Robinson Street, Carnarvon",ph:"08 9941 1053",url:"https://www.google.com/maps/search/BP+Carnarvon+diesel",imp:true,note:"Fill up fully here"},
-    {name:"Wooramel Roadhouse",brand:"Roadhouse",brandColor:"#666",addr:"North West Coastal Hwy, Wooramel",ph:"08 9942 5968",url:"https://www.google.com/maps/search/Wooramel+Roadhouse",imp:false,note:"En route — top up available"}
+    {name:"Caltex Carnarvon",brand:"Caltex",brandColor:"#e31837",addr:"Robinson Street, Carnarvon",ph:"",url:"https://www.google.com/maps/search/Caltex+Carnarvon",imp:false,note:"Alternative option in town"}
   ]},
-  9:{warn:"⚠️ Minilya Roadhouse is your only fuel between Carnarvon and Coral Bay. Coral Bay fuel is expensive and limited.",stops:[
+  6:{warn:"⚠️ Minilya Roadhouse is your only fuel between Carnarvon and Coral Bay. Coral Bay fuel is expensive and limited.",stops:[
+    {name:"Wooramel Roadhouse",brand:"Roadhouse",brandColor:"#666",addr:"North West Coastal Hwy, Wooramel",ph:"08 9942 5968",url:"https://www.google.com/maps/search/Wooramel+Roadhouse",imp:false,note:"En route — top up if available"},
     {name:"Minilya Roadhouse",brand:"Roadhouse",brandColor:"#666",addr:"North West Coastal Hwy, Minilya",ph:"08 9942 5922",url:"https://www.google.com/maps/search/Minilya+Roadhouse",imp:true,note:"⚠️ Fill here — last reasonable fuel before Coral Bay"},
     {name:"Coral Bay Servo",brand:"Independent",brandColor:"#888",addr:"Robinson Street, Coral Bay",ph:"08 9942 5988",url:"https://www.google.com/maps/search/Coral+Bay+fuel+station",imp:false,note:"Emergency top-up only — very high prices"}
   ]},
-  10:{warn:"Coral Bay fuel is limited and expensive. Top up if below half.",stops:[
-    {name:"Coral Bay Servo",brand:"Independent",brandColor:"#888",addr:"Robinson Street, Coral Bay",ph:"08 9942 5988",url:"https://www.google.com/maps/search/Coral+Bay+fuel+station",imp:false,note:"Top up before Exmouth leg"}
+  7:{warn:"Coral Bay fuel is limited and expensive. Top up if below half.",stops:[
+    {name:"Coral Bay Servo",brand:"Independent",brandColor:"#888",addr:"Robinson Street, Coral Bay",ph:"08 9942 5988",url:"https://www.google.com/maps/search/Coral+Bay+fuel+station",imp:false,note:"Top up before Exmouth leg tomorrow"}
   ]},
-  11:{warn:"",stops:[
-    {name:"Exmouth BP",brand:"BP",brandColor:"#006600",addr:"Maidstone Crescent, Exmouth",ph:"08 9949 1877",url:"https://www.google.com/maps/search/BP+Exmouth+diesel",imp:false,note:"Multiple servos in town — best prices on the trip north"},
+  8:{warn:"",stops:[
+    {name:"Coral Bay Servo",brand:"Independent",brandColor:"#888",addr:"Robinson Street, Coral Bay",ph:"08 9942 5988",url:"https://www.google.com/maps/search/Coral+Bay+fuel+station",imp:false,note:"Top up before leaving Coral Bay"},
+    {name:"Exmouth BP",brand:"BP",brandColor:"#006600",addr:"Maidstone Crescent, Exmouth",ph:"08 9949 1877",url:"https://www.google.com/maps/search/BP+Exmouth+diesel",imp:false,note:"Multiple servos in town — top up on arrival"}
+  ]},
+  9:{warn:"",stops:[
+    {name:"Exmouth BP",brand:"BP",brandColor:"#006600",addr:"Maidstone Crescent, Exmouth",ph:"08 9949 1877",url:"https://www.google.com/maps/search/BP+Exmouth+diesel",imp:false,note:"Multiple servos in town"},
     {name:"Exmouth Caltex",brand:"Caltex",brandColor:"#e31837",addr:"Maidstone Crescent, Exmouth",ph:"",url:"https://www.google.com/maps/search/Caltex+Exmouth",imp:false,note:""}
   ]},
-  12:{warn:"🚨 Fill completely in Exmouth before heading to Quobba. NO fuel at Quobba Station.",stops:[
-    {name:"Exmouth BP",brand:"BP",brandColor:"#006600",addr:"Maidstone Crescent, Exmouth",ph:"08 9949 1877",url:"https://www.google.com/maps/search/BP+Exmouth+diesel",imp:true,note:"🚨 Fill COMPLETELY — no fuel at Quobba"}
+  10:{warn:"",stops:[
+    {name:"Exmouth BP",brand:"BP",brandColor:"#006600",addr:"Maidstone Crescent, Exmouth",ph:"08 9949 1877",url:"https://www.google.com/maps/search/BP+Exmouth+diesel",imp:false,note:"Top up while in town"}
   ]},
-  13:{warn:"🚨 Carnarvon is your ONLY diesel stop. Quobba Station has zero fuel. Call ahead if unsure.",stops:[
-    {name:"BP Carnarvon",brand:"BP",brandColor:"#006600",addr:"Robinson Street, Carnarvon",ph:"08 9941 1053",url:"https://www.google.com/maps/search/BP+Carnarvon+diesel",imp:true,note:"🚨 Last fuel before Quobba — absolutely fill up"},
-    {name:"Caltex Carnarvon",brand:"Caltex",brandColor:"#e31837",addr:"Robinson Street, Carnarvon",ph:"",url:"https://www.google.com/maps/search/Caltex+Carnarvon",imp:false,note:"Also has diesel"}
+  11:{warn:"",stops:[
+    {name:"Exmouth BP",brand:"BP",brandColor:"#006600",addr:"Maidstone Crescent, Exmouth",ph:"08 9949 1877",url:"https://www.google.com/maps/search/BP+Exmouth+diesel",imp:false,note:"Top up — last Exmouth day"}
   ]},
-  14:{warn:"Horrocks has no servo. Northampton Roadhouse is your fuel stop en route.",stops:[
+  12:{warn:"🚨 Fill completely in Exmouth AND Carnarvon — absolutely NO fuel at Quobba Station.",stops:[
+    {name:"Exmouth BP",brand:"BP",brandColor:"#006600",addr:"Maidstone Crescent, Exmouth",ph:"08 9949 1877",url:"https://www.google.com/maps/search/BP+Exmouth+diesel",imp:true,note:"🚨 Fill before leaving Exmouth"},
+    {name:"BP Carnarvon",brand:"BP",brandColor:"#006600",addr:"Robinson Street, Carnarvon",ph:"08 9941 1053",url:"https://www.google.com/maps/search/BP+Carnarvon+diesel",imp:true,note:"🚨 Top up here — last fuel before Quobba"},
+    {name:"Caltex Carnarvon",brand:"Caltex",brandColor:"#e31837",addr:"Robinson Street, Carnarvon",ph:"",url:"https://www.google.com/maps/search/Caltex+Carnarvon",imp:false,note:"Alternative in town"}
+  ]},
+  13:{warn:"🚨 No fuel at Quobba Station. You filled up in Carnarvon yesterday — you're fine.",stops:[
+    {name:"Quobba Station",brand:"Station",brandColor:"#888",addr:"Quobba Station Road, Carnarvon",ph:"",url:"https://www.quobba.com.au",imp:false,note:"No fuel available here"}
+  ]},
+  14:{warn:"⚠️ Fill in Carnarvon on the way back — heading into the Gascoyne.",stops:[
+    {name:"BP Carnarvon",brand:"BP",brandColor:"#006600",addr:"Robinson Street, Carnarvon",ph:"08 9941 1053",url:"https://www.google.com/maps/search/BP+Carnarvon+diesel",imp:true,note:"Fill up here for the Wooramel leg"},
+    {name:"Wooramel Roadhouse",brand:"Roadhouse",brandColor:"#666",addr:"North West Coastal Hwy, Wooramel",ph:"08 9942 5968",url:"https://www.google.com/maps/search/Wooramel+Roadhouse",imp:false,note:"En route — top up if available"}
+  ]},
+  15:{warn:"Horrocks has no servo. Northampton Roadhouse is your fuel stop en route.",stops:[
+    {name:"Wooramel Roadhouse",brand:"Roadhouse",brandColor:"#666",addr:"North West Coastal Hwy, Wooramel",ph:"08 9942 5968",url:"https://www.google.com/maps/search/Wooramel+Roadhouse",imp:false,note:"Top up before heading south"},
     {name:"Northampton Roadhouse",brand:"Roadhouse",brandColor:"#666",addr:"Midlands Road, Northampton",ph:"08 9934 1075",url:"https://www.google.com/maps/search/Northampton+Roadhouse",imp:true,note:"Fill here — Horrocks has NO fuel"}
-  ]},
-  15:{warn:"",stops:[
-    {name:"Northampton Roadhouse",brand:"Roadhouse",brandColor:"#666",addr:"Midlands Road, Northampton",ph:"08 9934 1075",url:"https://www.google.com/maps/search/Northampton+Roadhouse",imp:false,note:"Top up before heading south"}
   ]},
   16:{warn:"",stops:[
     {name:"BP Geraldton",brand:"BP",brandColor:"#006600",addr:"Marine Terrace, Geraldton",ph:"",url:"https://www.google.com/maps/search/BP+Geraldton+diesel",imp:false,note:"Plenty of options in Geraldton"},
@@ -666,32 +674,37 @@ const ACTS = {
   1:{booked:[
     {icon:"🚐",name:"Campervan Pickup",time:"9:00am",op:"Campervan Rental Shop",ph:"0426 162 776",url:"https://www.google.com/maps/search/2+Redcliffe+Road+Redcliffe+Perth",note:"Sarah Feldman · 2 Redcliffe Rd, Redcliffe"}
   ],optional:[
-    {icon:"🦭",name:"Jurien Bay Sea Lion Colony",desc:"Snorkel with wild Australian sea lions at Jurien Bay Marine Park. World-class experience.",url:"https://www.jurienbay.com.au"},
-    {icon:"🏔️",name:"Sandy Cape Sand Dunes",desc:"Rolling white dunes — bring a bodyboard to sandboard down. Kids will go nuts.",url:"https://www.google.com/maps/search/Sandy+Cape+Jurien+Bay"},
-    {icon:"🗿",name:"Pinnacles Desert (quick stop)",desc:"If you make good time — the Pinnacles are 20min south of Cervantes. Otherworldly at sunset.",url:"https://www.exploreparks.dbca.wa.gov.au/park/nambung-national-park"}
+    {icon:"🗿",name:"Pinnacles Desert (Nambung NP)",desc:"Stop en route — the Pinnacles at Cervantes are otherworldly. Allow 1 hour. $15 day pass.",url:"https://www.exploreparks.dbca.wa.gov.au/park/nambung-national-park"},
+    {icon:"🦭",name:"Sandy Cape Sea Lions",desc:"Wild Australian sea lions just north of Jurien Bay. Snorkel or swim alongside them.",url:"https://www.jurienbay.com.au"},
+    {icon:"🏔️",name:"Sandy Cape Sand Dunes",desc:"Rolling white dunes — bring a bodyboard to sandboard down. Kids will go nuts.",url:"https://www.google.com/maps/search/Sandy+Cape+Jurien+Bay"}
   ]},
-  2:{booked:[],optional:[
-    {icon:"🦭",name:"Sea Lion Snorkel Tour",desc:"Swim with wild sea lions. Book at Jurien Bay Dive and Snorkel. 9am & 1pm departures.",url:"https://www.jurienbay.com.au"},
-    {icon:"🪁",name:"Sandboard the Sandy Cape Dunes",desc:"Rent boards from the caravan park or bring bodyboards. Kids love it.",url:"https://www.google.com/maps/search/Sandy+Cape+Jurien+Bay"},
-    {icon:"🎣",name:"Fish from the Jetty",desc:"Whiting, garfish, herring in the bay. BYO rods or hire from the park.",url:"https://www.google.com/maps/search/Jurien+Bay+Jetty"},
-    {icon:"🐧",name:"Little Penguin Walk (evening)",desc:"One of the few mainland penguin colonies in WA — they come ashore at dusk.",url:"https://www.jurienbay.com.au"}
+  2:{booked:[
+    {icon:"🦭",name:"Sea Lion Tour — Turquoise Safaris",time:"7:00am",op:"Turquoise Safaris",ph:"08 9652 1080",url:"https://www.turquoisesafaris.com.au",note:"7am departure. Book ahead — extremely popular. World-class snorkel with wild sea lions!"}
+  ],optional:[
+    {icon:"🚢",name:"HMAS Sydney II Memorial (Geraldton)",desc:"Powerful war memorial — 645 sailors lost 1941. Allow 1 hour. Fill diesel here too!",url:"https://www.google.com/maps/search/HMAS+Sydney+Memorial+Geraldton"},
+    {icon:"🦅",name:"Kalbarri Skywalk ⭐",desc:"100m cantilever over a 100m gorge drop. $12 adults. Opens 9am.",url:"https://www.exploreparks.dbca.wa.gov.au/park/kalbarri-national-park"},
+    {icon:"🌅",name:"Kalbarri Sunset at Jake's Point",desc:"Watch the sun set into the Indian Ocean from the surf break clifftop. Magical first night.",url:"https://www.google.com/maps/search/Jakes+Point+Kalbarri+WA"}
   ]},
   3:{booked:[],optional:[
-    {icon:"🚢",name:"HMAS Sydney II Memorial",desc:"Powerful war memorial overlooking the sea in Geraldton. 645 sailors lost 1941. Allow 1 hour.",url:"https://www.google.com/maps/search/HMAS+Sydney+Memorial+Geraldton"},
-    {icon:"🌅",name:"Kalbarri Sunset Walk",desc:"Walk the cliff-top trails at sunset — the reds and oranges are insane.",url:"https://www.google.com/maps/search/Kalbarri+cliffs+walk"}
+    {icon:"🦅",name:"Kalbarri Skywalk ⭐ (morning)",desc:"Start early — best light before 10am. 100m cantilever over ancient gorges. $12 adults.",url:"https://www.exploreparks.dbca.wa.gov.au/park/kalbarri-national-park"},
+    {icon:"👀",name:"Nature's Window & Z-Bend",desc:"Iconic photo spot — frames the gorge perfectly. 30min walk return from carpark.",url:"https://www.exploreparks.dbca.wa.gov.au/park/kalbarri-national-park"},
+    {icon:"🚨",name:"Overlander Roadhouse fuel stop",desc:"CRITICAL FUEL STOP — the ONLY fuel between Kalbarri and Denham (320km). Fill completely!",url:"https://www.google.com/maps/search/Overlander+Roadhouse+WA"},
+    {icon:"🐚",name:"Shell Beach",desc:"10 billion cockle shells 10 metres deep. Walk, swim, wade in hyper-saline water — you float!",url:"https://www.sharkbay.org/shell-beach/"},
+    {icon:"🪨",name:"Hamelin Pool Stromatolites",desc:"Living fossils 3.5 BILLION years old — only 2 places on Earth. Boardwalk walk, 1 hour.",url:"https://www.sharkbay.org/hamelin-pool/"}
   ]},
-  4:{booked:[],optional:[
-    {icon:"🦅",name:"Kalbarri Skywalk ⭐",desc:"100m cantilever over a 100m gorge drop. Opens 9am. $12 adults. Jaw-dropping!",url:"https://www.exploreparks.dbca.wa.gov.au/park/kalbarri-national-park"},
-    {icon:"🐦",name:"Pelican Feeding — 8:45am sharp!",desc:"Free (gold coin donation). Daily on the Foreshore. Don't be late — it's fast!",url:"https://www.australiascoralcoast.com/listing/kalbarri-pelican-feeding/"},
-    {icon:"🧗",name:"Kalbarri Abseil",desc:"Kids 8+ welcome. Morning sessions. Book via Kalbarri Abseil & Adventures.",url:"https://www.kalbarriabseil.com.au"},
-    {icon:"🚣",name:"Kayak the Murchison Gorge",desc:"Paddle through ancient gorge walls. Kalbarri Abseil & Adventures. 0427 995 123",url:"https://www.kalbarriabseil.com.au"},
-    {icon:"👀",name:"Nature's Window & Z Bend",desc:"Iconic photo spot — frames the gorge perfectly. 30min walk return from carpark.",url:"https://www.exploreparks.dbca.wa.gov.au/park/kalbarri-national-park"}
+  4:{booked:[
+    {icon:"🐬",name:"Dolphin Interaction #1 — 7:45am",time:"7:45am",op:"RAC Monkey Mia Dolphin Resort",ph:"1800 241 424",url:"https://parksandresorts.rac.com.au/monkey-mia/",note:"Free with resort entry. Be there 15 min early. The dolphins come to the beach!"},
+    {icon:"🐬",name:"Dolphin Interaction #2 — 9:15am",time:"9:15am",op:"RAC Monkey Mia Dolphin Resort",ph:"1800 241 424",url:"https://parksandresorts.rac.com.au/monkey-mia/",note:"Second feeding if dolphins return — stay on the beach after the first interaction."},
+    {icon:"🍽️",name:"Boughshed Restaurant — 6:30pm",time:"6:30pm",op:"RAC Monkey Mia",ph:"1800 241 424",url:"https://www.google.com/maps/search/Boughshed+Restaurant+Monkey+Mia",note:"Booked for 18:30 for 16 people. Celebrate Day 4!"}
+  ],optional:[
+    {icon:"🛶",name:"Kayak with Dolphins",desc:"Self-guided kayak in the bay. Hire from the resort. Dugongs often seen!",url:"https://parksandresorts.rac.com.au/monkey-mia/"},
+    {icon:"🦈",name:"Dugong & Wildlife Cruise",desc:"Boat cruise to spot dugongs (12,000 live here!), tiger sharks, sea turtles.",url:"https://parksandresorts.rac.com.au/monkey-mia/"}
   ]},
   5:{booked:[],optional:[
-    {icon:"🃏",name:"🎉 APRIL FOOLS! Prank the other families",desc:"It's 1 April — game on! Here are some harmless ideas to kick off the day..."},
-    {icon:"🪨",name:"Hamelin Pool Stromatolites",desc:"Living fossils 3.5 BILLION years old. Only 2 places on Earth. Boardwalk walk. 1 hour.",url:"https://www.sharkbay.org/hamelin-pool/"},
-    {icon:"🐚",name:"Shell Beach",desc:"10 billion cockle shells 10 metres deep. Walk, swim, wade in hyper-saline water.",url:"https://www.sharkbay.org/shell-beach/"},
-    {icon:"🦅",name:"Eagle Bluff Lookout",desc:"Stunning coastal lookout — spot dugongs, rays and sharks from above.",url:"https://www.google.com/maps/search/Eagle+Bluff+Shark+Bay"}
+    {icon:"🃏",name:"🎉 APRIL FOOLS! Prank the other families",desc:"It's 1 April — game on! Tap the April Fools section for harmless prank ideas..."},
+    {icon:"♨️",name:"Wooramel Artesian Bore Bath",desc:"33°C mineral water from 240m underground. Wear dark swimmers — minerals stain!",url:"https://www.wooramel.com.au"},
+    {icon:"🌟",name:"Stargazing at Wooramel",desc:"Zero light pollution. Download Stellarium app. Find the Milky Way core — spectacular.",url:"https://stellarium.org"},
+    {icon:"🏡",name:"Wooramel Station Tour",desc:"Learn about life on a remote WA sheep station. The history here goes back to the 1870s.",url:"https://www.wooramel.com.au"}
   ],april_fools:[
     {icon:"🐛",prank:"Fake spider in the van",setup:"Cut a realistic-looking spider shape from black cardboard or use a plastic toy spider. Stick it on the inside of the toilet door or in someone's shoe the night before. Works every time on the Tici types."},
     {icon:"🚐",prank:"The 'flat tyre' panic",setup:"Knock on the neighbouring van door looking very serious — 'Mate, think you've got a flat on the rear left.' Watch them bolt outside. Yell 'April Fools!' before they get too stressed. Buy them a coffee as compensation."},
@@ -703,60 +716,63 @@ const ACTS = {
     {icon:"🏕️",prank:"Cling-wrap the camp chairs",setup:"Wrap the camp chairs in cling wrap overnight. Simple, childish, perfect."}
   ]},
   6:{booked:[],optional:[
-    {icon:"💎",name:"Little Lagoon",desc:"5km from town. Crystal shallow lagoon — perfect for the little kids. Kayaks available.",url:"https://www.google.com/maps/search/Little+Lagoon+Denham"},
-    {icon:"🚙",name:"Francois Peron 4WD",desc:"Let tyres down to 18psi at the gate. Stunning red-dirt desert meeting turquoise sea.",url:"https://www.exploreparks.dbca.wa.gov.au/park/francois-peron-national-park"},
-    {icon:"♨️",name:"Peron Homestead Hot Tub",desc:"Natural artesian bore hot tub at the old homestead — families love it.",url:"https://www.google.com/maps/search/Peron+Homestead+hot+tub+Shark+Bay"}
+    {icon:"🤿",name:"Reef Snorkel off the Beach",desc:"Ningaloo Reef starts just 100m from shore at Coral Bay. Grab fins and go — no boat needed!",url:"https://www.ningaloocoralbay.com"},
+    {icon:"🦈",name:"Coral Bay Boat Tours",desc:"Glass-bottom boat, snorkel tours, manta ray swims. Book on arrival at the main beach.",url:"https://www.coralbayadventures.com.au"},
+    {icon:"🌅",name:"Coral Bay Sunset Watch",desc:"The bay faces west for perfect sunsets. Bring wine and cheese from the camp.",url:"https://www.google.com/maps/search/Coral+Bay+beach+sunset"}
   ]},
   7:{booked:[
-    {icon:"🐬",name:"Dolphin Interaction #1 — 7:45am",time:"7:45am",op:"Monkey Mia Dolphin Resort",ph:"1800 241 424",url:"https://www.monkeymia.com.au",note:"Free with resort entry fee. Be there 15 min early."},
-    {icon:"🐬",name:"Dolphin Interaction #2 — 9:15am",time:"9:15am",op:"Monkey Mia Dolphin Resort",ph:"1800 241 424",url:"https://www.monkeymia.com.au",note:"Second feeding if dolphins return."}
+    {icon:"🦅",name:"Manta Ray Snorkel Tour",time:"8:00am",op:"Coral Bay Adventures",ph:"08 9942 5955",url:"https://www.coralbayadventures.com.au",note:"Booking request sent. Morning tour 8am. Good Friday — book ASAP, fills very fast!"}
   ],optional:[
-    {icon:"🛶",name:"Kayak with Dolphins",desc:"Self-guided kayak in the bay. Hire from the resort. Dugongs often seen!",url:"https://www.monkeymia.com.au"},
-    {icon:"🦈",name:"Dugong & Wildlife Cruise",desc:"Boat cruise to spot dugongs (12,000 live here!), tiger sharks, sea turtles.",url:"https://www.monkeymia.com.au"}
+    {icon:"🤿",name:"Five Fingers Reef Snorkel",desc:"One of Coral Bay's best snorkel spots — abundant fish, coral and rays just off the beach.",url:"https://www.ningaloocoralbay.com"},
+    {icon:"🐢",name:"Turtle Nesting Beach Walk",desc:"Green and hawksbill turtles nest here Oct–Mar. Check with the park for guided walks.",url:"https://www.ningaloocoralbay.com"},
+    {icon:"☀️",name:"Happy Cowboy Café",desc:"Best brekkie in Coral Bay. Fish tacos, great coffee, right on the beach.",url:"https://www.google.com/maps/search/Happy+Cowboy+Coral+Bay+WA"}
   ]},
-  8:{booked:[],optional:[
-    {icon:"♨️",name:"Wooramel Artesian Bore Bath",desc:"33°C mineral water from 240m underground. Wear dark swimmers — minerals stain!",url:"https://www.wooramel.com.au"},
-    {icon:"🌟",name:"Stargazing at Wooramel",desc:"Zero light pollution. Download Stellarium app. Find the Milky Way core — spectacular.",url:"https://stellarium.org"}
-  ]},
-  9:{booked:[],optional:[
-    {icon:"🤿",name:"Reef Snorkel off the Beach",desc:"Ningaloo Reef starts just 100m from shore. Grab fins and go — no boat needed!",url:"https://www.ningaloocoralbay.com"},
-    {icon:"🦈",name:"Coral Bay Boat Tours",desc:"Glass-bottom boat, snorkel tours, manta ray swims. Book on arrival at the main beach.",url:"https://www.coralbayadventures.com.au"}
-  ]},
-  10:{booked:[
-    {icon:"🦅",name:"Manta Ray Snorkel Tour",time:"8:00am",op:"Coral Bay Adventures",ph:"08 9942 5955",url:"https://www.coralbayadventures.com.au",note:"Book ahead — fills fast. Morning tour departs 8am."}
+  8:{booked:[
+    {icon:"🍽️",name:"Whalers Restaurant — 7pm/7:30pm",time:"7:00pm",op:"Whalers Restaurant Exmouth",ph:"08 9949 2416",url:"https://www.google.com/maps/search/Whalers+Restaurant+Exmouth",note:"Booked for two tables at 7pm and 7:30pm. Celebrate arriving in Exmouth!"}
   ],optional:[
-    {icon:"🐢",name:"Turtle Nesting Beach Walk",desc:"Green and hawksbill turtles nest here Oct–Mar. Check with resort for guided walks.",url:"https://www.ningaloocoralbay.com"},
-    {icon:"🏄",name:"Coral Bay Sunset Watch",desc:"The bay faces west for perfect sunsets. Bring wine and cheese.",url:"https://www.google.com/maps/search/Coral+Bay+beach+sunset"}
+    {icon:"🤿",name:"Turquoise Bay Drift Snorkel ⭐",desc:"World-class drift snorkel. Enter upstream, drift over the reef, repeat. $20 NP day pass.",url:"https://www.exploreparks.dbca.wa.gov.au/park/cape-range-national-park"},
+    {icon:"🌅",name:"Vlamingh Head Lighthouse Sunset",desc:"THE iconic sundowner spot for Exmouth. 360° views. Bring drinks.",url:"https://www.google.com/maps/search/Vlamingh+Head+Lighthouse+Exmouth"}
+  ]},
+  9:{booked:[
+    {icon:"🦈",name:"Whale Shark Swim (if booked)",time:"6:00am",op:"Three Islands Whale Shark Dive",ph:"08 9949 2403",url:"https://www.whalesharkdive.com",note:"🐣 Easter Sunday whale shark experience! Booking request sent to Manta Rays. Season Mar–Jul."}
+  ],optional:[
+    {icon:"🦘",name:"Yardie Creek Gorge",desc:"Red limestone gorge — boat tours up the creek. Black-footed rock wallabies visible from shore.",url:"https://www.exploreparks.dbca.wa.gov.au/park/cape-range-national-park"},
+    {icon:"🤿",name:"Turquoise Bay Drift Snorkel",desc:"World-class drift snorkel. Enter upstream, drift over the reef, repeat. $20 NP day pass.",url:"https://www.exploreparks.dbca.wa.gov.au/park/cape-range-national-park"},
+    {icon:"🍺",name:"Whalebone Brewing Co",desc:"Easter Sunday session! Local Exmouth craft brewery with great beer and food.",url:"https://www.google.com/maps/search/Whalebone+Brewing+Exmouth"}
+  ]},
+  10:{booked:[],optional:[
+    {icon:"🤿",name:"Turquoise Bay (again — it's that good!)",desc:"Easter Monday drift snorkel. Different light in the morning. You will not regret going back.",url:"https://www.exploreparks.dbca.wa.gov.au/park/cape-range-national-park"},
+    {icon:"🌊",name:"Mandu Mandu Gorge",desc:"Short walk through a spectacular gorge in Cape Range NP. Great for all fitness levels.",url:"https://www.exploreparks.dbca.wa.gov.au/park/cape-range-national-park"},
+    {icon:"🍻",name:"Adrift Café",desc:"Exmouth's best café — great coffee, fresh food, excellent ambience.",url:"https://www.adriftcafe.com.au"}
   ]},
   11:{booked:[],optional:[
-    {icon:"🤿",name:"Turquoise Bay Drift Snorkel ⭐",desc:"World-class drift snorkel. Enter upstream, drift over the reef, repeat. $20 NP day pass.",url:"https://www.exploreparks.dbca.wa.gov.au/park/cape-range-national-park"},
-    {icon:"🌅",name:"Vlamingh Head Lighthouse Sunset",desc:"THE iconic sundowner spot for Exmouth. 360° views. Bring drinks.",url:"https://www.google.com/maps/search/Vlamingh+Head+Lighthouse+Exmouth"},
-    {icon:"🦘",name:"Yardie Creek Gorge",desc:"Red limestone gorge — boat tours up the creek. Black-footed rock wallabies visible from shore.",url:"https://www.exploreparks.dbca.wa.gov.au/park/cape-range-national-park"}
+    {icon:"🦈",name:"Whale Shark Swim",time:"6:00am",op:"Three Islands Whale Shark Dive",ph:"08 9949 2403",url:"https://www.whalesharkdive.com",note:"Season Mar–Jul. Last chance for whale sharks — call if not booked yet!"},
+    {icon:"🏔️",name:"Charles Knife Canyon Lookout",desc:"Dramatic lookout over Cape Range. 5 min stop — stunning.",url:"https://www.google.com/maps/search/Charles+Knife+Canyon+Exmouth"},
+    {icon:"☕",name:"Bungalow Barista (recommended by Ems)",desc:"Hidden gem café in Exmouth. Excellent coffee and food.",url:"https://www.google.com/maps/search/Bungalow+Barista+Exmouth+WA"}
   ]},
-  12:{booked:[
-    {icon:"🦈",name:"Whale Shark Swim (if booked)",time:"6:00am",op:"Three Islands Whale Shark Dive",ph:"08 9949 2403",url:"https://www.whalesharkdive.com",note:"March–July season. Spotter plane finds them. Life-changing experience!"}
-  ],optional:[
-    {icon:"🤿",name:"Turquoise Bay (again — it's that good)",desc:"If you didn't get enough yesterday, come back. Different light in the morning.",url:"https://www.exploreparks.dbca.wa.gov.au/park/cape-range-national-park"},
-    {icon:"🌊",name:"Charles Knife Canyon Lookout",desc:"Dramatic lookout over the Cape Range on the way in/out. 5 min stop.",url:"https://www.google.com/maps/search/Charles+Knife+Canyon+Exmouth"},
-    {icon:"🍺",name:"Froth Craft Brewery",desc:"Award-winning local brewery. 16 taps, great food, live music.",url:"https://www.frothbrewingco.com.au"}
-  ]},
-  13:{booked:[],optional:[
-    {icon:"💨",name:"Quobba Blowholes",desc:"Ocean swells shoot 20m into the air through natural rock holes. Dramatic!",url:"https://www.australiascoralcoast.com/listing/quobba-blowholes/"},
-    {icon:"🚢",name:"Korean Star Shipwreck",desc:"1988 cargo ship visible from shore. Eerie and fascinating.",url:"https://www.google.com/maps/search/Korean+Star+shipwreck+Quobba"},
+  12:{booked:[],optional:[
+    {icon:"💨",name:"Quobba Blowholes",desc:"Ocean swells shoot 20m into the air through natural rock holes. Spectacular!",url:"https://www.australiascoralcoast.com/listing/quobba-blowholes/"},
+    {icon:"🚢",name:"Korean Star Shipwreck",desc:"1988 cargo ship visible from shore. Eerie and fascinating — accessible by foot.",url:"https://www.google.com/maps/search/Korean+Star+shipwreck+Quobba"},
     {icon:"🏄",name:"Red Bluff Surf",desc:"WA's top 5 surf breaks. Long right-hander off the point. Intermediate+",url:"https://www.google.com/maps/search/Red+Bluff+Quobba+surf"}
   ]},
+  13:{booked:[],optional:[
+    {icon:"💨",name:"Quobba Blowholes (full exploration)",desc:"Explore the whole blowhole coast — different holes have different characters. Dramatic!",url:"https://www.australiascoralcoast.com/listing/quobba-blowholes/"},
+    {icon:"🌅",name:"Sunset at Blow 5",desc:"The most powerful blowhole — watch it fire into the setting sun. Unforgettable.",url:"https://www.australiascoralcoast.com/listing/quobba-blowholes/"},
+    {icon:"🌟",name:"Stargazing — Zero Light Pollution",desc:"Some of the darkest skies in Australia. Download Stellarium. Milky Way core is incredible.",url:"https://stellarium.org"},
+    {icon:"🎣",name:"Land-Based Fishing",desc:"WA's best land-based fishing. Snapper, coral trout, mackerel off the rocks.",url:"https://www.google.com/maps/search/Quobba+fishing+WA"}
+  ]},
   14:{booked:[],optional:[
-    {icon:"🎂",name:"ARIA'S BIRTHDAY MORNING SURPRISE",desc:"Decorations, balloons, breakfast in bed — make it magical from the moment she wakes up!",url:""},
-    {icon:"🌸",name:"Hutt Lagoon Pink Lake",desc:"Vivid pink from Dunaliella algae. Best 10am–2pm. 8km north at Port Gregory.",url:"https://www.google.com/maps/search/Hutt+Lagoon+Pink+Lake+Port+Gregory"},
-    {icon:"🎉",name:"Birthday Dinner Party",desc:"Set up the campsite beautifully. Birthday cake, streamers, party games, the works!",url:""}
+    {icon:"🎂",name:"ARIA'S BIRTHDAY MORNING SURPRISE",desc:"Decorations, balloons, birthday breakfast — make it magical from the moment she wakes up!",url:""},
+    {icon:"♨️",name:"Wooramel Artesian Bore Bath — BIRTHDAY EDITION",desc:"A warm mineral soak under the stars for Aria's birthday. 33°C natural hot spring.",url:"https://www.wooramel.com.au"},
+    {icon:"🎉",name:"Birthday Dinner Under the Stars",desc:"Set up the campsite beautifully. Birthday cake, streamers, party games, the works!",url:""}
   ]},
   15:{booked:[],optional:[
-    {icon:"🤿",name:"Horrocks Reef Snorkel",desc:"Clear water reef right off the beach. Good variety of fish and coral.",url:"https://www.google.com/maps/search/Horrocks+reef+snorkel"},
-    {icon:"🌸",name:"Hutt Lagoon Pink Lake (if missed Day 14)",desc:"Only 8km to Port Gregory. Don't leave without seeing this.",url:"https://www.google.com/maps/search/Hutt+Lagoon+Pink+Lake"},
-    {icon:"🎣",name:"Horrocks Beach Fishing",desc:"Dawn and dusk are best. Snapper, trevally, tailor off the rocks and beach.",url:"https://www.google.com/maps/search/Horrocks+fishing"}
+    {icon:"🤿",name:"Horrocks Reef Snorkel",desc:"Clear water reef right off the beach. Good fish and coral variety — grab the snorkel gear!",url:"https://www.google.com/maps/search/Horrocks+reef+snorkel"},
+    {icon:"🌸",name:"Hutt Lagoon Pink Lake",desc:"8km to Port Gregory. Vivid pink from Dunaliella algae. Best 10am–2pm.",url:"https://www.google.com/maps/search/Hutt+Lagoon+Pink+Lake+Port+Gregory"},
+    {icon:"🎣",name:"Horrocks Beach Fishing",desc:"Dawn and dusk are best. Snapper, trevally, tailor off the rocks.",url:"https://www.google.com/maps/search/Horrocks+fishing"}
   ]},
   16:{booked:[],optional:[
-    {icon:"🗿",name:"Pinnacles Desert at Sunset",desc:"If you haven't done it yet — this is your last chance. Magical at golden hour.",url:"https://www.exploreparks.dbca.wa.gov.au/park/nambung-national-park"},
+    {icon:"🗿",name:"Pinnacles Desert at Sunset",desc:"If you haven't done it yet — magical at golden hour. $15 NP day pass.",url:"https://www.exploreparks.dbca.wa.gov.au/park/nambung-national-park"},
     {icon:"🦞",name:"Lobster Shack Cervantes — Last Dinner!",desc:"Celebrate the trip with fresh crayfish! Ocean view deck. Book ahead.",url:"https://www.lobstershack.com.au"}
   ]},
   17:{booked:[
@@ -769,19 +785,19 @@ const ACTS = {
 // ── AREA INFO PER DAY ───────────────────────────────────
 const AREA = {
   1:{title:"Jurien Bay & the Turquoise Coast",history:"The coastal area north of Perth was charted by French explorer Nicolas Baudin in 1801. Jurien Bay was established as a rock lobster fishing port in the 1960s and is home to one of Australia's most diverse marine parks.",facts:["WA's rock lobster capital — crayfish have been fished here since the 1920s","One of only a few places in WA where you can see wild penguins on the mainland","The Jurien Bay Marine Park protects 115,000 hectares of Indian Ocean","Sandy Cape has Aboriginal middens — evidence of 40,000 years of habitation"],wildlife:"Australian sea lions, bottlenose dolphins, little penguins (at dusk), osprey, white-bellied sea eagles.",flora:"Coastal banksia, prickly moses wattle, native pigface groundcover along the dunes."},
-  2:{title:"Jurien Bay Marine Park",history:"Gazetted in 2003, Jurien Bay Marine Park is one of Western Australia's most biodiverse marine environments, with seagrass meadows, rocky reefs and sandy flats supporting a remarkable array of wildlife.",facts:["Home to the world's largest population of Australian sea lions","The sea lion colony at Jurien Island is the only mainland rookery in WA","Rock lobster fishing quotas here are among the most tightly managed in the world","The marine park covers 82,000 hectares of coastal and marine environment"],wildlife:"Australian sea lions, bottlenose dolphins, little penguins, whale sharks (seasonal), rays.",flora:"Posidonia seagrass meadows (ancient — some colonies are 200,000 years old)."},
-  3:{title:"Geraldton to Kalbarri",history:"Geraldton was the centre of a thriving pearling industry in the 1800s and was heavily involved in WWII — the HMAS Sydney II was lost off the coast in 1941 with 645 men. Kalbarri sits where the ancient Murchison River meets the sea, having carved its spectacular gorges over 400 million years.",facts:["HMAS Sydney II was sunk by German raider Kormoran on 19 November 1941","The wreck was only found in 2008 — after 67 years","The Murchison River is 820km long — WA's second longest","Kalbarri was only accessible by boat until the road was built in 1963","Geraldton is the lobster capital of the world"],wildlife:"Ospreys nesting on channel markers near Geraldton, grey kangaroos in the bush, emus along highway.",flora:"Everlasting wildflowers in season, Kalbarri National Park has 800+ species of wildflowers."},
-  4:{title:"Kalbarri National Park",history:"Kalbarri NP was gazetted in 1963 and protects one of Australia's most spectacular landscapes — ancient red-and-white banded Tumblagooda sandstone gorges carved by the Murchison River over millions of years.",facts:["The gorge walls are 400 million years old — among the oldest exposed rock on Earth","The Skywalk opened in 2020 — it's 100m long cantilevered over a 100m drop","Kalbarri has some of WA's best wildflower displays from August to October","The name Kalbarri means 'the place of the pelicans' in the Nanda language","Aboriginal people have lived in the Kalbarri area for at least 30,000 years"],wildlife:"Wedge-tailed eagles, black-and-white fairy-wrens, pelicans, dolphins in the river mouth.",flora:"Wreath leschenaultia (WA's most celebrated wildflower), Banksia, grevillea."},
-  5:{title:"Shark Bay World Heritage Area",history:"Shark Bay was inscribed on the UNESCO World Heritage List in 1991 — one of only a handful of places to meet all four natural criteria. It contains the world's largest seagrass meadows and some of the most ancient life on Earth.",facts:["Shark Bay meets ALL 4 natural World Heritage criteria — extremely rare","The stromatolites at Hamelin Pool are up to 3,500 years old and still living","Shark Bay has 12% of all the world's seagrass species in one area","The dugong population here is 12,000+ — the largest in the world","Shell Beach is 70km long and made entirely of tiny Fragum cockle shells 10m deep"],wildlife:"Dugongs (12,000+), bottlenose dolphins, humpback whales (Jul–Nov), loggerhead sea turtles, tiger sharks.",flora:"One of the world's largest and most diverse seagrass meadows."},
-  6:{title:"Denham & Francois Peron",history:"Denham is the most westerly town in Australia. It was the centre of pearling operations in the late 1800s. The Peron Peninsula was a sheep station until 1990 when it was converted to the Francois Peron National Park.",facts:["Denham is the westernmost town in Australia","The Peron Peninsula's red sand contrasts spectacularly with turquoise water","Francois Peron NP was the first national park created from a former pastoral station in WA","The artesian bore at Peron Homestead flows at 40°C","Little Lagoon is one of the most photographed spots in WA"],wildlife:"Western barred bandicoots, Shark Bay mouse, malleefowl, dugongs offshore.",flora:"Samphire saltmarsh, snakebush, coastal spinifex."},
-  7:{title:"Monkey Mia & the Dolphins",history:"Dolphins first began approaching fishing boats at Monkey Mia in the 1960s and were being hand-fed by the 1970s. A marine reserve was gazetted in 1996. The name 'Monkey Mia' possibly derives from a pearling lugger called 'Monkey' that was anchored here.",facts:["Wild dolphins have been interacting with people here for over 60 years","Only 5–8 specific dolphins regularly participate in the interactions","The interaction program is managed to keep the dolphins wild and healthy — no forced contact","Dolphin calves whose mothers interact are often banned to preserve their wild behaviour","Shark Bay's dolphins are the most studied wild dolphin population in the world"],wildlife:"Indo-Pacific bottlenose dolphins, dugongs, sea turtles, banded stilts, pelicans.",flora:"Mangroves fringing the bay support rich bird life."},
-  8:{title:"Wooramel Station",history:"Wooramel Station has been a working sheep and cattle station since the 1870s. The artesian bore was drilled in 1947 to provide water for stock and has been a traveller attraction ever since.",facts:["The artesian bore reaches 240 metres underground","Water temperature is a constant 33°C year-round — naturally heated by geothermal energy","Wooramel runs 25,000 sheep across 280,000 hectares","The Gascoyne River only flows above ground surface for a few weeks each year","The night sky here is exceptional — zero light pollution for hundreds of kilometres"],wildlife:"Wedge-tailed eagles, emus, red kangaroos, galahs, corellas.",flora:"River red gums lining the Gascoyne River floodplain."},
-  9:{title:"Ningaloo & Coral Bay",history:"Coral Bay was known only to fishermen and divers until the 1980s. The Ningaloo Marine Park was established in 1987 to protect the world's longest fringing reef. Tourism grew rapidly after whale shark tours began in the 1990s.",facts:["Ningaloo Reef is 260km long — the world's longest fringing reef","The reef comes within 100 metres of the shore — you can snorkel straight off the beach","Whale sharks arrive each year in March–July following mass coral spawning events","Ningaloo supports over 500 fish species and 300 coral species","Water visibility can exceed 40 metres"],wildlife:"Whale sharks (Mar–Jul), manta rays, sea turtles (green, hawksbill, loggerhead), reef sharks, dugongs.",flora:"Ningaloo is fringed by mangroves which support critical nursery habitats."},
-  10:{title:"Coral Bay Reef",history:"Coral Bay sits at the southern gateway to the Ningaloo Marine Park. The town has a permanent population of just 200 people but receives 150,000 visitors per year drawn by world-class reef snorkelling.",facts:["You can snorkel with manta rays from a small beach boat tour — rare globally","The Ningaloo current brings nutrient-rich water that drives extraordinary marine productivity","Coral spawning occurs in March–April — this triggers whale shark aggregations","Loggerhead turtles nest on Ningaloo beaches between November and February","The first whale shark was ever photographed at Ningaloo in 1983"],wildlife:"Manta rays, whale sharks, hawksbill turtles, bumphead parrotfish, Napoleon wrasse.",flora:"Ningaloo's kelp forests shelter juvenile fish; seagrass meadows feed dugongs and turtles."},
-  11:{title:"Cape Range & Exmouth Gulf",history:"Exmouth was purpose-built as a US naval communications base in 1967 (Harold E. Holt Naval Communication Station). The US military operated here during the Cold War until 1992. Cape Range NP protects WA's only true canyon country.",facts:["Harold Holt was Australia's Prime Minister who disappeared while swimming in 1967 — the base was named after him the same year","The US VLF transmitter here could communicate with submerged submarines","Cape Range has WA's only true canyons — carved from ancient reef limestone","Exmouth receives 300,000 visitors a year despite a permanent population of only 3,500","Turquoise Bay is consistently voted one of Australia's most beautiful beaches"],wildlife:"Manta rays, sea turtles, reef sharks, black-footed rock wallabies at Yardie Creek.",flora:"Desert wattle, Sturt's desert pea, Cape Range spinifex."},
-  12:{title:"Ningaloo World Heritage Area",history:"The Ningaloo Coast was inscribed on the UNESCO World Heritage List in 2011, recognised for its exceptional natural beauty and extraordinary marine biodiversity.",facts:["Ningaloo is one of the few places on Earth where whale sharks congregate predictably","The Cape Range is formed from an ancient coral reef that was uplifted 5 million years ago","The Exmouth Gulf on the eastern side is a critical nursery for prawns, fish and turtles","Whale sharks can reach 18 metres in length — the largest fish on Earth","Manta ray aggregations at Coral Bay and Ningaloo are among the largest in the Indo-Pacific"],wildlife:"Whale sharks, manta rays, humpback whales (Jun–Nov), sea turtles, dugongs, reef fish.",flora:"Ningaloo coastal vegetation including mangroves, samphire and spinifex."},
+  2:{title:"Geraldton to Kalbarri",history:"Geraldton was the centre of a thriving pearling industry in the 1800s and was heavily involved in WWII — the HMAS Sydney II was lost off the coast in 1941 with 645 men. Kalbarri sits where the ancient Murchison River meets the sea, having carved its spectacular gorges over 400 million years.",facts:["HMAS Sydney II was sunk by German raider Kormoran on 19 November 1941","The wreck was only found in 2008 — after 67 years","The Murchison River is 820km long — WA's second longest","Kalbarri was only accessible by boat until the road was built in 1963","Geraldton is the lobster capital of the world"],wildlife:"Ospreys nesting on channel markers near Geraldton, grey kangaroos in the bush, emus along highway.",flora:"Everlasting wildflowers in season, Kalbarri National Park has 800+ species of wildflowers."},
+  3:{title:"Shark Bay World Heritage Area",history:"Shark Bay was inscribed on the UNESCO World Heritage List in 1991 — one of only a handful of places to meet all four natural criteria. It contains the world's largest seagrass meadows and some of the most ancient life on Earth.",facts:["Shark Bay meets ALL 4 natural World Heritage criteria — extremely rare","The stromatolites at Hamelin Pool are up to 3,500 years old and still living","Shark Bay has 12% of all the world's seagrass species in one area","The dugong population here is 12,000+ — the largest in the world","Shell Beach is 70km long and made entirely of tiny Fragum cockle shells 10m deep"],wildlife:"Dugongs (12,000+), bottlenose dolphins, humpback whales (Jul–Nov), loggerhead sea turtles, tiger sharks.",flora:"One of the world's largest and most diverse seagrass meadows."},
+  4:{title:"Monkey Mia & the Dolphins",history:"Dolphins first began approaching fishing boats at Monkey Mia in the 1960s and were being hand-fed by the 1970s. A marine reserve was gazetted in 1996. The name 'Monkey Mia' possibly derives from a pearling lugger called 'Monkey' that was anchored here.",facts:["Wild dolphins have been interacting with people here for over 60 years","Only 5–8 specific dolphins regularly participate in the interactions","The interaction program is managed to keep the dolphins wild and healthy — no forced contact","Dolphin calves whose mothers interact are often banned to preserve their wild behaviour","Shark Bay's dolphins are the most studied wild dolphin population in the world"],wildlife:"Indo-Pacific bottlenose dolphins, dugongs, sea turtles, banded stilts, pelicans.",flora:"Mangroves fringing the bay support rich bird life."},
+  5:{title:"Wooramel Station",history:"Wooramel Station has been a working sheep and cattle station since the 1870s. The artesian bore was drilled in 1947 to provide water for stock and has been a traveller attraction ever since.",facts:["The artesian bore reaches 240 metres underground","Water temperature is a constant 33°C year-round — naturally heated by geothermal energy","Wooramel runs 25,000 sheep across 280,000 hectares","The Gascoyne River only flows above ground surface for a few weeks each year","The night sky here is exceptional — zero light pollution for hundreds of kilometres"],wildlife:"Wedge-tailed eagles, emus, red kangaroos, galahs, corellas.",flora:"River red gums lining the Gascoyne River floodplain."},
+  6:{title:"Ningaloo & Coral Bay",history:"Coral Bay was known only to fishermen and divers until the 1980s. The Ningaloo Marine Park was established in 1987 to protect the world's longest fringing reef. Tourism grew rapidly after whale shark tours began in the 1990s.",facts:["Ningaloo Reef is 260km long — the world's longest fringing reef","The reef comes within 100 metres of the shore — you can snorkel straight off the beach","Whale sharks arrive each year in March–July following mass coral spawning events","Ningaloo supports over 500 fish species and 300 coral species","Water visibility can exceed 40 metres"],wildlife:"Whale sharks (Mar–Jul), manta rays, sea turtles (green, hawksbill, loggerhead), reef sharks, dugongs.",flora:"Ningaloo is fringed by mangroves which support critical nursery habitats."},
+  7:{title:"Coral Bay Reef",history:"Coral Bay sits at the southern gateway to the Ningaloo Marine Park. The town has a permanent population of just 200 people but receives 150,000 visitors per year drawn by world-class reef snorkelling.",facts:["You can snorkel with manta rays from a small beach boat tour — rare globally","The Ningaloo current brings nutrient-rich water that drives extraordinary marine productivity","Coral spawning occurs in March–April — this triggers whale shark aggregations","Loggerhead turtles nest on Ningaloo beaches between November and February","The first whale shark was ever photographed at Ningaloo in 1983"],wildlife:"Manta rays, whale sharks, hawksbill turtles, bumphead parrotfish, Napoleon wrasse.",flora:"Ningaloo's kelp forests shelter juvenile fish; seagrass meadows feed dugongs and turtles."},
+  8:{title:"Cape Range & Exmouth Gulf",history:"Exmouth was purpose-built as a US naval communications base in 1967 (Harold E. Holt Naval Communication Station). The US military operated here during the Cold War until 1992. Cape Range NP protects WA's only true canyon country.",facts:["Harold Holt was Australia's Prime Minister who disappeared while swimming in 1967 — the base was named after him the same year","The US VLF transmitter here could communicate with submerged submarines","Cape Range has WA's only true canyons — carved from ancient reef limestone","Exmouth receives 300,000 visitors a year despite a permanent population of only 3,500","Turquoise Bay is consistently voted one of Australia's most beautiful beaches"],wildlife:"Manta rays, sea turtles, reef sharks, black-footed rock wallabies at Yardie Creek.",flora:"Desert wattle, Sturt's desert pea, Cape Range spinifex."},
+  9:{title:"Ningaloo World Heritage Area",history:"The Ningaloo Coast was inscribed on the UNESCO World Heritage List in 2011, recognised for its exceptional natural beauty and extraordinary marine biodiversity.",facts:["Ningaloo is one of the few places on Earth where whale sharks congregate predictably","The Cape Range is formed from an ancient coral reef that was uplifted 5 million years ago","The Exmouth Gulf on the eastern side is a critical nursery for prawns, fish and turtles","Whale sharks can reach 18 metres in length — the largest fish on Earth","Manta ray aggregations at Coral Bay and Ningaloo are among the largest in the Indo-Pacific"],wildlife:"Whale sharks, manta rays, humpback whales (Jun–Nov), sea turtles, dugongs, reef fish.",flora:"Ningaloo coastal vegetation including mangroves, samphire and spinifex."},
+  10:{title:"Ningaloo World Heritage Area",history:"The Ningaloo Coast was inscribed on the UNESCO World Heritage List in 2011, recognised for its exceptional natural beauty and extraordinary marine biodiversity.",facts:["Ningaloo is one of the few places on Earth where whale sharks congregate predictably","The Cape Range is formed from an ancient coral reef that was uplifted 5 million years ago","The Exmouth Gulf on the eastern side is a critical nursery for prawns, fish and turtles","Whale sharks can reach 18 metres in length — the largest fish on Earth","Manta ray aggregations at Coral Bay and Ningaloo are among the largest in the Indo-Pacific"],wildlife:"Whale sharks, manta rays, humpback whales (Jun–Nov), sea turtles, dugongs, reef fish.",flora:"Ningaloo coastal vegetation including mangroves, samphire and spinifex."},
+  11:{title:"Ningaloo World Heritage Area",history:"The Ningaloo Coast was inscribed on the UNESCO World Heritage List in 2011, recognised for its exceptional natural beauty and extraordinary marine biodiversity.",facts:["Ningaloo is one of the few places on Earth where whale sharks congregate predictably","The Cape Range is formed from an ancient coral reef that was uplifted 5 million years ago","The Exmouth Gulf on the eastern side is a critical nursery for prawns, fish and turtles","Whale sharks can reach 18 metres in length — the largest fish on Earth","Manta ray aggregations at Coral Bay and Ningaloo are among the largest in the Indo-Pacific"],wildlife:"Whale sharks, manta rays, humpback whales (Jun–Nov), sea turtles, dugongs, reef fish.",flora:"Ningaloo coastal vegetation including mangroves, samphire and spinifex."},
+  12:{title:"Quobba Station",history:"Quobba Station is a remote coastal pastoral station famous for its dramatic blowholes and the wreck of the Korean Star. The 1988 grounding remains one of the most dramatic shipwrecks in WA.",facts:["The Korean Star ran aground in a severe storm on 23 July 1988 — the crew was rescued by helicopter","'Blow 5' is the most powerful blowhole — geysers can reach 20 metres high","Red Bluff is rated among WA's top 5 surf breaks","Quobba means 'deep water' in the local Malgana language","The area has some of WA's best land-based fishing — snapper, coral trout, mackerel"],wildlife:"Humpback whales offshore (Jun–Nov), spinner dolphins, sea turtles, osprey.",flora:"Sparse coastal saltbush and spinifex — true arid zone vegetation."},
   13:{title:"Quobba Station",history:"Quobba Station is a remote coastal pastoral station famous for its dramatic blowholes and the wreck of the Korean Star. The 1988 grounding remains one of the most dramatic shipwrecks in WA.",facts:["The Korean Star ran aground in a severe storm on 23 July 1988 — the crew was rescued by helicopter","'Blow 5' is the most powerful blowhole — geysers can reach 20 metres high","Red Bluff is rated among WA's top 5 surf breaks","Quobba means 'deep water' in the local Malgana language","The area has some of WA's best land-based fishing — snapper, coral trout, mackerel"],wildlife:"Humpback whales offshore (Jun–Nov), spinner dolphins, sea turtles, osprey.",flora:"Sparse coastal saltbush and spinifex — true arid zone vegetation."},
-  14:{title:"Horrocks & the Pink Lake",history:"Horrocks is a sleepy fishing village named after explorer John Alonzo Horrocks, who led an expedition through this area in 1846. The stunning pink lake at nearby Port Gregory is a naturally occurring phenomenon.",facts:["Hutt Lagoon turns pink due to Dunaliella Salina algae that produces beta-carotene","The lake is commercially harvested for beta-carotene used in food colouring and cosmetics","Best viewed between 10am–2pm when the sun is overhead","The pink colour can range from baby pink to vivid hot pink depending on salinity","Horrocks has a permanent population of just 120 people"],wildlife:"Migratory seabirds, dolphins in the bay, reef fish.",flora:"Samphire and saltmarsh around the lagoon; coastal heath on the dunes."},
+  14:{title:"Wooramel Station",history:"Wooramel Station has been a working sheep and cattle station since the 1870s. The artesian bore was drilled in 1947 to provide water for stock and has been a traveller attraction ever since.",facts:["The artesian bore reaches 240 metres underground","Water temperature is a constant 33°C year-round — naturally heated by geothermal energy","Wooramel runs 25,000 sheep across 280,000 hectares","The Gascoyne River only flows above ground surface for a few weeks each year","The night sky here is exceptional — zero light pollution for hundreds of kilometres"],wildlife:"Wedge-tailed eagles, emus, red kangaroos, galahs, corellas.",flora:"River red gums lining the Gascoyne River floodplain."},
   15:{title:"Horrocks Coast",history:"The Horrocks coastline is part of the Murchison region, one of WA's most productive fishing areas. The area is known for its excellent reef fishing and sheltered snorkelling.",facts:["The Bowes River mouth creates a productive estuary with diverse fish life","Horrocks reef is part of a chain of fringing reefs extending south from Geraldton","The area sits in the transition zone between temperate and tropical marine environments","Local fishermen regularly catch snapper, dhufish and coral trout here"],wildlife:"Reef fish (snapper, wrasse, parrotfish), dolphins, sea eagles.",flora:"Low coastal heath, beach morning glory, coastal banksia."},
   16:{title:"Cervantes & the Pinnacles",history:"Cervantes was named after an American whaling ship wrecked near here in 1844. The Pinnacles — thousands of limestone pillars rising from yellow sand — mystified early Dutch sailors who thought they were a ruined ancient city.",facts:["The Pinnacles are up to 5 metres tall and formed from ancient seashell deposits leached by rainwater","Early Dutch sailors mapped them as a ruined city and warned ships to stay away","The yellow sand of the Pinnacles is coloured by iron oxide","Nambung National Park was established in 1956 to protect the Pinnacles","The best time to visit is sunrise or sunset when shadows create a dramatic landscape"],wildlife:"Emus and western grey kangaroos in the park, reptiles in the sandy soil.",flora:"Coastal heath, native pea flowers, Nambung's ancient banksia woodland."},
   17:{title:"Homeward Bound",history:"The journey south retraces some of the earliest European exploration of the WA coastline. Dutch VOC ships mapped this coast in the 1600s, and many wrecked on the treacherous reefs.",facts:["The Batavia wrecked on the Abrolhos Islands (visible from shore near Geraldton) in 1629","The subsequent mutiny on the Abrolhos is one of history's most dramatic maritime disasters","WA's Coral Coast has been inhabited by Aboriginal peoples for over 50,000 years","The Indian Ocean Coastal Drive from Jurien to Perth is one of WA's great scenic drives"],wildlife:"Osprey nesting on coastal rocks, dolphins in the surf zone.",flora:"Coastal tuart woodland south of Jurien Bay — rare and ancient ecosystem."}
@@ -830,38 +846,6 @@ const EXTRAS = {
   },
   2:{
     surf:[
-      {name:"Sandy Cape Beachbreak",lvl:"All levels",tip:"Best surf in the area — 4WD access north of Jurien Bay. Great all-day session.",url:"https://www.swellnet.com/reports/australia/western-australia/jurien-bay"},
-      {name:"Escape Island Reef",lvl:"Intermediate",tip:"Reef break best at high/mid tide. Check local conditions before paddling out.",url:"https://surfsphere.com/surf-spot/escape-island-reef-dandaragan/"}
-    ],
-    drinks:[
-      {name:"Jurien Bay Hotel",type:"Pub",note:"Sunday session! Good beers, local crowd.",url:"https://www.google.com/maps/search/Jurien+Bay+Hotel+WA"}
-    ],
-    eats:[
-      {name:"Jurien Jetty Café",note:"Legendary fish & chips on the jetty. Grab one and sit with your feet dangling.",url:"https://www.google.com/maps/search/Jurien+Jetty+Cafe+WA"},
-      {name:"Cervantes Bakery",note:"25min drive — worth it for fresh pastries and coffee at the Lobster Shack bakery.",url:"https://www.lobstershack.com.au"}
-    ],
-    nature:[
-      {name:"Hangover Bay Sea Lions",note:"Drive 30min south to swim with sea lions at Hangover Bay. Bring a snorkel — they love to play.",url:"https://www.google.com/maps/search/Hangover+Bay+Cervantes+WA"},
-      {name:"Green Head Snorkelling",note:"40min south — beautiful sheltered bay with diverse marine life and a natural rock arch.",url:"https://www.google.com/maps/search/Green+Head+WA"},
-      {name:"Sandy Cape Dunes",note:"Dramatic white sand dunes meeting the Indian Ocean. Perfect for photos and sandboarding.",url:"https://www.google.com/maps/search/Sandy+Cape+Jurien+Bay+WA"}
-    ],
-    sundowners:[
-      {name:"Jurien Bay Jetty",note:"West-facing jetty with spectacular Indian Ocean sunsets. Best sundowner spot in town.",url:"https://www.google.com/maps/search/Jurien+Bay+Jetty+WA"},
-      {name:"Sandy Cape Dunes at Sunset",note:"Drive out to Sandy Cape dunes — you'll have the beach to yourself at sunset.",url:"https://www.google.com/maps/search/Sandy+Cape+Jurien+Bay+WA"}
-    ],
-    nude:[],
-    burnman:[],
-    art:[
-      {name:"Cervantes Art Trail (day trip)",note:"23 public artworks across Cervantes — collect map from visitor centre.",url:"https://www.australiascoralcoast.com/destinations/indian-ocean-drive/cervantes"}
-    ],
-    games:[
-      {name:"Snorkelling Bingo 🤿",note:"Give each person a card with 10 marine creatures to spot. First to tick off all 10 wins!"},
-      {name:"Sandcastle Competition 🏰",note:"Families vs families — judge on creativity, scale and structural integrity. Timer: 45 minutes."},
-      {name:"Rockpool Safari 🦀",note:"Kids (and adults) compete to identify the most rockpool species — hermit crabs, sea stars, etc."}
-    ]
-  },
-  3:{
-    surf:[
       {name:"Back Beach Geraldton",lvl:"Intermediate",tip:"Most popular surf beach in Geraldton. Medium–large waves, good swell year-round. Locals surf here daily.",url:"https://www.surfline.com/surf-reports-forecasts-cams/australia/western-australia/geraldton/2070998"},
       {name:"Point Moore (Explosives)",lvl:"Advanced",tip:"Powerful left-hander over shallow reef on the north side of the headland. Not for beginners.",url:"https://www.surf-forecast.com/breaks/Explosives_1"},
       {name:"Sunset Beach",lvl:"Intermediate",tip:"Gets decent surf year-round, biggest swells in summer. Geraldton's longest wave in big swell.",url:"https://www.google.com/maps/search/Sunset+Beach+Geraldton+WA"},
@@ -904,7 +888,7 @@ const EXTRAS = {
       {name:"History Quiz Night 🎓",note:"Geraldton has an amazing history (HMAS Sydney, Batavia). Quiz families on facts from the memorial visit."}
     ]
   },
-  4:{
+  3:{
     surf:[
       {name:"Jake's Point (Kalbarri)",lvl:"Intermediate–Advanced",tip:"🏄 Kalbarri's signature wave — superb left-hand reef break along the point. Experienced surfers only. Can hold big swell.",url:"https://thesurfatlas.com/australia-surfing/surfing-kalbarri/"},
       {name:"Kalbarri Point",lvl:"Intermediate",tip:"Popular left-hand point break, great on smaller days. More forgiving than Jake's.",url:"https://www.surfline.com/travel/australia/western-australia/kalbarri-surfing-and-beaches/2068835"}
@@ -943,7 +927,7 @@ const EXTRAS = {
       {name:"Pelican Feeding 🦅",note:"Head to the foreshore at 8:45am for the daily pelican feeding — free, fun, great for kids."}
     ]
   },
-  5:{
+  4:{
     surf:[
       {name:"Kalbarri Jake's Point (morning)",lvl:"Intermediate–Advanced",tip:"Get one last morning session at Jake's before the long drive south.",url:"https://thesurfatlas.com/australia-surfing/surfing-kalbarri/"}
     ],
@@ -976,76 +960,7 @@ const EXTRAS = {
       {name:"Stromatolite Quiz 🧬",note:"Who can answer the most questions about stromatolites? (Hint: they're 3,500 years old!)"}
     ]
   },
-  6:{
-    surf:[
-      {name:"Shark Bay is sheltered",lvl:"No surf",tip:"Shark Bay is enclosed — no ocean swell reaches here. Save the boards for Coral Bay!"}
-    ],
-    drinks:[
-      {name:"Old Pearler Restaurant Bar",type:"Restaurant/Bar",note:"Have sundowners at the bar of this iconic cockle-shell restaurant.",url:"https://www.google.com/maps/search/Old+Pearler+Restaurant+Denham"},
-      {name:"Shark Bay Hotel",type:"Pub",note:"Cold beers, pub meals, local crowd.",url:"https://www.google.com/maps/search/Shark+Bay+Hotel+Denham+WA"}
-    ],
-    eats:[
-      {name:"Old Pearler Restaurant",note:"Don't miss dinner here — the building is made of cockle shells from Shell Beach. Unique WA landmark.",url:"https://www.google.com/maps/search/Old+Pearler+Restaurant+Denham"},
-      {name:"Ocean Park Aquarium Café",note:"Great lunch spot with sweeping bay views. Walk through the aquarium after.",url:"https://www.google.com/maps/search/Ocean+Park+Aquarium+Shark+Bay+WA"}
-    ],
-    nature:[
-      {name:"Little Lagoon",note:"One of WA's most photographed spots — calm, turquoise, perfect for swimming, kayaking and picnics.",url:"https://www.google.com/maps/search/Little+Lagoon+Denham+WA"},
-      {name:"Eagle Bluff",note:"Lookout with stunning panoramic views. Best dugong-spotting point in Shark Bay — bring binoculars.",url:"https://www.google.com/maps/search/Eagle+Bluff+Lookout+Shark+Bay+WA"},
-      {name:"Hamlin Pool Stromatolites",note:"Drive 45min to see these living 3,500-year-old structures. Oldest life on Earth — extraordinary.",url:"https://www.westernaustralia.com/en/attraction/hamelin-pool-stromatolites/56b266a27b935fbe730e5ae8"},
-      {name:"Francois Peron NP",note:"Red sand peninsula meets turquoise bay. 4WD required. Hot artesian bore bath at the historic homestead (free).",url:"https://exploreparks.dbca.wa.gov.au/park/francois-peron-national-park"},
-      {name:"Herald Bay",note:"Remote swimming and snorkelling on the western side of the peninsula. Beautiful and quiet.",url:"https://www.google.com/maps/search/Herald+Bay+Shark+Bay+WA"}
-    ],
-    sundowners:[
-      {name:"Eagle Bluff at Sunset",note:"🌅 One of Shark Bay's top sunset spots. Dugongs in the bay below, sky turns vivid orange and pink.",url:"https://www.google.com/maps/search/Eagle+Bluff+Lookout+Shark+Bay+WA"},
-      {name:"Little Lagoon Shore",note:"Peaceful and sheltered — float in the lagoon while watching the sunset. Magical.",url:"https://www.google.com/maps/search/Little+Lagoon+Denham+WA"}
-    ],
-    nude:[],
-    burnman:[
-      {name:"Shark Bay Pearls",note:"Unique WA cultured pearls and handmade jewellery — one-of-a-kind gifts.",url:"https://www.google.com/maps/search/Shark+Bay+Pearls+Denham+WA"}
-    ],
-    art:[],
-    games:[
-      {name:"Dugong Counting at Eagle Bluff 🐬",note:"Set a 20-minute timer at Eagle Bluff — family who spots the most dugongs wins. Use binoculars."},
-      {name:"Kayak Race at Little Lagoon 🛶",note:"Race across the lagoon — hire kayaks or bring inflatables. The water is so clear you can see the bottom."},
-      {name:"Cockle Shell Sculpting 🐚",note:"At Shell Beach, use the shells to build sculptures or mosaics. Families vote on the best creation."}
-    ]
-  },
-  7:{
-    surf:[
-      {name:"No surf at Monkey Mia",lvl:"No surf",tip:"Monkey Mia is deep inside the bay — flat water only. Great for kayaking and paddleboarding."}
-    ],
-    drinks:[
-      {name:"The Monkey Bar",type:"Resort Bar",note:"Happy hour 5–6pm at the Monkey Mia Dolphin Resort. Live bands some evenings, daily specials.",url:"https://www.monkeymia.com.au/dining"},
-      {name:"The Boughshed Restaurant",type:"Restaurant/Bar",note:"Cocktails at sunset on the beach. Watch dolphins glide past your table. Book ahead.",url:"https://www.monkeymia.com.au/dining"}
-    ],
-    eats:[
-      {name:"Boughshed Restaurant",note:"Breakfast, lunch and dinner. Dolphin beach views. Perfectly placed for post-dolphin-feeding brunch.",url:"https://www.monkeymia.com.au/dining"},
-      {name:"Monkey Mia Kiosk",note:"Quick bites and cold drinks near the beach — perfect between dolphin interactions.",url:"https://www.monkeymia.com.au"}
-    ],
-    nature:[
-      {name:"Dolphin Interaction (7:45am SHARP)",note:"Do NOT miss this. Wild dolphins come to shore to be fed. The interaction is extraordinary.",url:"https://www.monkeymia.com.au"},
-      {name:"Sea Kayaking",note:"Paddle out among dugongs, rays and turtles. The clearest water you'll ever see. Hire from the resort.",url:"https://www.google.com/maps/search/kayak+Monkey+Mia+Shark+Bay"},
-      {name:"Peron Homestead Artesian Bore",note:"FREE outdoor hot bath fed by 40°C artesian water. Bizarre and wonderful — kids love it.",url:"https://exploreparks.dbca.wa.gov.au/park/francois-peron-national-park"},
-      {name:"Cape Peron (Francois Peron NP)",note:"4WD to the tip of the peninsula — red cliffs, turquoise water, dugongs. Otherworldly scenery.",url:"https://exploreparks.dbca.wa.gov.au/park/francois-peron-national-park"}
-    ],
-    sundowners:[
-      {name:"Monkey Mia Beach Sunset",note:"Sit on the beach with a cold drink and watch the dolphins play at sunset. World class.",url:"https://www.monkeymia.com.au"},
-      {name:"Boughshed Restaurant Deck",note:"Book the outdoor deck for cocktails as the sun sets. Dolphins often appear in the shallows.",url:"https://www.monkeymia.com.au/dining"}
-    ],
-    nude:[],
-    burnman:[
-      {name:"Monkey Mia Wednesday Markets",note:"Local arts, crafts, produce and food stalls. Great for unique handmade gifts and jewellery.",url:"https://www.google.com/maps/search/Monkey+Mia+markets+WA"}
-    ],
-    art:[
-      {name:"Shark Bay Aboriginal Art",note:"The Malgana people have deep connections to Shark Bay. The resort stocks some Aboriginal art pieces.",url:"https://www.monkeymia.com.au"}
-    ],
-    games:[
-      {name:"Dolphin Interaction Photography 📸",note:"Everyone tries to get the best dolphin photo. Judge at dinner — most natural interaction wins."},
-      {name:"Kayak Dugong Hunt 🛶",note:"Paddle out in the bay and see who can get closest (respectful distance!) to a dugong."},
-      {name:"Sunset Dolphin Watch 🌅",note:"Who can stay on the beach longest and spot the most dolphin fin appearances after 5pm? Bring binoculars."}
-    ]
-  },
-  8:{
+  5:{
     surf:[
       {name:"No surf at Wooramel",lvl:"No surf",tip:"Remote outback station tonight. Save energy for the bore bath!"},
       {name:"Red Bluff (Quobba, 250km north)",lvl:"Advanced",tip:"If you extended the drive north of Carnarvon, Red Bluff is world-class. Better to stop on the way back (Day 13).",url:"https://www.australiascoralcoast.com/destinations/ningaloo/quobba-and-red-bluff"}
@@ -1083,7 +998,7 @@ const EXTRAS = {
       {name:"Campfire Storytelling 🔥",note:"Each family tells a scary story or travel memory. Vote for the best one. Prize for the winner."}
     ]
   },
-  9:{
+  6:{
     surf:[
       {name:"Coral Bay — gentle reef",lvl:"No surf",tip:"Coral Bay is sheltered by the reef. Snorkel, don't surf — the Ningaloo reef is what this place is about!"},
       {name:"Ningaloo outer reef (boat needed)",lvl:"Advanced only",tip:"Experienced surfers can access outer reef breaks via boat charter — enquire locally.",url:"https://www.google.com/maps/search/Coral+Bay+boat+tours+WA"}
@@ -1118,7 +1033,7 @@ const EXTRAS = {
       {name:"Underwater Photography Contest 📸",note:"Hire a cheap waterproof camera or use phone case. Judge underwater photos at dinner."}
     ]
   },
-  10:{
+  7:{
     surf:[
       {name:"Ningaloo outer reef (boat)",lvl:"Advanced",tip:"Outer reef breaks accessible by boat charter for experienced surfers. Enquire at Coral Bay Adventures.",url:"https://www.coralbayadventures.com.au"}
     ],
@@ -1148,7 +1063,7 @@ const EXTRAS = {
       {name:"Night Reef Walk 🌙",note:"Walk the shallow reef at low tide after dark with torches — see octopus, crabs and sleeping fish."}
     ]
   },
-  11:{
+  8:{
     surf:[
       {name:"Dunes Surf Beach (Surfer's Beach) 🏄",lvl:"Intermediate–Advanced",tip:"The best and most popular surf break in the Ningaloo Marine Park, 20km north of Exmouth. Best Jul–Oct but can be good in April.",url:"https://exploreparks.dbca.wa.gov.au/site/dunes-surf-beach"},
       {name:"Wobiri Beach",lvl:"Beginner–Intermediate",tip:"South of Vlamingh Head Lighthouse. Small waves, minimal rocks — ideal for learning or relaxed sessions.",url:"https://saltandcharcoal.co/wobiri-beach-exmouth/"},
@@ -1189,7 +1104,7 @@ const EXTRAS = {
       {name:"Lighthouse Sunset Quiz 🌅",note:"Take the family to Vlamingh Head. Quiz: how far can you see, which direction is Perth, etc."}
     ]
   },
-  12:{
+  9:{
     surf:[
       {name:"Dunes Surf Beach 🏄",lvl:"Intermediate–Advanced",tip:"Cape Range NP day pass covers access to Dunes Beach. Best surf session of the trip — wide open ocean.",url:"https://exploreparks.dbca.wa.gov.au/site/dunes-surf-beach"},
       {name:"Wobiri Beach",lvl:"Beginner",tip:"Easy morning session before the Cape Range day.",url:"https://saltandcharcoal.co/wobiri-beach-exmouth/"}
@@ -1225,6 +1140,116 @@ const EXTRAS = {
       {name:"Whale Shark GoPro Challenge 🎬",note:"Everyone brings a GoPro or waterproof camera on the whale shark dive. Best footage wins dinner bragging rights."},
       {name:"Reef Scavenger Hunt 🐠",note:"List of 15 creatures to find while snorkelling. Families compete — first to tick all 15 buys drinks."},
       {name:"Campfire Astronomy ⭐",note:"The skies here are extraordinary. Download Stellarium app and identify planets, the Milky Way core and Southern Cross."}
+    ]
+  },
+  10:{
+    surf:[
+      {name:"Dunes Surf Beach 🏄",lvl:"Intermediate–Advanced",tip:"Cape Range NP day pass covers access to Dunes Beach. Best surf session of the trip — wide open ocean.",url:"https://exploreparks.dbca.wa.gov.au/site/dunes-surf-beach"},
+      {name:"Wobiri Beach",lvl:"Beginner",tip:"Easy morning session before the Cape Range day.",url:"https://saltandcharcoal.co/wobiri-beach-exmouth/"}
+    ],
+    drinks:[
+      {name:"Whalebone Brewing Co",type:"Craft Brewery",note:"Post-dive pizza and beers. Kids play area — the whole family can relax after a big day on the reef.",url:"https://www.whalebonebrewing.com.au"},
+      {name:"Froth Craft Brewery",type:"Craft Brewery",note:"Second night at Froth — try a different beer from the tap list.",url:"https://frothcraft.com/exmouth/"}
+    ],
+    eats:[
+      {name:"The BBQ Father",note:"Already today's dinner. Exceptional BBQ after a huge day in the park.",url:"https://www.google.com/maps/search/BBQ+Father+Exmouth"},
+      {name:"Adrift Café",note:"Best breakfast in Exmouth. Start the day right before the whale shark dive.",url:"https://www.adriftcafe.com.au"}
+    ],
+    nature:[
+      {name:"Whale Shark Swim (6am depart) 🦈",note:"Book with Three Islands Whale Shark Dive. Departs 6am. Swimming with the world's biggest fish. Life-changing.",url:"https://www.whalesharkdive.com"},
+      {name:"Turquoise Bay drift snorkel",note:"World-class drift snorkel along the reef edge in stunning turquoise water.",url:"https://www.google.com/maps/search/Turquoise+Bay+Cape+Range+WA"},
+      {name:"Ningaloo Marine Park",note:"Cape Range NP day pass ($20) covers access to multiple beaches and snorkel spots along the coast.",url:"https://exploreparks.dbca.wa.gov.au/park/cape-range-national-park"},
+      {name:"Mandu Mandu Gorge",note:"Spectacular limestone canyon walk — 4km return. Bring water.",url:"https://www.google.com/maps/search/Mandu+Mandu+Gorge+Exmouth+WA"}
+    ],
+    sundowners:[
+      {name:"Mauritius Beach (nude/clothing optional) 🌅",note:"Watch the sunset from this secluded beach at the very tip of North West Cape.",url:"https://www.google.com/maps/search/Mauritius+Beach+Exmouth+WA"},
+      {name:"Vlamingh Head Lighthouse",note:"360° views for the ultimate Exmouth farewell sunset.",url:"https://www.google.com/maps/search/Vlamingh+Head+Lighthouse+Exmouth+WA"}
+    ],
+    nude:[
+      {name:"Mauritius Beach",note:"👙 Clothing-optional beach at the very tip of North West Cape. Remote, beautiful.",url:"https://www.google.com/maps/search/Mauritius+Beach+Exmouth+WA"}
+    ],
+    burnman:[
+      {name:"Exmouth Markets (weekend)",note:"Check Kennedy Street Mall area for weekend markets with artisan and craft stalls.",url:"https://www.google.com/maps/search/Exmouth+markets+WA"}
+    ],
+    art:[
+      {name:"Ningaloo Centre",note:"Stunning natural history gallery. Aboriginal art collection. Worth 90 minutes.",url:"https://www.ningaloocentre.com.au"}
+    ],
+    games:[
+      {name:"Whale Shark GoPro Challenge 🎬",note:"Everyone brings a GoPro or waterproof camera on the whale shark dive. Best footage wins dinner bragging rights."},
+      {name:"Reef Scavenger Hunt 🐠",note:"List of 15 creatures to find while snorkelling. Families compete — first to tick all 15 buys drinks."},
+      {name:"Campfire Astronomy ⭐",note:"The skies here are extraordinary. Download Stellarium app and identify planets, the Milky Way core and Southern Cross."}
+    ]
+  },
+  11:{
+    surf:[
+      {name:"Dunes Surf Beach 🏄",lvl:"Intermediate–Advanced",tip:"Cape Range NP day pass covers access to Dunes Beach. Best surf session of the trip — wide open ocean.",url:"https://exploreparks.dbca.wa.gov.au/site/dunes-surf-beach"},
+      {name:"Wobiri Beach",lvl:"Beginner",tip:"Easy morning session before the Cape Range day.",url:"https://saltandcharcoal.co/wobiri-beach-exmouth/"}
+    ],
+    drinks:[
+      {name:"Whalebone Brewing Co",type:"Craft Brewery",note:"Post-dive pizza and beers. Kids play area — the whole family can relax after a big day on the reef.",url:"https://www.whalebonebrewing.com.au"},
+      {name:"Froth Craft Brewery",type:"Craft Brewery",note:"Second night at Froth — try a different beer from the tap list.",url:"https://frothcraft.com/exmouth/"}
+    ],
+    eats:[
+      {name:"The BBQ Father",note:"Already today's dinner. Exceptional BBQ after a huge day in the park.",url:"https://www.google.com/maps/search/BBQ+Father+Exmouth"},
+      {name:"Adrift Café",note:"Best breakfast in Exmouth. Start the day right before the whale shark dive.",url:"https://www.adriftcafe.com.au"}
+    ],
+    nature:[
+      {name:"Whale Shark Swim (6am depart) 🦈",note:"Book with Three Islands Whale Shark Dive. Departs 6am. Swimming with the world's biggest fish. Life-changing.",url:"https://www.whalesharkdive.com"},
+      {name:"Turquoise Bay drift snorkel",note:"World-class drift snorkel along the reef edge in stunning turquoise water.",url:"https://www.google.com/maps/search/Turquoise+Bay+Cape+Range+WA"},
+      {name:"Ningaloo Marine Park",note:"Cape Range NP day pass ($20) covers access to multiple beaches and snorkel spots along the coast.",url:"https://exploreparks.dbca.wa.gov.au/park/cape-range-national-park"},
+      {name:"Mandu Mandu Gorge",note:"Spectacular limestone canyon walk — 4km return. Bring water.",url:"https://www.google.com/maps/search/Mandu+Mandu+Gorge+Exmouth+WA"}
+    ],
+    sundowners:[
+      {name:"Mauritius Beach (nude/clothing optional) 🌅",note:"Watch the sunset from this secluded beach at the very tip of North West Cape.",url:"https://www.google.com/maps/search/Mauritius+Beach+Exmouth+WA"},
+      {name:"Vlamingh Head Lighthouse",note:"360° views for the ultimate Exmouth farewell sunset.",url:"https://www.google.com/maps/search/Vlamingh+Head+Lighthouse+Exmouth+WA"}
+    ],
+    nude:[
+      {name:"Mauritius Beach",note:"👙 Clothing-optional beach at the very tip of North West Cape. Remote, beautiful.",url:"https://www.google.com/maps/search/Mauritius+Beach+Exmouth+WA"}
+    ],
+    burnman:[
+      {name:"Exmouth Markets (weekend)",note:"Check Kennedy Street Mall area for weekend markets with artisan and craft stalls.",url:"https://www.google.com/maps/search/Exmouth+markets+WA"}
+    ],
+    art:[
+      {name:"Ningaloo Centre",note:"Stunning natural history gallery. Aboriginal art collection. Worth 90 minutes.",url:"https://www.ningaloocentre.com.au"}
+    ],
+    games:[
+      {name:"Whale Shark GoPro Challenge 🎬",note:"Everyone brings a GoPro or waterproof camera on the whale shark dive. Best footage wins dinner bragging rights."},
+      {name:"Reef Scavenger Hunt 🐠",note:"List of 15 creatures to find while snorkelling. Families compete — first to tick all 15 buys drinks."},
+      {name:"Campfire Astronomy ⭐",note:"The skies here are extraordinary. Download Stellarium app and identify planets, the Milky Way core and Southern Cross."}
+    ]
+  },
+  12:{
+    surf:[
+      {name:"Red Bluff (at camp!) 🏄🌊",lvl:"Advanced",tip:"🌟 Legendary left-hand point break — waves up to 4m, can run 100+ metres. World class. Only for experienced surfers.",url:"https://weareexplorers.co/surfing-whale-watching-red-bluff-perth-wa/"},
+      {name:"17-Mile Break",lvl:"Intermediate–Advanced",tip:"17 miles from the Quobba homestead. Reliable reef break with fewer crowds than Red Bluff.",url:"https://www.carnarvon.org.au/things-to-do/surrounds/surfing.aspx"},
+      {name:"Blowholes Break",lvl:"Intermediate",tip:"Near the famous Quobba Blowholes. Watch the blowholes while surfing — dramatic backdrop.",url:"https://www.australiascoralcoast.com/destinations/ningaloo/quobba-and-red-bluff"}
+    ],
+    drinks:[
+      {name:"BYO everything",type:"BYO",note:"Quobba is totally remote — stock up in Carnarvon. Get a good wine for the Red Bluff cliff sunset."},
+      {name:"Gascoyne Hotel (Carnarvon stopover)",type:"Pub",note:"Last pub until Horrocks. Have lunch here and grab supplies.",url:"https://www.google.com/maps/search/Gascoyne+Hotel+Carnarvon+WA"}
+    ],
+    eats:[
+      {name:"Bush BBQ at Quobba",note:"Tonight is all about cooking over a fire at the most dramatic campsite of the trip.",url:"https://www.quobba.com.au"},
+      {name:"Carnarvon stopover lunch",note:"Harbour Café or Taste of Italy by Valeria — last proper restaurant meal before Horrocks.",url:"https://www.google.com/maps/search/restaurants+Carnarvon+WA"}
+    ],
+    nature:[
+      {name:"Quobba Blowholes 💦",note:"Water erupts 20 metres into the air through rock holes. Blow 5 is the most powerful. Extraordinary spectacle.",url:"https://www.australiascoralcoast.com/destinations/ningaloo/quobba-and-red-bluff"},
+      {name:"Red Bluff Cliffs",note:"400 million year old red rock cliffs plunging into the Indian Ocean. Spectacular photography.",url:"https://www.westernaustralia.com/en/attraction/red-bluff-at-quobba-station/56b268e9d5f1565045dac192"},
+      {name:"Whale Watching (offshore)",note:"Humpbacks pass through Jun–Nov, but dolphins are visible year-round. Look from the cliff.",url:"https://www.quobba.com.au"},
+      {name:"Gnaraloo Bay (100km north)",note:"World-class kitesurfing, white sand, pristine coral gardens. Loggerhead turtle habitat.",url:"https://gnaraloostation.com/nature-bay/"}
+    ],
+    sundowners:[
+      {name:"Red Bluff Clifftop 🌅",note:"🌟 One of WA's most dramatic sundowner spots. 400 million year old red cliffs turn fiery gold. Cold glass of wine watching the ocean — magical.",url:"https://www.westernaustralia.com/en/attraction/red-bluff-at-quobba-station/56b268e9d5f1565045dac192"}
+    ],
+    nude:[
+      {name:"Gnaraloo / Nature Bay",note:"👙 Gnaraloo Station's Nature Bay is a remote, clothing-optional secluded beach (100km north). If visiting, respect the private station rules.",url:"https://gnaraloostation.com/nature-bay/"}
+    ],
+    burnman:[],
+    art:[],
+    games:[
+      {name:"Blowhole Prediction Game 💦",note:"Everyone guesses how high the next blowhole eruption will go. Winner gets to assign a camp chore to someone."},
+      {name:"Surf Session Photo Battle 📸",note:"Photograph each surfer from the cliff at Red Bluff. Judge the best tube/wave combo at sunset."},
+      {name:"Night Fishing Competition 🎣",note:"Quobba has some of WA's best land-based fishing. Snapper, coral trout, mackerel. Catch and release (or eat!)."}
     ]
   },
   13:{
@@ -1481,11 +1506,12 @@ function renderDayStrip(){
 
 function selectDay(i){
   curDay = i;
-  // Remove old map instance so it reinitialises
   if(mapInstance){ mapInstance.remove(); mapInstance = null; }
   renderDayStrip();
   renderDay(i);
   window.scrollTo({top:0,behavior:'smooth'});
+  const m = $('main');
+  if(m){ m.classList.remove('day-fade'); void m.offsetWidth; m.classList.add('day-fade'); }
 }
 
 // ======================================================
@@ -1509,7 +1535,9 @@ function renderDay(i){
   <div class="hero-bg" style="background:${d.grad}">
     ${heroBg?`<img class="hero-photo" id="hero-img-${i}" src="${heroBg}" alt="Day ${d.day} photo">`:'<div class="hero-photo" id="hero-img-'+i+'" style="display:none"></div>'}
     <div class="hero-photo-overlay" style="${heroBg?'':'display:none'}"></div>
-    <div class="hero-eyebrow">Day ${d.day} of 17</div>
+    <div class="hero-eyebrow">Day ${d.day} of 17
+      <div class="hero-progress-bar"><div class="hero-progress-fill" style="width:${Math.round((d.day/17)*100)}%"></div></div>
+    </div>
     <div class="hero-day">${d.wday}, ${d.lbl}</div>
     <div class="hero-route">${d.from}${d.to!==d.from?' → '+d.to:' · Explore day'}</div>
     <div class="hero-meta">
@@ -2298,6 +2326,28 @@ function init(){
   curDay = getCurrentDayIdx();
   renderDayStrip();
   renderDay(curDay);
+
+  // ── Swipe gestures for day navigation ───────────────
+  let swipeStartX = 0, swipeStartY = 0;
+  document.addEventListener('touchstart', e => {
+    swipeStartX = e.touches[0].clientX;
+    swipeStartY = e.touches[0].clientY;
+  }, {passive:true});
+  document.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - swipeStartX;
+    const dy = e.changedTouches[0].clientY - swipeStartY;
+    if(Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5){
+      if(dx < 0 && curDay < DAYS.length - 1) selectDay(curDay + 1);
+      else if(dx > 0 && curDay > 0) selectDay(curDay - 1);
+    }
+  }, {passive:true});
+
+  // ── Keyboard navigation ──────────────────────────────
+  document.addEventListener('keydown', e => {
+    if(e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if(e.key === 'ArrowRight' && curDay < DAYS.length - 1) selectDay(curDay + 1);
+    else if(e.key === 'ArrowLeft' && curDay > 0) selectDay(curDay - 1);
+  });
 }
 
 window.addEventListener('load', init);
