@@ -2,1180 +2,1376 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#06B6D4">
 <title>WA Road Trip 2026</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
-:root{--ocean:#0EA5E9;--ocean-dk:#0284C7;--sun:#F59E0B;--reef:#10B981;--coral:#F43F5E;--sand:#FEF3C7;--g50:#F8FAFC;--g100:#F1F5F9;--g200:#E2E8F0;--g300:#CBD5E1;--g400:#94A3B8;--g500:#64748B;--g600:#475569;--g700:#334155;--g800:#1E293B;--r:16px;--rs:10px;--sh:0 1px 3px rgba(0,0,0,.08);--shl:0 8px 24px rgba(0,0,0,.1)}
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--g50);color:var(--g800);min-height:100vh;padding-bottom:72px}
-/* HEADER */
-.hdr{background:linear-gradient(135deg,var(--ocean),var(--ocean-dk));color:#fff;padding:16px 16px 0;position:sticky;top:0;z-index:100;box-shadow:var(--shl)}
-.hdr h1{font-size:20px;font-weight:800;letter-spacing:-.5px}
-.hdr p{font-size:12px;opacity:.85;margin-top:1px}
-.day-strip{display:flex;gap:6px;overflow-x:auto;padding:10px 16px;scrollbar-width:none}
-.day-strip::-webkit-scrollbar{display:none}
-.dc{flex-shrink:0;padding:7px 12px;border-radius:18px;font-size:11px;font-weight:600;cursor:pointer;background:rgba(255,255,255,.15);color:#fff;border:1.5px solid rgba(255,255,255,.25);text-align:center;min-width:48px}
-.dc.active{background:#fff;color:var(--ocean-dk);border-color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.15)}
-.dc .dn{display:block;font-size:14px;font-weight:800}
-.dc .dd{display:block;font-size:10px;opacity:.8;margin-top:1px}
-/* TABS */
-.tabbar{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;border-top:1px solid var(--g200);z-index:100;padding-bottom:env(safe-area-inset-bottom,0);box-shadow:0 -2px 10px rgba(0,0,0,.05)}
-.tab{flex:1;padding:7px 2px 5px;text-align:center;cursor:pointer;font-size:9px;color:var(--g400);display:flex;flex-direction:column;align-items:center;gap:2px;font-weight:600}
-.tab.active{color:var(--ocean)}
-.tab svg{width:20px;height:20px}
-/* CONTENT */
-.content{padding:14px;max-width:600px;margin:0 auto}
-.section{display:none}
-.section.active{display:block}
-/* CARDS */
-.card{background:#fff;border-radius:var(--r);padding:14px;margin-bottom:10px;box-shadow:var(--sh);border:1px solid var(--g100)}
-.card-title{font-size:14px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px}
-.card p{font-size:13px;line-height:1.5;color:var(--g600)}
-.card a{color:var(--ocean);font-size:12px;text-decoration:none}
-.card a:hover{text-decoration:underline}
-.badge{display:inline-block;padding:2px 9px;border-radius:11px;font-size:11px;font-weight:600}
-.badge-green{background:#D1FAE5;color:#065F46}
-.badge-amber{background:#FEF3C7;color:#92400E}
-.badge-blue{background:#DBEAFE;color:#1D4ED8}
-/* HOME PAGE */
-.hero{background:linear-gradient(135deg,var(--ocean),#6366F1);color:#fff;border-radius:var(--r);padding:20px;margin-bottom:12px;text-align:center}
-.hero h2{font-size:22px;font-weight:800}
-.hero p{font-size:13px;opacity:.9;margin-top:4px}
-.countdown{display:flex;justify-content:center;gap:16px;margin-top:14px;background:rgba(255,255,255,.15);border-radius:12px;padding:12px}
-.countdown .unit strong{font-size:22px;font-weight:900;display:block}
-.countdown .unit span{font-size:10px;opacity:.8}
-.quick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
-.quick-btn{background:#fff;border-radius:var(--rs);padding:12px 8px;text-align:center;box-shadow:var(--sh);cursor:pointer;border:1px solid var(--g100)}
-.quick-btn .qi{font-size:22px;margin-bottom:4px}
-.quick-btn .ql{font-size:11px;font-weight:600;color:var(--g700)}
-.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px}
-.stat-box{background:#fff;border-radius:var(--rs);padding:12px;text-align:center;box-shadow:var(--sh)}
-.stat-box .sv{font-size:22px;font-weight:800;color:var(--ocean)}
-.stat-box .sl{font-size:11px;color:var(--g500)}
-/* DAD JOKE */
-.joke{background:linear-gradient(135deg,#FEF3C7,#FDE68A);border-radius:var(--r);padding:14px;margin-bottom:10px;cursor:pointer;border:1px solid #FCD34D}
-.joke h4{font-size:12px;font-weight:700;color:#92400E}
-.joke .jq{font-size:14px;font-weight:600;color:var(--g800);margin-top:5px}
-.joke .ja{font-size:13px;color:#92400E;margin-top:5px;display:none;font-style:italic}
-.joke.open .ja{display:block}
-/* ROUTE HEADER */
-.rhdr{background:linear-gradient(135deg,var(--ocean),#7C3AED);color:#fff;border-radius:var(--r);padding:18px;margin-bottom:10px;text-align:center}
-.rhdr h2{font-size:17px;font-weight:800}
-.rhdr .rm{display:flex;justify-content:center;gap:18px;margin-top:8px;font-size:12px}
-.rhdr .rm strong{font-size:17px;display:block;font-weight:800}
-/* WEATHER IN DAY VIEW */
-.wx-card{background:linear-gradient(135deg,#EFF6FF,#DBEAFE);border-radius:var(--r);padding:12px;margin-bottom:10px;border:1px solid #BFDBFE}
-.wx-inner{display:flex;align-items:center;gap:12px;margin-top:6px}
-.wx-icon{font-size:36px}
-.wx-temps .hi{font-size:22px;font-weight:800;color:var(--sun)}
-.wx-temps .lo{font-size:13px;color:var(--g500)}
-.wx-meta{font-size:12px;color:var(--g600);margin-top:4px}
-/* FUEL CARD */
-.fuel-card{background:linear-gradient(135deg,#D1FAE5,#A7F3D0);border-radius:var(--r);padding:12px;margin-bottom:10px;border:1px solid #6EE7B7}
-/* SPOT ROW */
-.spot{padding:10px 0;border-bottom:1px solid var(--g100)}
-.spot:last-child{border-bottom:none}
-.spot h4{font-size:13px;font-weight:600}
-.spot p{font-size:12px;color:var(--g500);margin-top:1px}
-/* AREA ACCORDION */
-.area-hdr{background:linear-gradient(135deg,var(--ocean),#7C3AED);color:#fff;border-radius:var(--r) var(--r) 0 0;padding:14px}
-.area-hdr h3{font-size:15px;font-weight:700}
-.area-hdr p{font-size:11px;opacity:.85;margin-top:2px}
-.area-body{background:#fff;border-radius:0 0 var(--r) var(--r);padding:14px;box-shadow:var(--sh);margin-bottom:12px}
-.coll{width:100%;text-align:left;background:none;border:none;cursor:pointer;font:inherit;display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:13px}
-.coll::after{content:'\25BC';font-size:9px;color:var(--g400);transition:transform .3s}
-.coll.op::after{transform:rotate(180deg)}
-.coll-body{max-height:0;overflow:hidden;transition:max-height .3s ease}
-.coll-body.op{max-height:2000px}
-/* EXPLORE */
-.search-bar{width:100%;padding:11px 14px;border-radius:var(--r);border:1.5px solid var(--g200);font-size:14px;background:#fff;margin-bottom:10px;outline:none}
-.search-bar:focus{border-color:var(--ocean)}
-.tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
-.tag{padding:4px 10px;border-radius:12px;font-size:11px;font-weight:600;background:var(--g100);color:var(--g600);cursor:pointer}
-.tag.active{background:var(--ocean);color:#fff}
-.sun-card{background:linear-gradient(135deg,#FB923C,#F97316);border-radius:var(--r);padding:14px;margin-bottom:10px;color:#fff}
-.sun-card h4{font-size:14px;font-weight:700}
-.sun-card p{font-size:12px;opacity:.9;margin-top:3px}
-/* BIRTHDAY */
-.bday{background:linear-gradient(135deg,#F0ABFC,#C084FC);border-radius:var(--r);padding:18px;margin-bottom:10px;color:#fff;text-align:center}
-.bday h3{font-size:20px;font-weight:800}
-/* PHOTO */
-.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:8px}
-.photo-grid img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;cursor:pointer}
-.up-btn{display:flex;align-items:center;justify-content:center;gap:6px;padding:11px;border:2px dashed var(--g300);border-radius:var(--r);color:var(--g500);font-size:13px;font-weight:600;cursor:pointer;width:100%;background:#fff;margin-top:8px}
-/* LIGHTBOX */
-.lb{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:1000;display:none;align-items:center;justify-content:center;flex-direction:column;padding:16px}
-.lb.on{display:flex}
-.lb img{max-width:100%;max-height:75vh;border-radius:8px;object-fit:contain}
-.lb-cap{color:#fff;font-size:13px;margin-top:10px}
-.lb-x{position:absolute;top:16px;right:16px;color:#fff;font-size:26px;cursor:pointer;background:rgba(0,0,0,.5);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center}
-/* CHECK LIST */
-.ci{display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--g100)}
-.ci:last-child{border-bottom:none}
-.ci input[type=checkbox]{width:19px;height:19px;accent-color:var(--ocean);flex-shrink:0;margin-top:1px}
-.ci label{font-size:13px;color:var(--g700);cursor:pointer;flex:1}
-.ci.done label{text-decoration:line-through;color:var(--g400)}
-.ci-del{background:none;border:none;color:var(--g400);font-size:18px;line-height:1;cursor:pointer;padding:0 2px;flex-shrink:0;margin-left:auto}
-.ci-del:hover{color:var(--coral)}
-.ci-custom label{color:var(--ocean)}
-/* ADD ITEM ROW */
-.pack-add{display:flex;gap:6px;padding:8px 0 2px;margin-top:4px;border-top:1px dashed var(--g200)}
-.pack-add input{flex:1;border:1px solid var(--g200);border-radius:.5rem;padding:6px 10px;font-size:13px;outline:none}
-.pack-add input:focus{border-color:var(--ocean)}
-.pack-add button{background:var(--ocean);color:#fff;border:none;border-radius:.5rem;padding:6px 14px;font-size:18px;cursor:pointer;font-weight:700;line-height:1}
-.pack-add button:active{opacity:.8}
-.pack-progress{display:flex;align-items:center;gap:10px;padding:.5rem 1rem .25rem;font-size:.82rem;color:var(--g600)}
-.pack-progress-bar{flex:1;height:7px;background:var(--g100);border-radius:99px;overflow:hidden}
-.pack-progress-fill{height:100%;background:var(--reef);border-radius:99px;transition:width .3s}
-/* GAME CARD */
-.gc{background:linear-gradient(135deg,#FEF3C7,#FDE68A);border-radius:var(--r);padding:14px;margin-bottom:10px;border:1px solid #FCD34D}
-.gc h4{font-size:14px;font-weight:700}
-.gc .gm{font-size:12px;color:var(--g600);margin:3px 0}
-.gc p{font-size:13px;color:var(--g700);line-height:1.5}
-/* ACTIVITY */
-.ac{background:#fff;border-radius:var(--r);padding:12px;margin-bottom:8px;box-shadow:var(--sh);border-left:4px solid var(--reef)}
-.ac.bkd{border-left-color:var(--ocean)}
-.ac h4{font-size:13px;font-weight:700}
-.ac-meta{display:flex;gap:10px;font-size:11px;color:var(--g500);margin-top:3px;flex-wrap:wrap}
-/* CONTACT */
-.fcard{background:#fff;border-radius:var(--r);padding:14px;margin-bottom:10px;box-shadow:var(--sh);border-left:4px solid var(--ocean)}
-.crow{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--g100)}
-.crow:last-child{border-bottom:none}
-.crow a{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--g100);font-size:14px;text-decoration:none}
-/* MAP */
-#tripMap{width:100%;height:380px;border-radius:var(--r);margin-bottom:10px}
-.nav-btn{display:inline-flex;align-items:center;gap:4px;padding:7px 13px;background:var(--ocean);color:#fff;border-radius:18px;text-decoration:none;font-size:12px;font-weight:600;margin-top:6px}
-/* PLAYLIST */
-.pli{background:var(--g50);border-radius:var(--rs);padding:12px;margin-bottom:8px}
-.pli-input{width:100%;padding:10px 13px;border:1.5px solid var(--g200);border-radius:var(--rs);font-size:13px;outline:none;margin-bottom:6px}
-.pli-input:focus{border-color:var(--ocean)}
-.btn{padding:8px 16px;border-radius:18px;border:none;font-size:13px;font-weight:600;cursor:pointer}
-.btn-p{background:var(--ocean);color:#fff}
-.btn-sm{padding:5px 11px;font-size:11px}
-/* CONVOY */
-.cvi{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--g100)}
-.cvi:last-child{border-bottom:none}
-.cvi-ic{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
-/* NOTIF */
-.notif{background:var(--coral);color:#fff;padding:9px 14px;font-size:13px;text-align:center;cursor:pointer;display:none}
-.notif.on{display:block}
-/* FIREBASE */
-.fb-setup textarea{width:100%;padding:8px;border:1.5px solid var(--g200);border-radius:8px;font-family:monospace;font-size:11px;height:70px;margin:6px 0;outline:none}
-@media(min-width:600px){.quick-grid{grid-template-columns:repeat(6,1fr)}.photo-grid{grid-template-columns:repeat(4,1fr)}}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --aqua:#06B6D4;--aqua-d:#0891B2;--aqua-l:#CFFAFE;--aqua-xl:#F0FDFF;
+  --txt1:#111827;--txt2:#6B7280;--txt3:#9CA3AF;
+  --bg:#F7F9FA;--card:#FFFFFF;--border:#F0F0F0;
+  --shadow:0 2px 12px rgba(0,0,0,.07);--shadow-lg:0 8px 32px rgba(0,0,0,.12);
+  --r:16px;--r-sm:10px;--r-lg:24px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+}
+html,body{height:100%;background:var(--bg);font-family:var(--font);color:var(--txt1);-webkit-font-smoothing:antialiased}
+
+/* ── HEADER ─────────────────────────────── */
+#hdr{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  background:#fff;border-bottom:1px solid var(--border);
+  padding:env(safe-area-inset-top,0) 0 0;
+}
+#hdr-inner{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 16px 0;height:48px;
+}
+#hdr-logo{font-size:15px;font-weight:700;color:var(--aqua);letter-spacing:-.3px}
+#hdr-logo span{color:var(--txt1)}
+#menu-btn{
+  background:none;border:none;cursor:pointer;
+  width:36px;height:36px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--bg);color:var(--txt2)
+}
+
+/* ── DAY STRIP ───────────────────────────── */
+#day-strip{
+  display:flex;gap:6px;align-items:center;
+  padding:10px 16px 12px;
+  overflow-x:auto;-webkit-overflow-scrolling:touch;
+  scrollbar-width:none;scroll-behavior:smooth;
+}
+#day-strip::-webkit-scrollbar{display:none}
+.dc{
+  flex-shrink:0;border:none;cursor:pointer;
+  padding:6px 13px;border-radius:999px;
+  font-size:12px;font-weight:600;line-height:1.3;
+  background:var(--bg);color:var(--txt2);
+  transition:all .15s;white-space:nowrap;
+  font-family:var(--font);text-align:center;
+}
+.dc .dc-wday{font-size:10px;font-weight:500;opacity:.8;display:block}
+.dc.active{background:var(--aqua);color:#fff}
+.dc.today-chip{position:relative}
+.dc.today-chip::after{
+  content:'';position:absolute;bottom:3px;left:50%;transform:translateX(-50%);
+  width:4px;height:4px;border-radius:50%;background:var(--aqua);
+}
+.dc.active.today-chip::after{background:rgba(255,255,255,.7)}
+
+/* ── MAIN SCROLL ─────────────────────────── */
+#main{
+  padding-top:120px; /* hdr + strip height */
+  padding-bottom:32px;
+  min-height:100vh;
+}
+
+/* ── CARDS ───────────────────────────────── */
+.card{
+  background:var(--card);border-radius:var(--r);
+  box-shadow:var(--shadow);margin:0 16px 14px;overflow:hidden;
+}
+.ch{display:flex;align-items:center;gap:8px;padding:16px 18px 10px}
+.ch-icon{font-size:18px;line-height:1}
+.ch-title{font-size:14px;font-weight:700;color:var(--txt1);letter-spacing:-.2px}
+.cb{padding:0 18px 16px}
+
+/* ── HERO CARD ───────────────────────────── */
+#hero-card{
+  margin:0 16px 14px;border-radius:var(--r-lg);overflow:hidden;
+  box-shadow:var(--shadow-lg);position:relative;min-height:160px;
+}
+.hero-bg{
+  padding:24px 20px 20px;color:#fff;position:relative;
+}
+.hero-bg::before{
+  content:'';position:absolute;inset:0;background:rgba(0,0,0,.18);
+}
+.hero-bg > *{position:relative}
+.hero-eyebrow{font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;opacity:.85;margin-bottom:4px}
+.hero-day{font-size:28px;font-weight:700;letter-spacing:-.5px;line-height:1.1}
+.hero-route{font-size:14px;opacity:.9;margin-top:4px}
+.hero-meta{
+  display:flex;gap:16px;margin-top:14px;
+}
+.hero-meta-item{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:500;opacity:.9}
+.hero-acc{
+  background:rgba(255,255,255,.15);backdrop-filter:blur(8px);
+  border-radius:var(--r-sm);padding:8px 12px;margin-top:10px;
+  font-size:13px;display:flex;align-items:center;gap:6px;
+}
+.hero-acc a{color:#fff;font-weight:600;text-decoration:none}
+
+/* ── COUNTDOWN ───────────────────────────── */
+#countdown-card{background:linear-gradient(135deg,var(--aqua-d),var(--aqua));margin:0 16px 14px;border-radius:var(--r-lg);padding:24px 20px;color:#fff;box-shadow:var(--shadow-lg)}
+.cd-label{font-size:12px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;opacity:.85;margin-bottom:16px}
+.cd-row{display:flex;gap:12px}
+.cd-box{flex:1;background:rgba(255,255,255,.15);border-radius:var(--r-sm);padding:12px 8px;text-align:center}
+.cd-n{font-size:28px;font-weight:700;line-height:1}
+.cd-u{font-size:11px;font-weight:500;opacity:.8;margin-top:3px;text-transform:uppercase;letter-spacing:.5px}
+.cd-sub{font-size:13px;opacity:.8;margin-top:14px;text-align:center}
+
+/* ── QUOTE CARD ──────────────────────────── */
+.quote-text{
+  font-size:16px;font-weight:300;line-height:1.65;color:var(--txt1);
+  font-style:italic;letter-spacing:-.1px;
+}
+.quote-text::before{content:'C';font-size:32px;color:var(--aqua);line-height:.5;vertical-align:-.3em;margin-right:4px;font-style:normal;font-weight:700}
+.quote-attr{margin-top:12px;font-size:12px;font-weight:600;color:var(--aqua);letter-spacing:.2px}
+.quote-src{font-size:11px;color:var(--txt3);margin-top:2px;font-style:italic}
+
+/* ── JOKE CARD ───────────────────────────── */
+.joke-wrap{cursor:pointer;user-select:none}
+.joke-q{font-size:14px;font-weight:500;color:var(--txt1);line-height:1.5}
+.joke-a{
+  font-size:14px;font-weight:400;color:var(--aqua-d);line-height:1.5;
+  margin-top:10px;padding-top:10px;border-top:1px solid var(--border);
+  display:none;
+}
+.joke-wrap.open .joke-a{display:block}
+.joke-hint{font-size:11px;color:var(--txt3);margin-top:8px;display:flex;align-items:center;gap:4px}
+.joke-wrap.open .joke-hint{display:none}
+
+/* ── ROUTE MAP CARD ──────────────────────── */
+.route-info{display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.ri-item{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--txt2)}
+.ri-item strong{color:var(--txt1)}
+#day-map-container{
+  border-radius:var(--r-sm);overflow:hidden;position:relative;
+  height:160px;background:var(--bg);margin-bottom:12px;cursor:pointer;
+}
+#day-map-container::after{
+  content:'';position:absolute;inset:0;background:transparent;z-index:400;
+}
+.gmap-btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;padding:12px;border-radius:var(--r-sm);border:none;cursor:pointer;
+  background:var(--aqua);color:#fff;font-size:14px;font-weight:600;
+  font-family:var(--font);text-decoration:none;
+}
+.gmap-btn:active{background:var(--aqua-d)}
+
+/* ── FUEL CARD ───────────────────────────── */
+.fuel-alert{
+  background:linear-gradient(135deg,#FEF3C7,#FDE68A);
+  border-radius:var(--r-sm);padding:10px 12px;margin-bottom:12px;
+  font-size:13px;color:#92400E;display:flex;align-items:flex-start;gap:8px;
+  border:1px solid #FCD34D;
+}
+.fuel-station{
+  padding:12px 0;border-bottom:1px solid var(--border);
+  display:flex;gap:12px;align-items:flex-start;
+}
+.fuel-station:last-child{border-bottom:none}
+.fuel-brand-dot{
+  width:36px;height:36px;border-radius:10px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:800;color:#fff;letter-spacing:-.3px;
+}
+.fuel-right{flex:1;min-width:0}
+.fuel-name{font-size:14px;font-weight:600;color:var(--txt1)}
+.fuel-addr{font-size:12px;color:var(--txt3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fuel-ph{font-size:12px;color:var(--aqua);margin-top:4px}
+.fuel-ph a{color:var(--aqua);text-decoration:none;font-weight:500}
+.fuel-note{font-size:12px;color:#B45309;margin-top:4px;font-weight:500}
+.fuel-important{border-left:3px solid #F59E0B;padding-left:10px}
+.fuelwatch-link{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;padding:10px;background:var(--aqua-xl);border-radius:var(--r-sm);font-size:13px;color:var(--aqua-d);font-weight:600;text-decoration:none;border:1px solid var(--aqua-l)}
+
+/* ── ACTIVITIES CARD ────────────────────── */
+.act-section-label{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--txt3);margin:12px 0 8px}
+.act-item{
+  display:flex;gap:12px;align-items:flex-start;
+  padding:10px 0;border-bottom:1px solid var(--border);
+}
+.act-item:last-child{border-bottom:none}
+.act-icon{font-size:20px;width:36px;height:36px;background:var(--aqua-xl);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.act-right{flex:1;min-width:0}
+.act-name{font-size:14px;font-weight:600;color:var(--txt1);text-decoration:none}
+.act-name:visited{color:var(--txt1)}
+a.act-name{color:var(--aqua-d)}
+.act-desc{font-size:12px;color:var(--txt2);margin-top:3px;line-height:1.45}
+.act-meta{display:flex;gap:10px;margin-top:5px;flex-wrap:wrap}
+.act-tag{font-size:11px;font-weight:600;color:var(--aqua-d);background:var(--aqua-l);padding:2px 8px;border-radius:999px}
+.act-ph{font-size:12px;color:var(--txt3)}
+.act-ph a{color:var(--aqua);text-decoration:none}
+.act-booked-badge{font-size:10px;font-weight:700;background:#D1FAE5;color:#065F46;padding:2px 7px;border-radius:999px;letter-spacing:.3px}
+
+/* ── AREA INFO CARD ─────────────────────── */
+.area-fact-list{list-style:none}
+.area-fact-list li{
+  padding:8px 0;border-bottom:1px solid var(--border);
+  font-size:13px;color:var(--txt2);line-height:1.5;
+  display:flex;gap:8px;align-items:flex-start;
+}
+.area-fact-list li:last-child{border-bottom:none}
+.area-fact-list li::before{content:"✦";color:var(--aqua);font-size:10px;flex-shrink:0;margin-top:3px}
+.area-body-text{font-size:13px;color:var(--txt2);line-height:1.6;margin-bottom:12px}
+
+/* ── WILDLIFE CARD ──────────────────────── */
+.wildlife-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.wl-item{background:var(--bg);border-radius:var(--r-sm);padding:10px 12px}
+.wl-emoji{font-size:22px;margin-bottom:4px}
+.wl-name{font-size:12px;font-weight:600;color:var(--txt1)}
+.wl-desc{font-size:11px;color:var(--txt3);margin-top:2px;line-height:1.4}
+
+/* ── PHOTOS CARD ────────────────────────── */
+.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;margin-bottom:12px}
+.photo-thumb{aspect-ratio:1;background:var(--bg);border-radius:6px;overflow:hidden;cursor:pointer}
+.photo-thumb img{width:100%;height:100%;object-fit:cover}
+.upload-row{display:flex;gap:8px}
+.upload-btn{
+  flex:1;padding:11px;border-radius:var(--r-sm);border:1.5px dashed var(--aqua-l);
+  background:var(--aqua-xl);color:var(--aqua-d);font-size:13px;font-weight:600;
+  cursor:pointer;text-align:center;font-family:var(--font);
+}
+.upload-btn:active{background:var(--aqua-l)}
+.fb-setup details summary{font-size:13px;color:var(--aqua);cursor:pointer;padding:8px 0}
+.fb-setup input{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:13px;font-family:var(--font);outline:none;margin:6px 0}
+.fb-setup input:focus{border-color:var(--aqua)}
+.fb-connect-btn{background:var(--aqua);color:#fff;border:none;padding:9px 20px;border-radius:var(--r-sm);font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font)}
+
+/* ── PLAYLIST CARD ──────────────────────── */
+.pl-input-row{display:flex;gap:8px;margin-bottom:12px}
+.pl-input-row input{flex:1;padding:10px 12px;border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:13px;font-family:var(--font);outline:none;background:#fff}
+.pl-input-row input:focus{border-color:var(--aqua)}
+.pl-add-btn{background:var(--aqua);color:#fff;border:none;padding:10px 16px;border-radius:var(--r-sm);font-size:18px;font-weight:700;cursor:pointer;line-height:1;font-family:var(--font)}
+.pl-item{position:relative;margin-bottom:8px}
+.pl-del{position:absolute;top:6px;right:6px;z-index:5;background:rgba(0,0,0,.45);color:#fff;border:none;border-radius:50%;width:22px;height:22px;font-size:14px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+/* ── BIRTHDAY CARD ──────────────────────── */
+.bday-card{
+  background:linear-gradient(135deg,#EC4899,#F472B6,#FDE68A);
+  border-radius:var(--r-lg);margin:0 16px 14px;padding:24px 20px;color:#fff;
+  box-shadow:var(--shadow-lg);text-align:center;
+}
+.bday-title{font-size:24px;font-weight:700;letter-spacing:-.5px}
+.bday-sub{font-size:14px;opacity:.9;margin-top:6px;line-height:1.5}
+.bday-ideas{margin-top:16px;text-align:left}
+.bday-idea{background:rgba(255,255,255,.2);border-radius:var(--r-sm);padding:8px 12px;margin-bottom:6px;font-size:13px;display:flex;gap:8px;align-items:flex-start}
+
+/* ── SIDE DRAWER ────────────────────────── */
+#drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;opacity:0;pointer-events:none;transition:opacity .25s}
+#drawer-overlay.open{opacity:1;pointer-events:all}
+#drawer{
+  position:fixed;top:0;right:-320px;bottom:0;width:300px;
+  background:#fff;z-index:501;transition:right .25s cubic-bezier(.4,0,.2,1);
+  overflow-y:auto;-webkit-overflow-scrolling:touch;
+  padding:env(safe-area-inset-top,0) 0 0;
+}
+#drawer.open{right:0}
+.drawer-hdr{padding:16px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.drawer-hdr h2{font-size:16px;font-weight:700}
+.drawer-close{background:none;border:none;font-size:22px;cursor:pointer;color:var(--txt2);padding:4px}
+.drawer-section{padding:14px 18px;border-bottom:1px solid var(--border)}
+.drawer-section-title{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--txt3);margin-bottom:10px}
+.contact-card{margin-bottom:10px}
+.cc-name{font-size:14px;font-weight:700;color:var(--txt1)}
+.cc-van{font-size:12px;color:var(--txt3);margin-bottom:4px}
+.cc-row{font-size:13px;color:var(--txt2);margin:2px 0;display:flex;gap:8px;align-items:center}
+.cc-row a{color:var(--aqua);text-decoration:none}
+
+/* ── PACKING IN DRAWER ──────────────────── */
+.pack-cat-label{font-size:12px;font-weight:700;color:var(--txt2);margin:10px 0 4px;display:flex;align-items:center;gap:6px}
+.pack-check{display:flex;gap:8px;align-items:flex-start;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px}
+.pack-check:last-child{border-bottom:none}
+.pack-check input{width:17px;height:17px;accent-color:var(--aqua);flex-shrink:0;margin-top:1px}
+.pack-check label{flex:1;color:var(--txt2);cursor:pointer}
+.pack-check.done label{text-decoration:line-through;color:var(--txt3)}
+.pack-del{background:none;border:none;color:var(--txt3);font-size:16px;cursor:pointer;padding:0;margin-left:auto}
+.pack-add-row{display:flex;gap:6px;margin-top:8px}
+.pack-add-row input{flex:1;padding:7px 10px;border:1.5px solid var(--border);border-radius:var(--r-sm);font-size:13px;font-family:var(--font);outline:none}
+.pack-add-row input:focus{border-color:var(--aqua)}
+.pack-add-row button{background:var(--aqua);color:#fff;border:none;border-radius:var(--r-sm);padding:7px 14px;font-size:16px;cursor:pointer;font-weight:700}
+.pack-progress-bar{height:5px;background:var(--border);border-radius:99px;margin:8px 0;overflow:hidden}
+.pack-progress-fill{height:100%;background:var(--aqua);border-radius:99px;transition:width .3s}
+.pack-progress-text{font-size:11px;color:var(--txt3);text-align:right;margin-bottom:10px}
+
+/* ── LIGHTBOX ───────────────────────────── */
+#lb{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:900;align-items:center;justify-content:center;flex-direction:column}
+#lb.open{display:flex}
+#lb img{max-width:94vw;max-height:80vh;border-radius:var(--r-sm);object-fit:contain}
+#lb-cap{color:rgba(255,255,255,.7);font-size:13px;margin-top:12px;text-align:center}
+#lb-x{position:absolute;top:16px;right:16px;color:#fff;font-size:26px;cursor:pointer;background:rgba(255,255,255,.15);width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+
+/* ── COLLAPSIBLE ────────────────────────── */
+.coll-trigger{
+  width:100%;background:none;border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 0;font-size:13px;font-weight:600;color:var(--txt1);
+  font-family:var(--font);border-top:1px solid var(--border);
+}
+.coll-trigger .coll-arrow{color:var(--txt3);font-size:16px;transition:transform .2s}
+.coll-trigger.open .coll-arrow{transform:rotate(180deg)}
+.coll-body{display:none;padding-bottom:8px}
+.coll-body.open{display:block}
+
+/* ── SECTION DIVIDER ────────────────────── */
+.section-eyebrow{font-size:11px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--txt3);padding:6px 16px 2px}
+
+/* ── UTILS ───────────────────────────────── */
+.pill{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px;background:var(--aqua-l);color:var(--aqua-d)}
+.link{color:var(--aqua-d);text-decoration:none;font-weight:500}
+.link:active{opacity:.7}
+.empty-state{color:var(--txt3);font-size:13px;text-align:center;padding:20px 0}
 </style>
 </head>
 <body>
 
-<div class="hdr" id="mainHdr">
-  <h1>🌊 WA Road Trip 2026</h1>
-  <p>Perth → Exmouth → Perth &bull; 28 Mar – 13 Apr &bull; 5 Families</p>
-  <div class="day-strip" id="dayStrip" style="display:none"></div>
+<!-- HEADER -->
+<div id="hdr">
+  <div id="hdr-inner">
+    <div id="hdr-logo">🌊 <span>WA Trip 2026</span></div>
+    <button id="menu-btn" onclick="openDrawer()">
+      <svg width="18" height="14" viewBox="0 0 18 14" fill="none">
+        <path d="M0 1h18M0 7h18M0 13h18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+    </button>
+  </div>
+  <div id="day-strip"></div>
 </div>
 
-<div id="notif" class="notif"></div>
+<!-- MAIN CONTENT -->
+<div id="main">
+  <div id="day-content"></div>
+</div>
 
-<div class="content">
-  <!-- HOME -->
-  <div class="section active" id="sec-home"></div>
-  <!-- TRIP -->
-  <div class="section" id="sec-trip"></div>
-  <!-- EXPLORE -->
-  <div class="section" id="sec-explore">
-    <input class="search-bar" id="srch" placeholder="Search cafes, surf, sundowners, breweries..." oninput="filterX()">
-    <div class="tags" id="xTags"></div>
-    <div id="xResults"></div>
+<!-- SIDE DRAWER -->
+<div id="drawer-overlay" onclick="closeDrawer()"></div>
+<div id="drawer">
+  <div class="drawer-hdr">
+    <h2>📋 Trip Info</h2>
+    <button class="drawer-close" onclick="closeDrawer()">×</button>
   </div>
-  <!-- MAP -->
-  <div class="section" id="sec-map">
-    <div class="card"><div class="card-title">🗺️ Route Map</div>
-      <p style="font-size:12px;color:var(--g500);margin-bottom:8px">Tap a marker for details & navigation</p>
-      <div id="tripMap"></div>
-    </div>
-    <div id="mapList"></div>
-  </div>
-  <!-- MORE -->
-  <div class="section" id="sec-more">
-    <div class="tags" id="moreTags" style="margin-bottom:10px">
-      <span class="tag active" onclick="showMore('activities')">Activities</span>
-      <span class="tag" onclick="showMore('packing')">Packing</span>
-      <span class="tag" onclick="showMore('people')">People</span>
-      <span class="tag" onclick="showMore('photos')">Photos</span>
-      <span class="tag" onclick="showMore('music')">Music</span>
-      <span class="tag" onclick="showMore('games')">Games</span>
-      <span class="tag" onclick="showMore('convoy')">Convoy</span>
-      <span class="tag" onclick="showMore('meals')">Meals</span>
-      <span class="tag" onclick="showMore('vans')">Vans</span>
-    </div>
-    <div id="m-activities"></div>
-    <div id="m-packing" style="display:none"></div>
-    <div id="m-people" style="display:none"></div>
-    <div id="m-photos" style="display:none"></div>
-    <div id="m-music" style="display:none"></div>
-    <div id="m-games" style="display:none"></div>
-    <div id="m-convoy" style="display:none"></div>
-    <div id="m-meals" style="display:none"></div>
-    <div id="m-vans" style="display:none"></div>
-  </div>
+  <div id="drawer-body"></div>
 </div>
 
 <!-- LIGHTBOX -->
-<div class="lb" id="lb" onclick="closeLb()">
-  <div class="lb-x">✕</div>
-  <img id="lbImg" src="" alt="">
-  <div class="lb-cap" id="lbCap"></div>
-</div>
-
-<!-- TAB BAR -->
-<div class="tabbar">
-  <div class="tab active" onclick="goTab('home')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-    <span>Home</span>
-  </div>
-  <div class="tab" onclick="goTab('trip')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-    <span>Trip</span>
-  </div>
-  <div class="tab" onclick="goTab('explore')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-    <span>Explore</span>
-  </div>
-  <div class="tab" onclick="goTab('map')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
-    <span>Map</span>
-  </div>
-  <div class="tab" onclick="goTab('more')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
-    <span>More</span>
-  </div>
+<div id="lb" onclick="closeLb()">
+  <div id="lb-x">×</div>
+  <img id="lb-img" src="" alt="">
+  <div id="lb-cap"></div>
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 'use strict';
-// ===== DAD JOKES (40, rotate every 12h) =====
-const JOKES=[
-  {q:"Why don't sharks eat clowns?",a:"Because they taste funny!"},
-  {q:"What did the ocean say to the beach?",a:"Nothing, it just waved."},
-  {q:"Why did the lobster blush?",a:"Because the sea weed."},
-  {q:"What's a whale shark's favourite game?",a:"Swallow the leader!"},
-  {q:"Why don't oysters share?",a:"Because they're shellfish."},
+
+// ======================================================
+// DATA
+// ======================================================
+
+const DAYS = [
+  {day:1,date:"2026-03-28",wday:"Sat",lbl:"28 Mar",from:"Perth",to:"Jurien Bay",via:"Cervantes",km:220,drv:"2h 45m",
+   acc:"Jurien Bay Tourist Park",accUrl:"https://summerstar.com.au/caravan-parks/jurien-bay",
+   food:"Lobster Shack Cervantes",foodUrl:"https://www.lobstershack.com.au",
+   grad:"linear-gradient(135deg,#0891B2 0%,#06B6D4 100%)",
+   lat:-30.306,lon:115.038,fromLat:-31.9505,fromLon:115.8605,bday:false,
+   note:"Campervans collected 9am from 2 Redcliffe Rd, Redcliffe. Adventure begins!"},
+  {day:2,date:"2026-03-29",wday:"Sun",lbl:"29 Mar",from:"Jurien Bay",to:"Jurien Bay",via:"",km:0,drv:"Rest day",
+   acc:"Jurien Bay Tourist Park",accUrl:"https://summerstar.com.au/caravan-parks/jurien-bay",
+   food:"Jurien Jetty Cafe",foodUrl:"https://www.google.com/maps/search/Jurien+Jetty+Cafe",
+   grad:"linear-gradient(135deg,#0E7490 0%,#22D3EE 100%)",
+   lat:-30.306,lon:115.038,fromLat:-30.306,fromLon:115.038,bday:false,
+   note:"Explore day — sea lions, dunes, and the jetty."},
+  {day:3,date:"2026-03-30",wday:"Mon",lbl:"30 Mar",from:"Jurien Bay",to:"Kalbarri",via:"Geraldton",km:360,drv:"4h",
+   acc:"Kalbarri Tudor Holiday Park",accUrl:"https://www.kalbarritudorpark.com.au",
+   food:"Finlay's Kalbarri",foodUrl:"https://www.finlayskalbarri.com.au",
+   grad:"linear-gradient(135deg,#B45309 0%,#F59E0B 50%,#EF4444 100%)",
+   lat:-27.712,lon:114.163,fromLat:-30.306,fromLon:115.038,bday:false,
+   note:"Stop in Geraldton to see HMAS Sydney Memorial. Fill diesel here!"},
+  {day:4,date:"2026-03-31",wday:"Tue",lbl:"31 Mar",from:"Kalbarri",to:"Kalbarri",via:"",km:0,drv:"Explore day",
+   acc:"Kalbarri Tudor Holiday Park",accUrl:"https://www.kalbarritudorpark.com.au",
+   food:"The Gorges Cafe",foodUrl:"https://www.google.com/maps/search/Gorges+Cafe+Kalbarri",
+   grad:"linear-gradient(135deg,#DC2626 0%,#F59E0B 100%)",
+   lat:-27.712,lon:114.163,fromLat:-27.712,fromLon:114.163,bday:false,
+   note:"Full day exploring gorges. Start early — Skywalk opens 9am."},
+  {day:5,date:"2026-04-01",wday:"Wed",lbl:"1 Apr",from:"Kalbarri",to:"Denham",via:"Overlander Roadhouse",km:355,drv:"3h 45m",
+   acc:"Shark Bay Holiday Cottages",accUrl:"https://www.sharkbayholidaycottages.com.au",
+   food:"Shark Bay Bakery",foodUrl:"https://www.google.com/maps/search/Shark+Bay+Bakery+Denham",
+   grad:"linear-gradient(135deg,#0E7490 0%,#06B6D4 80%,#22D3EE 100%)",
+   lat:-25.929,lon:113.537,fromLat:-27.712,fromLon:114.163,bday:false,
+   note:"⚠️ Overlander Roadhouse is the ONLY fuel stop between Kalbarri and Denham — don't miss it!"},
+  {day:6,date:"2026-04-02",wday:"Thu",lbl:"2 Apr",from:"Denham",to:"Denham",via:"Shark Bay",km:0,drv:"Explore day",
+   acc:"Shark Bay Holiday Cottages",accUrl:"https://www.sharkbayholidaycottages.com.au",
+   food:"Old Pearler Restaurant",foodUrl:"https://www.google.com/maps/search/Old+Pearler+Restaurant+Denham",
+   grad:"linear-gradient(135deg,#0369A1 0%,#38BDF8 100%)",
+   lat:-25.929,lon:113.537,fromLat:-25.929,fromLon:113.537,bday:false,
+   note:"World Heritage Shark Bay — stromatolites, shell beach, little lagoon."},
+  {day:7,date:"2026-04-03",wday:"Fri",lbl:"3 Apr",from:"Denham",to:"Monkey Mia",via:"",km:26,drv:"20 min",
+   acc:"Monkey Mia Dolphin Resort",accUrl:"https://www.monkeymia.com.au",
+   food:"Monkey Mia Dolphin Resort Restaurant",foodUrl:"https://www.monkeymia.com.au/dining",
+   grad:"linear-gradient(135deg,#1D4ED8 0%,#38BDF8 100%)",
+   lat:-25.793,lon:113.718,fromLat:-25.929,fromLon:113.537,bday:false,
+   note:"🐬 First dolphin interaction 7:45am sharp — don't be late!"},
+  {day:8,date:"2026-04-04",wday:"Sat",lbl:"4 Apr",from:"Monkey Mia",to:"Wooramel Station",via:"Carnarvon",km:240,drv:"2h 45m",
+   acc:"Wooramel Station",accUrl:"https://www.wooramel.com.au",
+   food:"Artesian Bore Bath Dinner (BYO)",foodUrl:"https://www.wooramel.com.au",
+   grad:"linear-gradient(135deg,#92400E 0%,#D97706 100%)",
+   lat:-26.1,lon:114.7,fromLat:-25.793,fromLon:113.718,bday:false,
+   note:"Fill diesel in Carnarvon — remote ahead. Evening bore bath under the stars!"},
+  {day:9,date:"2026-04-05",wday:"Sun",lbl:"5 Apr",from:"Wooramel Station",to:"Coral Bay",via:"Minilya Junction",km:260,drv:"2h 50m",
+   acc:"Ningaloo Club",accUrl:"https://www.ningaloocoral.com.au",
+   food:"Fins Cafe Coral Bay",foodUrl:"https://www.ningaloocoralbay.com",
+   grad:"linear-gradient(135deg,#047857 0%,#10B981 80%,#34D399 100%)",
+   lat:-23.142,lon:113.776,fromLat:-26.1,fromLon:114.7,bday:false,
+   note:"Reef snorkel straight off the beach this arvo — gear up!"},
+  {day:10,date:"2026-04-06",wday:"Mon",lbl:"6 Apr",from:"Coral Bay",to:"Coral Bay",via:"",km:0,drv:"Reef day",
+   acc:"Ningaloo Club",accUrl:"https://www.ningaloocoral.com.au",
+   food:"Sweet Ningaloo Gelato",foodUrl:"https://www.google.com/maps/search/Sweet+Ningaloo+Coral+Bay",
+   grad:"linear-gradient(135deg,#065F46 0%,#10B981 100%)",
+   lat:-23.142,lon:113.776,fromLat:-23.142,fromLon:113.776,bday:false,
+   note:"Manta ray tour departs 8am. Book ahead via Coral Bay Adventures!"},
+  {day:11,date:"2026-04-07",wday:"Tue",lbl:"7 Apr",from:"Coral Bay",to:"Exmouth",via:"",km:130,drv:"1h 20m",
+   acc:"Exmouth Cape Holiday Park",accUrl:"https://www.exmouthcapeholidaypark.com.au",
+   food:"Adrift Cafe",foodUrl:"https://www.adriftcafe.com.au",
+   grad:"linear-gradient(135deg,#0E7490 0%,#22D3EE 100%)",
+   lat:-21.934,lon:114.125,fromLat:-23.142,fromLon:113.776,bday:false,
+   note:"Arrive in time for arvo snorkel at Turquoise Bay — world class."},
+  {day:12,date:"2026-04-08",wday:"Wed",lbl:"8 Apr",from:"Exmouth",to:"Exmouth",via:"Cape Range NP",km:0,drv:"Big day out",
+   acc:"Exmouth Cape Holiday Park",accUrl:"https://www.exmouthcapeholidaypark.com.au",
+   food:"The BBQ Father",foodUrl:"https://www.google.com/maps/search/BBQ+Father+Exmouth",
+   grad:"linear-gradient(135deg,#0891B2 0%,#06B6D4 60%,#0E7490 100%)",
+   lat:-21.934,lon:114.125,fromLat:-21.934,fromLon:114.125,bday:false,
+   note:"Cape Range NP day pass $20. Whale shark swims depart 6am — book with Three Islands!"},
+  {day:13,date:"2026-04-09",wday:"Thu",lbl:"9 Apr",from:"Exmouth",to:"Quobba Station",via:"Carnarvon",km:380,drv:"4h 20m",
+   acc:"Quobba Station Campsite",accUrl:"https://www.quobbastation.com.au",
+   food:"Bush BBQ at Quobba",foodUrl:"https://www.quobbastation.com.au",
+   grad:"linear-gradient(135deg,#4C1D95 0%,#7C3AED 60%,#8B5CF6 100%)",
+   lat:-24.5,lon:113.4,fromLat:-21.934,fromLon:114.125,bday:false,
+   note:"⚠️ FILL DIESEL in Carnarvon — absolutely no fuel at Quobba. Dramatic coastline awaits!"},
+  {day:14,date:"2026-04-10",wday:"Fri",lbl:"10 Apr",from:"Quobba",to:"Horrocks",via:"Northampton",km:200,drv:"2h 30m",
+   acc:"Horrocks Beach Caravan Park",accUrl:"https://www.horrocks.com.au",
+   food:"Galactic Espresso + Birthday Dinner",foodUrl:"https://www.google.com/maps/search/Galactic+Espresso+Northampton",
+   grad:"linear-gradient(135deg,#DB2777 0%,#F472B6 60%,#FDE68A 100%)",
+   lat:-28.378,lon:114.421,fromLat:-24.5,fromLon:113.4,bday:true,
+   note:"🎂 ARIA'S 11TH BIRTHDAY! Make it magical!"},
+  {day:15,date:"2026-04-11",wday:"Sat",lbl:"11 Apr",from:"Horrocks",to:"Horrocks",via:"",km:0,drv:"Beach day",
+   acc:"Horrocks Beach Caravan Park",accUrl:"https://www.horrocks.com.au",
+   food:"BYO Beach Lunch",foodUrl:"",
+   grad:"linear-gradient(135deg,#0E7490 0%,#06B6D4 100%)",
+   lat:-28.378,lon:114.421,fromLat:-28.378,fromLon:114.421,bday:false,
+   note:"Pink lake is best at 10am–2pm. Reef snorkel off Horrocks beach."},
+  {day:16,date:"2026-04-12",wday:"Sun",lbl:"12 Apr",from:"Horrocks",to:"Cervantes",via:"Geraldton",km:410,drv:"4h 15m",
+   acc:"Cervantes Pinnacles Motel",accUrl:"https://www.google.com/maps/search/Cervantes+accommodation",
+   food:"Lobster Shack",foodUrl:"https://www.lobstershack.com.au",
+   grad:"linear-gradient(135deg,#B45309 0%,#F59E0B 100%)",
+   lat:-30.506,lon:115.059,fromLat:-28.378,fromLon:114.421,bday:false,
+   note:"Last big dinner! Lobster Shack — celebrate an incredible trip 🦞"},
+  {day:17,date:"2026-04-13",wday:"Mon",lbl:"13 Apr",from:"Cervantes",to:"Perth",via:"",km:240,drv:"2h 30m",
+   acc:"Home 🏠",accUrl:"",
+   food:"Pit stop on the highway",foodUrl:"",
+   grad:"linear-gradient(135deg,#06B6D4 0%,#0891B2 100%)",
+   lat:-31.9505,lon:115.8605,fromLat:-30.506,fromLon:115.059,bday:false,
+   note:"Campervans returned to 2 Redcliffe Rd by 3pm. What a trip! 🥂"}
+];
+
+const QUOTES = [
+  {text:"And, when you want something, all the universe conspires in helping you to achieve it.",attr:"Paulo Coelho",src:"The Alchemist"},
+  {text:"It's the possibility of having a dream come true that makes life interesting.",attr:"Paulo Coelho",src:"The Alchemist"},
+  {text:"Not all those who wander are lost.",attr:"J.R.R. Tolkien",src:"The Fellowship of the Ring"},
+  {text:"The world is a book, and those who do not travel read only one page.",attr:"Saint Augustine",src:""},
+  {text:"Life is either a daring adventure or nothing at all.",attr:"Helen Keller",src:""},
+  {text:"We shall not cease from exploration, and at the end of all our exploring will be to arrive where we started and know the place for the first time.",attr:"T.S. Eliot",src:"Four Quartets"},
+  {text:"Look deep into nature, and then you will understand everything better.",attr:"Albert Einstein",src:""},
+  {text:"The real voyage of discovery consists not in seeking new landscapes, but in having new eyes.",attr:"Marcel Proust",src:""},
+  {text:"To travel is to live.",attr:"Hans Christian Andersen",src:""},
+  {text:"In every walk with nature, one receives far more than he seeks.",attr:"John Muir",src:""},
+  {text:"We travel not to escape life, but for life not to escape us.",attr:"Anonymous",src:""},
+  {text:"The sea, once it casts its spell, holds one in its net of wonder forever.",attr:"Jacques Cousteau",src:""},
+  {text:"A ship in harbor is safe, but that's not what ships are for.",attr:"John A. Shedd",src:""},
+  {text:"Do not go where the path may lead, go instead where there is no path and leave a trail.",attr:"Ralph Waldo Emerson",src:""},
+  {text:"Twenty years from now you will be more disappointed by the things you didn't do than by the ones you did.",attr:"Mark Twain",src:""},
+  {text:"The journey itself is my home.",attr:"Matsuo Basho",src:""},
+  {text:"It is good to have an end to journey toward; but it is the journey that matters, in the end.",attr:"Ursula K. Le Guin",src:"The Left Hand of Darkness"}
+];
+
+const JOKES = [
+  {q:"Why don't scientists trust atoms?",a:"Because they make up everything."},
   {q:"What do you call a fish without eyes?",a:"A fsh."},
-  {q:"What did one tide pool say to the other?",a:"Show me your mussels!"},
-  {q:"Why are dolphins so smart?",a:"Within 3 hours they can train a human to throw them fish!"},
-  {q:"What do you call a lazy crayfish?",a:"A slobster."},
-  {q:"Why did the surfer bring a ladder?",a:"Because the surf was way over his head!"},
-  {q:"What sits at the bottom of the sea and twitches?",a:"A nervous wreck."},
-  {q:"What do sea monsters eat?",a:"Fish and ships."},
-  {q:"Why do scuba divers fall backwards off the boat?",a:"If they fell forwards they'd still be in the boat!"},
-  {q:"How do you make an octopus laugh?",a:"With ten-tickles."},
-  {q:"What did the daddy buffalo say to his kid?",a:"Bison!"},
-  {q:"Why couldn't the bicycle stand up by itself?",a:"It was two tired. Just like Dad after a 4-hour drive."},
-  {q:"What's a kangaroo's favourite year?",a:"A leap year!"},
-  {q:"What do you call a boomerang that doesn't come back?",a:"A stick."},
-  {q:"Why did the campervan break up with the caravan park?",a:"It needed more space."},
-  {q:"Why are camping trips intense?",a:"Because they're in tents!"},
-  {q:"Why do seagulls fly over the sea?",a:"Because if they flew over the bay, they'd be bagels!"},
-  {q:"What do you call a fish wearing a crown?",a:"King of the sea-bass."},
-  {q:"Why did the pelican get kicked out of the restaurant?",a:"He had a very large bill."},
-  {q:"What do you call five campervans in a row?",a:"A mobile home improvement!"},
-  {q:"What did the whale say to the whale shark?",a:"Nothing — whale sharks don't speak humpback."},
-  {q:"Why did the manta ray cross the road?",a:"To get to the other tide."},
-  {q:"What do you call a sleeping dinosaur?",a:"A dino-snore."},
-  {q:"What did the beach say to the tide?",a:"Long time no sea!"},
+  {q:"Why did the scarecrow win an award?",a:"He was outstanding in his field."},
+  {q:"I'm reading a book about anti-gravity.",a:"It's impossible to put down."},
+  {q:"What do you call cheese that isn't yours?",a:"Nacho cheese."},
   {q:"Why do cows wear bells?",a:"Because their horns don't work."},
-  {q:"I used to hate facial hair...",a:"But then it grew on me."},
-  {q:"What's orange and sounds like a parrot?",a:"A carrot."},
-  {q:"Why did the koala get fired?",a:"Because he was always dropping his gum."},
-  {q:"Why did Aria get a birthday cake at Wooramel?",a:"Because you can't have a birthday without a-RTESIAN baths and cake!"},
-  {q:"What's a road trip without snacks?",a:"Un-bear-able. Like sharing a campervan with the Wilsons."},
-  {q:"What do you call a crocodile in a campervan?",a:"Whatever he wants."},
-  {q:"Why did the shark keep swimming in circles?",a:"It had a school of thought."},
-  {q:"Why did the emu cross the road?",a:"To prove he wasn't chicken."},
-  {q:"What do you get when you cross a whale with a computer?",a:"A Dell Dolphin."},
-  {q:"Why did the snorkeller bring a pencil?",a:"In case he wanted to draw a fish."},
-  {q:"What do Exmouth locals say when they're confused?",a:"I'm a bit out of my depth."}
+  {q:"What do you call a sleeping dinosaur?",a:"A dino-snore."},
+  {q:"Why can't you give Elsa a balloon?",a:"Because she'll let it go."},
+  {q:"What do you call a fake noodle?",a:"An impasta."},
+  {q:"Why did the bicycle fall over?",a:"Because it was two-tired."},
+  {q:"What do you call a sad strawberry?",a:"A blueberry."},
+  {q:"How does a penguin build its house?",a:"Igloos it together."},
+  {q:"Why did the golfer bring extra socks?",a:"In case he got a hole in one."},
+  {q:"What do you call a snowman with a six-pack?",a:"An abdominal snowman."},
+  {q:"Why can't Elsa have a balloon?",a:"She'll let it go."},
+  {q:"What did the ocean say to the beach?",a:"Nothing, it just waved."},
+  {q:"What do sharks say when something radical happens?",a:"Jawesome!"},
+  {q:"What do you call a dolphin who doesn't share?",a:"Selfish."},
+  {q:"Why don't oysters share?",a:"Because they're shellfish."},
+  {q:"What did one wave say to the other?",a:"Nothing, it just gave a little wave."},
+  {q:"Why did the crab never share his food?",a:"Because he was a little shellfish."},
+  {q:"What kind of music do mummies listen to?",a:"Wrap."},
+  {q:"Why do seagulls fly over the sea?",a:"If they flew over the bay they'd be bagels."},
+  {q:"Why do fish swim in saltwater?",a:"Because pepper makes them sneeze."},
+  {q:"What do you get when you cross a snowman and a vampire?",a:"Frostbite."},
+  {q:"I told my wife she was drawing her eyebrows too high.",a:"She looked surprised."},
+  {q:"What do you call a lazy kangaroo?",a:"A pouch potato."},
+  {q:"Why do Australian kids excel at maths?",a:"Because they're always Down Under."},
+  {q:"What did the big flower say to the little flower?",a:"Hey bud!"},
+  {q:"Why do we tell actors to break a leg?",a:"Because every play has a cast."},
+  {q:"What's a vampire's favourite fruit?",a:"A blood orange."},
+  {q:"What's brown and sticky?",a:"A stick."},
+  {q:"How do you make a tissue dance?",a:"Put a little boogie in it."},
+  {q:"What did the zero say to the eight?",a:"Nice belt!"},
+  {q:"What did one wall say to the other?",a:"I'll meet you at the corner."},
+  {q:"How many tickles does it take to make an octopus laugh?",a:"Ten-tickles."},
+  {q:"Why did the invisible man turn down the job offer?",a:"He couldn't see himself doing it."},
+  {q:"Did you hear about the guy who invented Lifesavers?",a:"He made a mint."},
+  {q:"Why can't a nose be 12 inches long?",a:"Because then it'd be a foot."},
+  {q:"What do you call a fish with no eyes?",a:"A fsh."}
 ];
 
-function getJoke(dayIdx){
-  // Changes every 12 hours, different per day
-  const period=Math.floor(Date.now()/(12*3600*1000));
-  const idx=(dayIdx*2+(period%2))%JOKES.length;
-  return JOKES[idx];
+function getJoke(dayIdx) {
+  const period = Math.floor(Date.now() / (4 * 3600 * 1000));
+  return JOKES[(dayIdx * 7 + period) % JOKES.length];
 }
 
-// ===== TRIP DATA =====
-const DAYS=[
-  {day:1,date:"2026-03-28",wday:"Sat",lbl:"28",from:"Perth",to:"Jurien Bay",via:"Cervantes",km:220,drv:"2h 45",acc:"Jurien Bay Tourist Park",accUrl:"https://summerstar.com.au/caravan-parks/jurien-bay",sleep:"Campervan – Powered",attract:["Pinnacles Desert","Lancelin Sand Dunes","Sea Lion tours"],acts:["Sea lion tour 1pm","Sandboarding","Pinnacles visit"],coffee:"Jurien Jetty Cafe",coffeeUrl:"",food:"Lobster Shack (Cervantes), Sandpiper Tavern",foodUrl:"https://www.lobstershack.com.au",bkg:"Lobster Shack lunch 1pm",petrol:"Ampol Cervantes, Puma Cervantes, Ampol Jurien Bay, Puma Jurien Bay",groc:"Jurien IGA – full groceries, 8am–6pm. Do your first big shop here!",dinner:"Conroys' night",arr:"5:00 PM",notes:"Collect campervans 9am at 2 Redcliffe Rd, Redcliffe Perth 6104. Branch hours 9am–3pm.",lat:-30.306,lon:115.038,bday:false},
-  {day:2,date:"2026-03-29",wday:"Sun",lbl:"29",from:"Jurien Bay",to:"Kalbarri",via:"",km:370,drv:"4h",acc:"Kalbarri Holiday Park (Summerstar)",accUrl:"https://summerstar.com.au/caravan-parks/kalbarri",sleep:"Campervan – Ensuite Powered",attract:["Kalbarri Skywalk","Nature's Window","Coastal Cliffs"],acts:["Sea Lion Tour 7am (Turquoise Safaris)","Nature's Window hike"],coffee:"Angie's Cafe",coffeeUrl:"",food:"Finlay's Kalbarri (microbrewery + seafood)",foodUrl:"https://www.finlayskalbarri.com.au",bkg:"Sea Lion Tour 7am – Turquoise Safaris",petrol:"Dongara BP, Dongara Puma, BP Geraldton, Ampol Geraldton, BP Northampton, BP Kalbarri",groc:"Coles Dongara – last proper supermarket before Kalbarri",dinner:"",arr:"5:00 PM",notes:"Book sea lions via turquoisesafaris.com.au. Kalbarri Skywalk is 100m above the Murchison River gorge!",lat:-27.713,lon:114.166,bday:false},
-  {day:3,date:"2026-03-30",wday:"Mon",lbl:"30",from:"Kalbarri",to:"Denham",via:"",km:400,drv:"4h 30",acc:"Denham Seaside (Tasman Holiday Parks)",accUrl:"https://tasmanholidayparks.com.au/park/denham-seaside-tourist-park/",sleep:"Powered Seaview",attract:["Shell Beach","Hamelin Pool Stromatolites","Eagle Bluff","Ocean Park Aquarium"],acts:["Stromatolites boardwalk","Ocean Park Aquarium"],coffee:"Shark Bay Bakery",coffeeUrl:"",food:"Old Pearler Restaurant",foodUrl:"",bkg:"Booking request sent",petrol:"Billabong Roadhouse, Overlander Roadhouse, Denham Fuel & Supplies",groc:"IGA Denham – 97 Knight Terrace, 7am–7pm. Last real supermarket before heading north!",dinner:"",arr:"3:00 PM",notes:"UNESCO World Heritage Shark Bay. Shell Beach is made entirely of cockle shells up to 10m deep!",lat:-25.928,lon:113.535,bday:false},
-  {day:4,date:"2026-03-31",wday:"Tue",lbl:"31",from:"Denham",to:"Monkey Mia",via:"",km:27,drv:"25 min",acc:"RAC Monkey Mia Dolphin Resort",accUrl:"https://parksandresorts.rac.com.au/monkey-mia",sleep:"Powered Site",attract:["Wild dolphin feeding (free!)","Monkey Mia Beach","Snorkelling"],acts:["Dolphin feeding 7:45am","Kayaking","Beach day"],coffee:"Boughshed Cafe",coffeeUrl:"https://monkeymiaboughshed.com.au",food:"Boughshed Restaurant (booked 6:30pm for 16)",foodUrl:"https://monkeymiaboughshed.com.au",bkg:"Boughshed Restaurant 6:30pm × 16 people",petrol:"Denham Fuel & Supplies, Monkey Mia Resort Fuel",groc:"IGA Denham before leaving",dinner:"Boughshed Restaurant",arr:"3:00 PM",notes:"Register for dolphin feeding at check-in. Arrive early for a good spot on the shore.",lat:-25.793,lon:113.719,bday:false},
-  {day:5,date:"2026-04-01",wday:"Wed",lbl:"1 Apr",from:"Monkey Mia",to:"Wooramel",via:"",km:230,drv:"2h 30",acc:"Wooramel River Retreat",accUrl:"https://www.wooramel.com.au",sleep:"Grass Site",attract:["Natural artesian bore baths","Wooramel River","Stargazing"],acts:["Artesian baths under the stars","5km river walk","Stargazing"],coffee:"Denham Bakery",coffeeUrl:"",food:"Wooramel campfire dinner",foodUrl:"https://www.wooramel.com.au",bkg:"",petrol:"Denham Fuel, Overlander Roadhouse, Wooramel Roadhouse",groc:"Stock up in Denham before leaving – Wooramel has only a small roadhouse",dinner:"Camp dinner",arr:"3:00 PM",notes:"Artesian baths are magical at night – sit in 33°C mineral water under the stars. WEAR DARK SWIMMERS – minerals stain!",lat:-25.50,lon:114.20,bday:false},
-  {day:6,date:"2026-04-02",wday:"Thu",lbl:"2",from:"Wooramel",to:"Coral Bay",via:"Carnarvon",km:300,drv:"3h 30",acc:"People's Park Coral Bay – Oceanfront",accUrl:"https://www.peoplesparkcaravanresort.com.au",sleep:"Powered Site",attract:["Bill's Bay – snorkel right off the beach","Ningaloo Reef","Manta rays"],acts:["Morning bore bath soak","Snorkelling Coral Bay","Explore reef"],coffee:"Coral Bay Bakery",coffeeUrl:"",food:"Bill's Bar & Restaurant",foodUrl:"",bkg:"",petrol:"Wooramel Roadhouse, Ampol/BP Carnarvon, Minilya Roadhouse, Coral Bay Fuel",groc:"⚠️ STOCK UP in Carnarvon Coles or Woolworths – Coral Bay has only a tiny expensive shop",dinner:"",arr:"3:00 PM",notes:"Carnarvon is the last major town with proper supermarkets before Exmouth. Don't skip it!",lat:-23.151,lon:113.765,bday:false},
-  {day:7,date:"2026-04-03",wday:"Fri",lbl:"3",from:"Coral Bay",to:"Coral Bay",via:"",km:0,drv:"Rest day",acc:"People's Park Coral Bay",accUrl:"https://www.peoplesparkcaravanresort.com.au",sleep:"Powered Site",attract:["Five Fingers Reef","Ningaloo Reef","Manta ray snorkel"],acts:["Manta ray swim","Snorkelling Five Fingers Reef","Full beach day"],coffee:"The Happy Cowboy",coffeeUrl:"",food:"Fins Cafe",foodUrl:"https://www.ningaloocoralbay.com",bkg:"Manta Ray charter enquiry (Forty)",petrol:"",groc:"Coral Bay Bakery for snacks",dinner:"",arr:"",notes:"Good Friday! Walk straight into the water at Bill's Bay and you're on Ningaloo Reef within 20 metres. Turtles, manta rays!",lat:-23.151,lon:113.765,bday:false},
-  {day:8,date:"2026-04-04",wday:"Sat",lbl:"4",from:"Coral Bay",to:"Exmouth",via:"",km:150,drv:"1h 45",acc:"Ningaloo Caravan & Holiday Resort",accUrl:"https://www.ningaloocaravanholidayresort.com.au",sleep:"Powered Site",attract:["Turquoise Bay drift snorkel","Charles Knife Canyon","Cape Range NP"],acts:["Drift snorkel Turquoise Bay","Froth Craft Brewery","Whalers Restaurant"],coffee:"Froth Craft Brewery",coffeeUrl:"https://www.frothbrewingco.com.au",food:"Whalers Restaurant (booked 7pm & 7:30pm)",foodUrl:"https://www.whalesrestaurant.com.au",bkg:"Whalers Restaurant – two tables 7pm & 7:30pm",petrol:"Minilya Roadhouse, Ampol Exmouth, Ningaloo Reef Fuels",groc:"IGA or Woolworths Exmouth – stock up for several days",dinner:"Whalers Restaurant",arr:"2:00 PM",notes:"Stop at Charles Knife Canyon on the way into Exmouth for spectacular views over Cape Range. Worth it!",lat:-21.932,lon:114.126,bday:false},
-  {day:9,date:"2026-04-05",wday:"Sun",lbl:"5",from:"Exmouth",to:"Exmouth",via:"",km:0,drv:"Rest day",acc:"Ningaloo Caravan & Holiday Resort",accUrl:"https://www.ningaloocaravanholidayresort.com.au",sleep:"Powered Site",attract:["WHALE SHARKS 🐋","Yardie Creek","Cape Range NP"],acts:["Whale shark swim 8am!","Explore Cape Range NP"],coffee:"Social Society Cafe",coffeeUrl:"https://www.thesocialsocietyexmouth.com.au",food:"Whalebone Brewing Co",foodUrl:"https://www.whalebonebrewingcompany.com.au",bkg:"Whale Sharks 8am (Fortescues booked). Manta Rays restaurant 6:30pm request sent.",petrol:"",groc:"",dinner:"Manta Rays Restaurant 6:30pm",arr:"",notes:"EASTER SUNDAY! Whale shark season is prime right now. Once-in-a-lifetime experience – don't be late!",lat:-21.932,lon:114.126,bday:false},
-  {day:10,date:"2026-04-06",wday:"Mon",lbl:"6",from:"Exmouth",to:"Exmouth",via:"",km:0,drv:"Rest day",acc:"Ningaloo Caravan & Holiday Resort – VILLA",accUrl:"https://www.ningaloocaravanholidayresort.com.au",sleep:"Villa",attract:["Ningaloo Navy Pier (world top 10 dive)","Turquoise Bay","Lighthouse Bay"],acts:["Scuba diving 9am","Snorkelling","Beach day"],coffee:"Short Order Cafe",coffeeUrl:"",food:"Adrift Cafe",foodUrl:"https://www.adriftcafe.com.au",bkg:"Scuba Dive 9am – Dive Ningaloo ($290pp)",petrol:"",groc:"",dinner:"",arr:"",notes:"Easter Monday – villas from today! Navy Pier is rated one of the world's top 10 shore dives.",lat:-21.932,lon:114.126,bday:false},
-  {day:11,date:"2026-04-07",wday:"Tue",lbl:"7",from:"Exmouth",to:"Exmouth",via:"",km:0,drv:"Rest day",acc:"Ningaloo Caravan & Holiday Resort – VILLA",accUrl:"https://www.ningaloocaravanholidayresort.com.au",sleep:"Villa",attract:["Cape Range gorges","Ningaloo Reef","Scenic flight"],acts:["Scenic flight 5:15pm","Gorge walks","Last big reef day"],coffee:"Bungalow Barista",coffeeUrl:"",food:"Adrift Cafe",foodUrl:"https://www.adriftcafe.com.au",bkg:"Scenic Flight – Ningaloo Aviation 5:15–6:15pm",petrol:"",groc:"",dinner:"",arr:"",notes:"Check out Bullara Station (bullarastation.com.au) for a real outback station experience if time.",lat:-21.932,lon:114.126,bday:false},
-  {day:12,date:"2026-04-08",wday:"Wed",lbl:"8",from:"Exmouth",to:"Quobba Station",via:"Carnarvon",km:295,drv:"3h 15",acc:"Quobba Station – Coastal Camp",accUrl:"https://www.quobba.com.au",sleep:"Unpowered Bush Camp",attract:["Quobba Blowholes","Aquarium snorkel spot","Yardie Creek Gorge"],acts:["Yardie Creek Boat Tour (morning)","Blowholes visit","Bush camping"],coffee:"Exmouth Bakery",coffeeUrl:"",food:"Quobba camp dinner",foodUrl:"",bkg:"Yardie Creek Boat Tour ($45pp)",petrol:"Ampol Carnarvon, BP Carnarvon, Coles Express Carnarvon",groc:"⚠️ Stock up in Carnarvon – Quobba has absolutely no supplies",dinner:"Camp dinner",arr:"2:00 PM",notes:"Quobba is wild and remote – 80km of raw Indian Ocean coastline. Powered sites but no water at sites. 50% non-refundable deposit.",lat:-24.48,lon:113.41,bday:false},
-  {day:13,date:"2026-04-09",wday:"Thu",lbl:"9",from:"Quobba",to:"Quobba",via:"",km:0,drv:"Rest day",acc:"Quobba Station – Coastal Camp",accUrl:"https://www.quobba.com.au",sleep:"Unpowered Bush Camp",attract:["Korean Star Shipwreck (1988)","Blowholes","Red Bluff surf"],acts:["Sunset cliff exploring","Fishing","Snorkelling"],coffee:"Gnaraloo Store (basic)",coffeeUrl:"",food:"Camp dinner",foodUrl:"",bkg:"",petrol:"",groc:"",dinner:"Camp dinner",arr:"",notes:"Look for the 1988 Korean Star shipwreck visible from the cliffs. Red Bluff is a world-class surf break – advanced only!",lat:-24.48,lon:113.41,bday:false},
-  {day:14,date:"2026-04-10",wday:"Fri",lbl:"10",from:"Quobba",to:"Wooramel",via:"Carnarvon",km:250,drv:"3h",acc:"Wooramel River Retreat",accUrl:"https://www.wooramel.com.au",sleep:"Grass Site",attract:["Artesian baths (again!)","Wooramel River","Stargazing"],acts:["Artesian baths round 2","Aria's birthday celebration!","Stargazing"],coffee:"Carnarvon Coffee Co",coffeeUrl:"",food:"Wooramel station dinner",foodUrl:"https://www.wooramel.com.au",bkg:"",petrol:"Ampol Carnarvon, BP Carnarvon, Wooramel Roadhouse",groc:"Stock up in Carnarvon – grab a birthday cake!",dinner:"Station dinner",arr:"",notes:"🎂 ARIA WILSON'S 11TH BIRTHDAY! Grab a birthday cake from Carnarvon bakery en route. Make it special!",lat:-25.50,lon:114.20,bday:true},
-  {day:15,date:"2026-04-11",wday:"Sat",lbl:"11",from:"Wooramel",to:"Horrocks",via:"Northampton",km:230,drv:"2h 30",acc:"Horrocks Beach Caravan Park",accUrl:"https://www.horrocksbeachcaravanpark.com.au",sleep:"Powered Site",attract:["Horrocks Beach (Tourism Australia Best Mainland Beach 2018!)","Pink Lake (Hutt Lagoon)","Port Gregory"],acts:["SUP on the lagoon","Pink Lake visit (10am–2pm best)","Beach day"],coffee:"Galactic Espresso (Northampton)",coffeeUrl:"",food:"Northampton Bakery",foodUrl:"",bkg:"",petrol:"Wooramel Roadhouse, Billabong Roadhouse, BP Northampton, BP Geraldton",groc:"Horrocks has small general store only – get supplies in Geraldton if needed",dinner:"",arr:"3:00 PM",notes:"Pink Lake gets its colour from Dunaliella Salina algae – best viewed 10am–2pm in bright sunlight.",lat:-28.38,lon:114.42,bday:false},
-  {day:16,date:"2026-04-12",wday:"Sun",lbl:"12",from:"Horrocks",to:"Cervantes",via:"Geraldton",km:210,drv:"2h 15",acc:"Cervantes Holiday Park",accUrl:"https://www.cervantesholidaypark.com.au",sleep:"Powered Site",attract:["Pinnacles Desert at sunset 🌅","Lobster Shack round 2","Lake Thetis Thrombolites"],acts:["Lobster Shack lunch","Pinnacles sunset walk","Lake Thetis"],coffee:"Rayza's Cafe (Geraldton)",coffeeUrl:"",food:"Lobster Shack",foodUrl:"https://www.lobstershack.com.au",bkg:"",petrol:"BP Geraldton, Dongara BP, Ampol Jurien Bay, Ampol/Puma Cervantes",groc:"Geraldton supermarkets for last supplies",dinner:"",arr:"",notes:"Last full day! Visit Pinnacles at sunset for magical orange pillars. A perfect end to the trip.",lat:-30.506,lon:115.067,bday:false},
-  {day:17,date:"2026-04-13",wday:"Mon",lbl:"13",from:"Cervantes",to:"Perth Airport",via:"",km:200,drv:"2h",acc:"✈️ Fly Home to Sydney!",accUrl:"",sleep:"",attract:["Safe journey home","Little Creatures Fremantle (if time)"],acts:["Drop off campervans by 3pm"],coffee:"Jurien Jetty Cafe (passing through)",coffeeUrl:"",food:"Little Creatures Fremantle (if time)",foodUrl:"",bkg:"Campervans due back by 3:00 PM",petrol:"Ampol Cervantes, Puma Jurien Bay",groc:"",dinner:"",arr:"",notes:"Drop campervans at 2 Redcliffe Road, Redcliffe Perth 6104 by 3pm. Safe travels everyone! What a trip! 🌊",lat:-31.95,lon:115.86,bday:false}
-];
-
-// ===== EXPLORE DATA =====
-const XD=[
-  // SUNDOWNERS
-  {c:"sundowner",area:"Exmouth",name:"Vlamingh Head Lighthouse",desc:"THE iconic sundowner spot in WA. 360-degree views – Ningaloo Reef on one side, the gulf on the other. Bring a blanket, cheese and wine. Unmissable.",url:"https://www.google.com/maps/search/Vlamingh+Head+Lighthouse+Exmouth"},
-  {c:"sundowner",area:"Coral Bay",name:"Bill's Bay Beach",desc:"Grab a drink from Bill's Bar and settle on the west-facing beach. Crystal water turns liquid gold. Dolphins often visible.",url:"https://www.google.com/maps/search/Bills+Bay+Coral+Bay"},
-  {c:"sundowner",area:"Kalbarri",name:"Red Bluff Lookout",desc:"West-facing clifftop above the Indian Ocean. Stunning reds and oranges against the sandstone. BYO drinks.",url:"https://www.google.com/maps/search/Red+Bluff+Kalbarri"},
-  {c:"sundowner",area:"Kalbarri",name:"Mushroom Rock",desc:"Fewer crowds than the Skywalk, equally stunning golden hour. Fascinating rock formation in the fading light.",url:"https://www.google.com/maps/search/Mushroom+Rock+Kalbarri"},
-  {c:"sundowner",area:"Wooramel",name:"Artesian Baths at Sunset",desc:"Soak in 33°C mineral water as the outback sky turns every shade of orange, then watch the stars appear one by one. Magical.",url:"https://www.wooramel.com.au"},
-  {c:"sundowner",area:"Quobba",name:"Quobba Station Clifftops",desc:"Wild, raw sunset over the Indian Ocean. Zero light pollution – stars appear immediately after sunset. Bring camp chairs.",url:"https://www.quobba.com.au"},
-  {c:"sundowner",area:"Denham",name:"Denham Foreshore",desc:"Grassed foreshore with BBQs overlooking Shark Bay. Grab fish & chips and watch the bay turn gold.",url:"https://www.google.com/maps/search/Denham+Foreshore+Shark+Bay"},
-  {c:"sundowner",area:"Horrocks",name:"Horrocks Beach",desc:"Award-winning west-facing beach. The reef-protected lagoon turns rose gold at sunset. Stunning on a clear evening.",url:"https://www.google.com/maps/search/Horrocks+Beach+Western+Australia"},
-  {c:"sundowner",area:"Monkey Mia",name:"Monkey Mia Waterfront Bar",desc:"Cocktails with floor-to-ceiling ocean views. Watch dolphins play as the sun melts into the bay.",url:"https://parksandresorts.rac.com.au/monkey-mia"},
-  {c:"sundowner",area:"Cervantes",name:"Pinnacles at Sunset",desc:"The limestone pillars cast dramatic shadows and glow bright orange at sunset. Arguably the best time to visit.",url:"https://www.exploreparks.dbca.wa.gov.au/park/nambung-national-park"},
-  {c:"sundowner",area:"Exmouth",name:"Tantabiddi Beach",desc:"Quiet secluded beach in Cape Range NP. Set up camp chairs for a private sunset show. Often see turtles.",url:"https://www.exploreparks.dbca.wa.gov.au/park/cape-range-national-park"},
-  // NUDE/CLOTHING OPTIONAL
-  {c:"nude",area:"Perth (pre-trip)",name:"Swanbourne Beach",desc:"WA's official clothing-optional beach, 15 mins from Perth CBD. North end of the beach. Established since the 1970s. Sandy and sheltered.",url:"https://www.google.com/maps/search/Swanbourne+Beach+Perth"},
-  {c:"nude",area:"Coral Bay",name:"Remote Ningaloo Coastline",desc:"The secluded beaches south of Coral Bay are extremely remote with virtually zero foot traffic. Informal clothing-optional by virtue of complete isolation.",url:"https://www.google.com/maps/search/Coral+Bay+Remote+Beach"},
-  {c:"nude",area:"Quobba",name:"Hidden Quobba Coves",desc:"80km of wild coastline with hidden coves accessible only by scrambling over rocks. Complete privacy. Check tide and swell first.",url:"https://www.quobba.com.au"},
-  {c:"nude",area:"Exmouth",name:"Secluded Cape Range Beaches",desc:"Many beaches past Turquoise Bay heading south receive fewer than 5 visitors per day. Remote enough for complete privacy.",url:"https://www.exploreparks.dbca.wa.gov.au/park/cape-range-national-park"},
-  {c:"nude",area:"Horrocks",name:"North Horrocks Beach",desc:"Walk 1–2km north from the main access point. Very few people venture this far. Sheltered by dunes.",url:"https://www.google.com/maps/search/Horrocks+Beach+Northern+End"},
-  // SURF
-  {c:"surf",area:"Kalbarri",name:"Jake's Point",desc:"National Surfing Reserve. Iconic left-hander with 50–100m barrel rides. Advanced surfers only.",url:"https://www.google.com/maps/search/Jakes+Point+Kalbarri+surf"},
-  {c:"surf",area:"Kalbarri",name:"Granny's Beach",desc:"Best beginner/intermediate option in Kalbarri. Gentle waves, sandy bottom, safe for all levels.",url:"https://www.google.com/maps/search/Grannys+Beach+Kalbarri"},
-  {c:"surf",area:"Quobba",name:"Red Bluff (Quobba)",desc:"World-class left-hand point break. 100m+ barrel rides. Advanced only. Very remote – check conditions before going.",url:"https://www.quobba.com.au"},
-  {c:"surf",area:"Exmouth",name:"Dunes Surf Beach",desc:"17–20km south of Exmouth town. Safe reef break, beginner-to-intermediate. Consistent swells.",url:"https://www.google.com/maps/search/Dunes+Surf+Beach+Exmouth"},
-  {c:"surf",area:"Geraldton",name:"Sunset Beach",desc:"Decent waves year-round, longest rides in big swell. Intermediate level. Popular local spot.",url:"https://www.google.com/maps/search/Sunset+Beach+Geraldton+surf"},
-  {c:"surf",area:"Horrocks",name:"Bowes River Mouth",desc:"Secluded reef break 8km east of Horrocks. Gravel road access. Intermediate-advanced.",url:"https://www.google.com/maps/search/Bowes+River+Horrocks+surf"},
-  // BREWERIES
-  {c:"brewery",area:"Exmouth",name:"Froth Craft Brewery",desc:"Award-winning craft brewery. 16 rotating taps, modern Aussie cuisine. Live music, beer yoga, community hub.",url:"https://www.frothbrewingco.com.au"},
-  {c:"brewery",area:"Exmouth",name:"Whalebone Brewing Co",desc:"Local beer brewed on-site plus Ningaloo Spirits distillery. Wood-fired pizza. Right on the doorstep of Ningaloo.",url:"https://www.whalebonebrewingcompany.com.au"},
-  {c:"brewery",area:"Kalbarri",name:"Finlay's Kalbarri",desc:"Microbrewery + restaurant. Won Best Lager at Perth Royal Show. Fresh local seafood. Live music Sundays.",url:"https://www.finlayskalbarri.com.au"},
-  {c:"brewery",area:"Geraldton",name:"30 Knots Spirits",desc:"Family-run handcrafted distillery. Award-winning rums, gins and vodkas. Shack built from reclaimed jetty timbers.",url:"https://www.google.com/maps/search/30+Knots+Spirits+Geraldton"},
-  {c:"brewery",area:"Jurien Bay",name:"Kakka Alley Brewing Co",desc:"Local microbrewery with town history theme. Great pizzas and chicken wings.",url:"https://www.google.com/maps/search/Kakka+Alley+Brewing+Jurien+Bay"},
-  // WINERIES
-  {c:"winery",area:"Geraldton",name:"Chapman Valley Wines",desc:"WA's most northern winery, 30km NE of Geraldton. Semillon, shiraz, cabernet. Est. 1995. Beautiful cellar door.",url:"https://www.google.com/maps/search/Chapman+Valley+Wines+Geraldton"},
-  // CAFES
-  {c:"cafe",area:"Jurien Bay",name:"Jurien Jetty Cafe",desc:"Overlooking the jetty. Affordable breakfast, lunch & dinner with great ocean views.",url:"https://www.google.com/maps/search/Jurien+Jetty+Cafe"},
-  {c:"cafe",area:"Cervantes",name:"Lobster Shack",desc:"Iconic! Rock lobster with garlic butter, Spanish mackerel and chips, Cervantes octopus. Ocean view deck.",url:"https://www.lobstershack.com.au"},
-  {c:"cafe",area:"Kalbarri",name:"Angie's Cafe",desc:"Kalbarri local favourite for breakfast and brunch. Good coffee and hearty meals.",url:"https://www.google.com/maps/search/Angies+Cafe+Kalbarri"},
-  {c:"cafe",area:"Kalbarri",name:"The Gorges Cafe & Restaurant",desc:"Highly recommended by locals. Great cafe downstairs + upstairs restaurant.",url:"https://www.google.com/maps/search/Gorges+Cafe+Kalbarri"},
-  {c:"cafe",area:"Denham",name:"Shark Bay Bakery",desc:"Great pies, pastries and coffee. Essential morning fuel stop in Denham.",url:"https://www.google.com/maps/search/Shark+Bay+Bakery+Denham"},
-  {c:"cafe",area:"Coral Bay",name:"Fins Cafe",desc:"Stacked breakfast and lunch menu. Alfresco dining, open 8am till late.",url:"https://www.ningaloocoralbay.com"},
-  {c:"cafe",area:"Coral Bay",name:"Sweet Ningaloo",desc:"Handcrafted artisan gelato. Natural, eco-friendly ingredients. Perfect beach treat!",url:"https://www.google.com/maps/search/Sweet+Ningaloo+Coral+Bay"},
-  {c:"cafe",area:"Exmouth",name:"Social Society Cafe",desc:"Vegetarian/vegan focused. Healthy breakfast and lunch. Great smoothies.",url:"https://www.thesocialsocietyexmouth.com.au"},
-  {c:"cafe",area:"Exmouth",name:"Adrift Cafe",desc:"Laid-back rustic fare with high-quality local ingredients. Eggs benny, salads, burgers.",url:"https://www.adriftcafe.com.au"},
-  {c:"cafe",area:"Exmouth",name:"Bungalow Barista",desc:"Recommended by friends! Great coffee. Cosy spot.",url:"https://www.google.com/maps/search/Bungalow+Barista+Exmouth"},
-  {c:"cafe",area:"Exmouth",name:"The BBQ Father",desc:"Southern BBQ + Italian wood-fired pizzas. Beef brisket, pork ribs, local ingredients. Unique!",url:"https://www.google.com/maps/search/BBQ+Father+Exmouth"},
-  {c:"cafe",area:"Carnarvon",name:"Carnarvon Coffee Co",desc:"Best coffee in Carnarvon. Essential fuel stop.",url:"https://www.google.com/maps/search/Carnarvon+Coffee+Co"},
-  {c:"cafe",area:"Northampton",name:"Galactic Espresso",desc:"Quirky coffee spot in Northampton. Good stop on the way to/from Horrocks.",url:"https://www.google.com/maps/search/Galactic+Espresso+Northampton"},
-  {c:"cafe",area:"Geraldton",name:"Skeetas Restaurant",desc:"Premium waterfront dining at Batavia Coast Marina. Fresh local seafood and views.",url:"https://www.google.com/maps/search/Skeetas+Restaurant+Geraldton"},
-  // NATURE
-  {c:"nature",area:"Kalbarri",name:"Pot Alley Beach",desc:"Hidden gem! Dramatic cliff-framed cove that few tourists find. Requires a short rocky scramble down.",url:"https://www.google.com/maps/search/Pot+Alley+Beach+Kalbarri"},
-  {c:"nature",area:"Kalbarri",name:"Z Bend Gorge",desc:"Steep scramble beyond the main lookout. Shade, solitude, and spectacular rock walls.",url:"https://www.exploreparks.dbca.wa.gov.au/park/kalbarri-national-park"},
-  {c:"nature",area:"Denham",name:"Little Lagoon",desc:"5km from Denham. Beautiful crystal-clear shallow lagoon. Perfect for families and small kids.",url:"https://www.google.com/maps/search/Little+Lagoon+Denham"},
-  {c:"nature",area:"Denham",name:"Hamelin Pool Stromatolites",desc:"Living fossils 3 BILLION years old. Boardwalk access. One of only 2 places on Earth!",url:"https://www.sharkbay.org/hamelin-pool/"},
-  {c:"nature",area:"Wooramel",name:"Artesian Bore Baths",desc:"Natural 33°C mineral water from 240m underground. Sit under the stars. Wear dark swimmers!",url:"https://www.wooramel.com.au"},
-  {c:"nature",area:"Exmouth",name:"Turquoise Bay",desc:"World-class drift snorkel. Crystal clear water, abundant marine life. Cape Range NP.",url:"https://www.exploreparks.dbca.wa.gov.au/park/cape-range-national-park"},
-  {c:"nature",area:"Exmouth",name:"Yardie Creek Gorge",desc:"Red limestone gorge meets turquoise water. Black-footed rock wallabies live here!",url:"https://www.exploreparks.dbca.wa.gov.au/park/cape-range-national-park"},
-  {c:"nature",area:"Exmouth",name:"Charles Knife Canyon",desc:"Spectacular lookout. Stop for views over Cape Range on the way into Exmouth.",url:"https://www.google.com/maps/search/Charles+Knife+Canyon+Exmouth"},
-  {c:"nature",area:"Quobba",name:"Quobba Blowholes",desc:"Ocean swells shoot 20m into the air through natural rock holes. Powerful and spectacular!",url:"https://www.australiascoralcoast.com/listing/quobba-blowholes/"},
-  {c:"nature",area:"Quobba",name:"Korean Star Shipwreck",desc:"1988 cargo ship still visible from shore. Eerie and fascinating piece of history.",url:"https://www.google.com/maps/search/Korean+Star+shipwreck+Quobba"},
-  {c:"nature",area:"Horrocks",name:"Pink Lake (Hutt Lagoon)",desc:"Vivid pink from Dunaliella Salina algae. Best viewed 10am–2pm. Near Port Gregory.",url:"https://www.google.com/maps/search/Hutt+Lagoon+Pink+Lake+Port+Gregory"},
-  {c:"nature",area:"Cervantes",name:"Pinnacles Desert",desc:"Thousands of limestone pillars rising from yellow sand. Otherworldly at sunrise or sunset.",url:"https://www.exploreparks.dbca.wa.gov.au/park/nambung-national-park"},
-  {c:"nature",area:"Jurien Bay",name:"Sandy Cape Sand Dunes",desc:"Rolling white dunes with direct beach access. Bring a sandboard for the kids!",url:"https://www.google.com/maps/search/Sandy+Cape+Jurien+Bay"},
-  // CULTURE
-  {c:"culture",area:"Carnarvon",name:"Space & Technology Museum",desc:"Carnarvon's tracking station supported NASA's Apollo missions including the 1969 moon landing!",url:"https://www.google.com/maps/search/Carnarvon+Space+Technology+Museum"},
-  {c:"culture",area:"Carnarvon",name:"One Mile Jetty",desc:"Historic 1897 jetty stretching into the Indian Ocean. Great views and maritime heritage.",url:"https://www.google.com/maps/search/One+Mile+Jetty+Carnarvon"},
-  {c:"culture",area:"Kalbarri",name:"Pelican Feeding",desc:"Daily at 8:45am on the Foreshore. Free (gold coin donation). Great fun for kids!",url:"https://www.australiascoralcoast.com/listing/kalbarri-pelican-feeding/"},
-  {c:"culture",area:"Geraldton",name:"HMAS Sydney II Memorial",desc:"Stunning memorial overlooking the sea. 645 sailors lost in WWII 1941. Moving and beautiful.",url:"https://www.google.com/maps/search/HMAS+Sydney+Memorial+Geraldton"},
-  // SHOPS
-  {c:"shop",area:"Carnarvon",name:"Gascoyne Growers Market",desc:"Saturday 8:30–11:30am. Local tropical fruits, homemade ice cream, honey, crafts.",url:"https://www.google.com/maps/search/Gascoyne+Growers+Market+Carnarvon"},
-  {c:"shop",area:"Kalbarri",name:"Kalbarri Art & Craft Gallery",desc:"Est. 1981 on Porter St. Textiles, pottery, kiln glass, paintings, woodwork.",url:"https://www.google.com/maps/search/Kalbarri+Art+Craft+Gallery"},
-  {c:"shop",area:"Exmouth",name:"The Ningaloo Gallery",desc:"Local Exmouth and WA artists. Various mediums. Great for unique souvenirs.",url:"https://www.google.com/maps/search/Ningaloo+Gallery+Exmouth"},
-  {c:"shop",area:"Northampton",name:"Storytellers – Keepers of the Dreaming",desc:"Aboriginal art & craft. Painting, basket weaving, wood carving, jewellery. Beautiful pieces.",url:"https://www.google.com/maps/search/Storytellers+Keepers+Dreaming+Northampton"}
-];
-
-
-// ===== AREA INFO =====
-const AI={
-  "Jurien Bay":{hist:"Named after French explorer Nicolas Baudin's ship 'La Naturaliste' which charted these waters in 1801. The town grew as a crayfish (rock lobster) fishing hub in the 1960s.",geo:"Protected bay with turquoise waters backed by white sand dunes. Part of the Jurien Bay Marine Park, one of WA's most diverse marine ecosystems.",wild:"Australian sea lions, bottlenose dolphins, penguins, diverse reef fish, seabirds.",facts:["World's largest sea lion colony at Jurien Island","Rock lobster capital of WA","Sand dune boarding available","One of only a few places in WA to see wild penguins","Ancient Aboriginal middens at Sandy Cape"]},
-  "Cervantes":{hist:"Named after an American whaling ship that was wrecked near here in 1844. The town was established in the 1960s, primarily as a rock lobster fishing port.",geo:"Coastal limestone town flanked by Nambung National Park. Famous for the Pinnacles Desert — thousands of limestone pillars rising from yellow sand.",wild:"Emus, kangaroos, reptiles in the Pinnacles. Marine life in the bay.",facts:["The Pinnacles are up to 5 metres tall","Pinnacles were mysterious to early Dutch sailors who thought they were a ruined city","Lobster Shack does free tours of their processing facility","Best Pinnacles viewing: sunrise or sunset when shadows are dramatic","Cervantes is the world's southernmost rock lobster industry centre"]},
-  "Kalbarri":{hist:"The Murchison River has carved spectacular gorges over millions of years. Kalbarri was settled in the 1950s and became famous for its stunning national park, which opened in 1963.",geo:"Where the Murchison River meets the Indian Ocean. Dramatic red-sandstone gorges, coastal cliffs, and pristine beaches stretch for kilometres.",wild:"Kangaroos, emus, black cockatoos, wedge-tailed eagles, ospreys, pelicans, dolphins.",facts:["The Skywalk extends 100m over a 100m drop!","Morning pelican feeding at 8:45am is free","Kalbarri has some of WA's best wildflower displays (Aug–Oct)","The Murchison River is 820km long — WA's second longest","Kalbarri town was only accessible by boat until 1963"]},
-  "Denham":{hist:"The most westerly town in Australia. Named after Henry Mangles Denham, British Royal Navy captain who surveyed Shark Bay in 1858. Pearling and fishing heritage.",geo:"Located on the eastern shore of Peron Peninsula in Shark Bay. UNESCO World Heritage area with extraordinary seagrasses, stromatolites, and wildlife.",wild:"Dolphins at Monkey Mia, dugongs (largest population on Earth), sea turtles, tiger sharks, hammerhead sharks, rays, humpback whales (Jul–Nov).",facts:["Shark Bay is 1 of only 4 places with living stromatolites on Earth","Dugong population here is 12,000+","Shell Beach is made of 10 billion cockle shells 10m deep","Shark Bay has 12% of all Earth's seagrass","Average depth of Shark Bay is only 9 metres"]},
-  "Monkey Mia":{hist:"Dolphins began approaching boats here in the 1960s, and a marine reserve was created in 1996. Now one of Australia's top wildlife attractions. The name origin is disputed — possibly from a pearling lugger.",geo:"Small resort area on the eastern tip of Peron Peninsula. Shallow turquoise waters perfect for wild dolphin interactions.",wild:"Indo-Pacific bottlenose dolphins (daily interactions), dugongs, turtles, rays, sea eagles.",facts:["Dolphin interactions happen at 7:45am, 9:15am, and 12pm (weather permitting)","Only 5 dolphins regularly interact with people","Monkey Mia has been rated among the world's top 10 wildlife experiences","The water is so clear you can see 10m down","Dolphins were first hand-fed here in 1964"]},
-  "Wooramel":{hist:"Wooramel Station has been a working sheep and cattle station since the 1870s. The artesian bore has provided natural hot water for generations of travellers.",geo:"Remote outback station 150km north of Carnarvon. Gascoyne River floodplains meet the semi-arid station country.",wild:"Wedge-tailed eagles, galahs, kangaroos, emus, lizards, snakes.",facts:["The artesian bore reaches 240m underground","Water temperature is a constant 33°C year-round","Wooramel runs 25,000 sheep on 280,000 hectares","Don't wear light-coloured swimmers — the minerals stain!","The Gascoyne River only flows above ground for a few weeks a year"]},
-  "Coral Bay":{hist:"Coral Bay was known only to fishermen and divers until the 1980s. Declared part of Ningaloo Marine Park in 1987. Tourism has grown dramatically since the 1990s.",geo:"Small holiday town on the edge of the Ningaloo Reef — the world's longest fringing reef. Crystal clear, sheltered waters perfect for snorkelling.",wild:"Manta rays, whale sharks (March–July), turtles, reef sharks, giant trevally, hawkfish, parrotfish, dugongs.",facts:["Ningaloo Reef is 260km long — the world's longest fringing reef","You can snorkel straight off the beach here — reef is 100m from shore","Whale shark season is March–July — biggest fish on Earth!","Coral Bay has permanent population of only ~200 people","Water visibility can exceed 40 metres"]},
-  "Exmouth":{hist:"Exmouth was purpose-built as a US naval communications base in 1967 (Harold E. Holt Naval Communication Station). The town grew around this. The US military left in 1992.",geo:"Cape Range Peninsula — rugged limestone ranges meeting the turquoise Ningaloo Reef on the west coast. Gulf of Exmouth on the east coast.",wild:"Whale sharks, manta rays, turtles, dugongs, dolphins, reef fish, humpback whales, rock wallabies at Yardie Creek.",facts:["Exmouth has the most northerly vineyards in WA","Harold E. Holt was Australia's PM who disappeared swimming in 1967 — the base was named after him!","Cape Range NP protects WA's only true canyon country","Turquoise Bay is consistently voted WA's most beautiful beach","Exmouth population is only ~3,500 but receives 300,000 visitors/year"]},
-  "Quobba":{hist:"Quobba Station is a remote coastal station famous for its spectacular blowholes and the wreck of the Korean Star cargo vessel, which grounded here in 1988.",geo:"Remote red-dirt coastal station country. Wild ocean meets ancient limestone cliffs. The blowholes are created by sea caves with narrow openings.",wild:"Humpback whales (Jul–Nov), spinner dolphins, sea turtles, seabirds, reef fish.",facts:["'Blow 5' is the most spectacular blowhole — shoots water 20m high","The Korean Star ran aground in heavy seas in 1988 — the crew was rescued by helicopter","Red Bluff is a legendary surf break rated in WA's top 5","Quobba means 'deep water' in the local Malgana language","Some of WA's best fishing — snapper, coral trout, Spanish mackerel"]},
-  "Horrocks":{hist:"A sleepy fishing village named after explorer John Alonzo Horrocks, who led an expedition through the area in 1846. Famous for the stunning pink lake at nearby Port Gregory.",geo:"Sheltered bay with good reef breaks. Hutt Lagoon (the famous pink lake) is 8km north at Port Gregory.",wild:"Dolphins, reef fish, migratory seabirds, flamingos have occasionally been spotted at the pink lake.",facts:["Hutt Lagoon turns pink due to Dunaliella Salina algae — best viewed 10am–2pm","The pink lake is used for beta-carotene production","Horrocks has permanent population of only ~120 people","Local legend says the beach sand is mixed with pink from the lake","The reef here produces some of WA's best crayfish"]},
-  "Carnarvon":{hist:"Carnarvon was established in 1883 as a port for pastoral stations. It became famous when NASA built a tracking station here in 1964, which supported the Apollo moon landings.",geo:"At the mouth of the Gascoyne River. The river's unique subterranean flow allows tropical fruit farming in a semi-arid climate. Indian Ocean to the west.",wild:"Humpback whales offshore, dugongs, dolphins, migratory seabirds, fruit bats.",facts:["Carnarvon's tracking station received telemetry from Apollo 11 — first Moon landing 1969","The Gascoyne River has underground water even when the surface is dry","Carnarvon produces bananas, tomatoes, capsicums, mangoes — year-round","One Mile Jetty was built in 1897 and is 1,534 metres long","Carnarvon Fruit Loop is a 16km self-drive trail past fruit stalls"]},
-  "Perth":{hist:"Founded in 1829 as the Swan River Colony. Named after Perth, Scotland. It's the most isolated major city in the world, closer to Singapore than to Sydney.",geo:"Spread along the Swan River and Indian Ocean coast. City centre plus beaches like Cottesloe, Scarborough. World's sunniest capital city.",wild:"Black swans (the state emblem), dolphins in the Swan River, quokkas on Rottnest Island.",facts:["Perth is closer to Singapore (3,900km) than to Sydney (4,100km)","The black swan was previously thought impossible — hence 'black swan event'","Rottnest Island's quokkas are considered the happiest animals in the world","Perth has more sunshine hours than any other Australian capital","Kings Park is one of the world's largest inner-city parks at 400 hectares"]}
+// ── FUEL STOPS PER DAY ──────────────────────────────────
+const FUEL = {
+  1:{warn:"Fill up in Perth before you leave — metro prices are cheapest!",stops:[
+    {name:"BP Wanneroo Road",brand:"BP",brandColor:"#006600",addr:"Multiple locations, Northern Perth",ph:"",url:"https://www.google.com/maps/search/BP+diesel+Wanneroo+Perth",imp:true,note:"Fill up here — best prices on route north"},
+    {name:"Cervantes Service Station",brand:"Independent",brandColor:"#888",addr:"Cervantes Road, Cervantes",ph:"08 9652 7023",url:"https://www.google.com/maps/search/Cervantes+Service+Station",imp:false,note:"Top up if below half"}
+  ]},
+  2:{warn:"Top up in Jurien Bay before heading north.",stops:[
+    {name:"Jurien Bay Caltex",brand:"Caltex",brandColor:"#e31837",addr:"Bashford Street, Jurien Bay",ph:"08 9652 1466",url:"https://www.google.com/maps/search/Caltex+Jurien+Bay+diesel",imp:true,note:"Fill up here"}
+  ]},
+  3:{warn:"⚠️ Fill in Geraldton — it's the last big city. Northampton is the final stop before Kalbarri.",stops:[
+    {name:"United Petroleum Geraldton",brand:"United",brandColor:"#1a1a6e",addr:"Marine Terrace, Geraldton",ph:"",url:"https://www.google.com/maps/search/diesel+fuel+Geraldton+WA",imp:true,note:"Fill up fully here"},
+    {name:"Northampton Roadhouse",brand:"Roadhouse",brandColor:"#666",addr:"Midlands Road, Northampton",ph:"08 9934 1075",url:"https://www.google.com/maps/search/Northampton+Roadhouse",imp:true,note:"⛽ Last fuel before Kalbarri — 83km ahead"}
+  ]},
+  4:{warn:"",stops:[
+    {name:"Kalbarri Service Station",brand:"Independent",brandColor:"#888",addr:"Porter Street, Kalbarri",ph:"08 9937 1203",url:"https://www.google.com/maps/search/Kalbarri+service+station+diesel",imp:false,note:"Top up before leaving town"}
+  ]},
+  5:{warn:"🚨 CRITICAL: Overlander Roadhouse is the ONLY fuel between Kalbarri and Denham (320km). Do not skip it.",stops:[
+    {name:"Overlander Roadhouse",brand:"Roadhouse",brandColor:"#666",addr:"North West Coastal Hwy, Overlander",ph:"08 9942 5916",url:"https://www.google.com/maps/search/Overlander+Roadhouse+WA",imp:true,note:"🚨 Cannot skip this stop — fill completely"},
+    {name:"Denham Service Station",brand:"Independent",brandColor:"#888",addr:"Knight Terrace, Denham",ph:"08 9948 1222",url:"https://www.google.com/maps/search/Denham+service+station",imp:false,note:"Top up on arrival"}
+  ]},
+  6:{warn:"",stops:[
+    {name:"Denham Service Station",brand:"Independent",brandColor:"#888",addr:"Knight Terrace, Denham",ph:"08 9948 1222",url:"https://www.google.com/maps/search/Denham+service+station",imp:false,note:"Fill before Monkey Mia day"}
+  ]},
+  7:{warn:"",stops:[
+    {name:"Denham Service Station",brand:"Independent",brandColor:"#888",addr:"Knight Terrace, Denham",ph:"08 9948 1222",url:"https://www.google.com/maps/search/Denham+service+station",imp:true,note:"Fill before leaving Shark Bay — remote roads ahead"}
+  ]},
+  8:{warn:"⚠️ Fill in Carnarvon on the way through — key diesel hub before heading further north.",stops:[
+    {name:"BP Carnarvon",brand:"BP",brandColor:"#006600",addr:"Robinson Street, Carnarvon",ph:"08 9941 1053",url:"https://www.google.com/maps/search/BP+Carnarvon+diesel",imp:true,note:"Fill up fully here"},
+    {name:"Wooramel Roadhouse",brand:"Roadhouse",brandColor:"#666",addr:"North West Coastal Hwy, Wooramel",ph:"08 9942 5968",url:"https://www.google.com/maps/search/Wooramel+Roadhouse",imp:false,note:"En route — top up available"}
+  ]},
+  9:{warn:"⚠️ Minilya Roadhouse is your only fuel between Carnarvon and Coral Bay. Coral Bay fuel is expensive and limited.",stops:[
+    {name:"Minilya Roadhouse",brand:"Roadhouse",brandColor:"#666",addr:"North West Coastal Hwy, Minilya",ph:"08 9942 5922",url:"https://www.google.com/maps/search/Minilya+Roadhouse",imp:true,note:"⚠️ Fill here — last reasonable fuel before Coral Bay"},
+    {name:"Coral Bay Servo",brand:"Independent",brandColor:"#888",addr:"Robinson Street, Coral Bay",ph:"08 9942 5988",url:"https://www.google.com/maps/search/Coral+Bay+fuel+station",imp:false,note:"Emergency top-up only — very high prices"}
+  ]},
+  10:{warn:"Coral Bay fuel is limited and expensive. Top up if below half.",stops:[
+    {name:"Coral Bay Servo",brand:"Independent",brandColor:"#888",addr:"Robinson Street, Coral Bay",ph:"08 9942 5988",url:"https://www.google.com/maps/search/Coral+Bay+fuel+station",imp:false,note:"Top up before Exmouth leg"}
+  ]},
+  11:{warn:"",stops:[
+    {name:"Exmouth BP",brand:"BP",brandColor:"#006600",addr:"Maidstone Crescent, Exmouth",ph:"08 9949 1877",url:"https://www.google.com/maps/search/BP+Exmouth+diesel",imp:false,note:"Multiple servos in town — best prices on the trip north"},
+    {name:"Exmouth Caltex",brand:"Caltex",brandColor:"#e31837",addr:"Maidstone Crescent, Exmouth",ph:"",url:"https://www.google.com/maps/search/Caltex+Exmouth",imp:false,note:""}
+  ]},
+  12:{warn:"🚨 Fill completely in Exmouth before heading to Quobba. NO fuel at Quobba Station.",stops:[
+    {name:"Exmouth BP",brand:"BP",brandColor:"#006600",addr:"Maidstone Crescent, Exmouth",ph:"08 9949 1877",url:"https://www.google.com/maps/search/BP+Exmouth+diesel",imp:true,note:"🚨 Fill COMPLETELY — no fuel at Quobba"}
+  ]},
+  13:{warn:"🚨 Carnarvon is your ONLY diesel stop. Quobba Station has zero fuel. Call ahead if unsure.",stops:[
+    {name:"BP Carnarvon",brand:"BP",brandColor:"#006600",addr:"Robinson Street, Carnarvon",ph:"08 9941 1053",url:"https://www.google.com/maps/search/BP+Carnarvon+diesel",imp:true,note:"🚨 Last fuel before Quobba — absolutely fill up"},
+    {name:"Caltex Carnarvon",brand:"Caltex",brandColor:"#e31837",addr:"Robinson Street, Carnarvon",ph:"",url:"https://www.google.com/maps/search/Caltex+Carnarvon",imp:false,note:"Also has diesel"}
+  ]},
+  14:{warn:"Horrocks has no servo. Northampton Roadhouse is your fuel stop en route.",stops:[
+    {name:"Northampton Roadhouse",brand:"Roadhouse",brandColor:"#666",addr:"Midlands Road, Northampton",ph:"08 9934 1075",url:"https://www.google.com/maps/search/Northampton+Roadhouse",imp:true,note:"Fill here — Horrocks has NO fuel"}
+  ]},
+  15:{warn:"",stops:[
+    {name:"Northampton Roadhouse",brand:"Roadhouse",brandColor:"#666",addr:"Midlands Road, Northampton",ph:"08 9934 1075",url:"https://www.google.com/maps/search/Northampton+Roadhouse",imp:false,note:"Top up before heading south"}
+  ]},
+  16:{warn:"",stops:[
+    {name:"BP Geraldton",brand:"BP",brandColor:"#006600",addr:"Marine Terrace, Geraldton",ph:"",url:"https://www.google.com/maps/search/BP+Geraldton+diesel",imp:false,note:"Plenty of options in Geraldton"},
+    {name:"Cervantes Service Station",brand:"Independent",brandColor:"#888",addr:"Cervantes Road, Cervantes",ph:"08 9652 7023",url:"https://www.google.com/maps/search/Cervantes+Service+Station",imp:false,note:""}
+  ]},
+  17:{warn:"",stops:[
+    {name:"Jurien Bay Caltex",brand:"Caltex",brandColor:"#e31837",addr:"Bashford Street, Jurien Bay",ph:"08 9652 1466",url:"https://www.google.com/maps/search/Caltex+Jurien+Bay+diesel",imp:false,note:"Top up for final run home"},
+    {name:"BP Wanneroo",brand:"BP",brandColor:"#006600",addr:"Northern suburbs, Perth",ph:"",url:"https://www.google.com/maps/search/BP+diesel+northern+Perth",imp:false,note:"Plenty of options back in Perth"}
+  ]}
 };
 
-// ===== FAMILIES =====
-const FAM=[
-  {name:"Fortescue",color:"#F59E0B",emoji:"🦁",dad:"Michael (Forty)",dadPh:"0405 223 423",mum:"Laetitia (Tici)",mumPh:"0450 619 593",kids:["Julian (10)","William (7)"],van:"Maui River Elite #1",note:"Trip captain! All queries go to Forty first."},
-  {name:"Walker",color:"#0EA5E9",emoji:"🐬",dad:"Matthew (Matty)",dadPh:"0420 887 889",mum:"Anna",mumPh:"0415 165 477",kids:["Byron (12)","Josh (11)"],van:"Maui River Elite #2",note:""},
-  {name:"Woolcott",color:"#10B981",emoji:"🦘",dad:"Mark (Pokes)",dadPh:"0403 618 826",mum:"Hannah",mumPh:"0431 348 492",kids:["Blayk (11)"],van:"Maui River Elite #3",note:""},
-  {name:"Conroy",color:"#8B5CF6",emoji:"🐠",dad:"Bruce",dadPh:"0467 801 941",mum:"Paula",mumPh:"0435 465 504",kids:["Leo (11)","Isla (9)"],van:"Maui River Elite #4",note:""},
-  {name:"Wilson",color:"#F43F5E",emoji:"🌺",dad:"Kevin (Kev)",dadPh:"0413 388 803",mum:"Samantha (Sam)",mumPh:"0428 055 824",kids:["Aria (11 on Apr 10! 🎂)","Conor (7)"],van:"Maui River Elite #5",note:"Happy birthday Aria on April 10! 🎉"}
-];
-const BROKER={name:"Sarah Feldman",ph:"0426 162 776",email:"sarah@campervanrentalshop.com.au",addr:"2 Redcliffe Road, Redcliffe Perth 6104",hours:"9am–3pm"};
-
-// ===== ACTIVITIES =====
-const ACT=[
-  {cat:"snorkel",name:"Ningaloo Reef Snorkel Cruise",area:"Coral Bay",op:"Ningaloo Reef Dive & Snorkel",ph:"(08) 9942 5851",url:"https://www.ningalooreef.com.au",note:"Book ahead — fills fast in peak season"},
-  {cat:"snorkel",name:"Manta Ray Snorkel Tour",area:"Coral Bay",op:"Coral Bay Adventures",ph:"(08) 9942 5955",url:"https://www.coralbaywatersports.com.au",note:"Morning and afternoon tours available"},
-  {cat:"snorkel",name:"Whale Shark Swim",area:"Exmouth",op:"Three Islands Whale Shark Dive",ph:"(08) 9949 2403",url:"https://www.threeislands.com.au",note:"March–July season. Spotter plane guides you to the sharks!"},
-  {cat:"snorkel",name:"Turquoise Bay Drift Snorkel",area:"Exmouth",op:"Self-guided (Cape Range NP)",ph:"",url:"https://www.exploreparks.dbca.wa.gov.au/park/cape-range-national-park",note:"Enter upstream, drift down. $20 NP day pass required."},
-  {cat:"dolphin",name:"Monkey Mia Dolphin Interaction",area:"Monkey Mia",op:"Monkey Mia Dolphin Resort",ph:"1800 241 424",url:"https://www.monkeymia.com.au",note:"Free with resort entry. 7:45am first interaction."},
-  {cat:"4wd",name:"Francois Peron National Park 4WD",area:"Denham",op:"Self-drive",ph:"",url:"https://www.exploreparks.dbca.wa.gov.au/park/francois-peron-national-park",note:"Let tyres down to 18psi. Compressor at park entry. Return same day."},
-  {cat:"kayak",name:"Kayak Kalbarri Gorge",area:"Kalbarri",op:"Kalbarri Abseil & Adventures",ph:"0427 995 123",url:"https://www.kalbarriabseil.com.au",note:"Full moon paddles available on request"},
-  {cat:"fishing",name:"Deep Sea Fishing Charter",area:"Kalbarri",op:"Kalbarri Sport Fishing",ph:"(08) 9937 1111",url:"https://www.google.com/maps/search/Kalbarri+Sport+Fishing",note:"Coral trout, snapper, tuna in season"},
-  {cat:"fishing",name:"Horrocks Reef Fishing",area:"Horrocks",op:"Self-guided from beach/rocks",ph:"",url:"https://www.fishingwa.com",note:"Best at dawn and dusk. Local knowledge — ask at caravan park."},
-  {cat:"adventure",name:"Kalbarri Skywalk",area:"Kalbarri",op:"Kalbarri National Park",ph:"(08) 9937 1140",url:"https://www.exploreparks.dbca.wa.gov.au/park/kalbarri-national-park",note:"100m cantilevered over a 100m drop. Jaw-dropping!"},
-  {cat:"adventure",name:"Kalbarri Abseil",area:"Kalbarri",op:"Kalbarri Abseil & Adventures",ph:"0427 995 123",url:"https://www.kalbarriabseil.com.au",note:"Morning sessions. Kids from 8 years old OK."},
-  {cat:"tour",name:"Cervantes Pinnacles Tour (self-drive)",area:"Cervantes",op:"Nambung National Park",ph:"",url:"https://www.exploreparks.dbca.wa.gov.au/park/nambung-national-park",note:"Sunrise and sunset are magic. Watch for emus on the road."},
-  {cat:"tour",name:"Shell Beach Walk",area:"Denham",op:"Self-guided",ph:"",url:"https://www.sharkbay.org/shell-beach/",note:"10 billion shells 10m deep. One of only 2 hyper-saline shell beaches on Earth."},
-  {cat:"tour",name:"Carnarvon Space & Tech Museum",area:"Carnarvon",op:"Carnarvon Space & Technology Museum",ph:"(08) 9941 9165",url:"https://www.google.com/maps/search/Carnarvon+Space+Technology+Museum",note:"Open daily. Supported NASA Apollo 11 moon landing."}
-];
-
-// ===== CONVOY PLAN =====
-const CONVOY={
-  rules:["Lead van: Fortescue (Forty). All decisions go via Forty.","Safety van: Wilson at the rear. Phone Kev if you see anything wrong.","CB radio channel: Ch 40 (standard highway). Switch to Ch 18 for chatter.","Speed: Keep to 110 max. Gap of 3–4 van lengths on highways.","Rest stops: Every 1.5–2 hours. Leader signals right to pull over.","Fuel: Fill up TOGETHER — never let anyone fall below ¼ tank in remote areas.","Breakdowns: Hazard lights on, pull fully off road, call Forty and Sarah (broker).","Emergency: 000 first, then Forty, then Sarah Feldman 0426 162 776."],
-  comms:["WhatsApp group: 'WA Trip 2026' — primary comms","CB Radio Ch 40 — on highway","Sarah Feldman (broker) 0426 162 776 — 24hr emergency"],
-  remote:["Exmouth → Quobba → Horrocks leg is most remote. Fuel at Carnarvon is MUST before heading north.","Quobba Station road is unsealed — reduce to 80km/h. No overtaking on gravel.","Wooramel to Horrocks: carry 2x extra 20L jerry cans of fuel per van."]
+// ── ACTIVITIES PER DAY ──────────────────────────────────
+const ACTS = {
+  1:{booked:[
+    {icon:"🚐",name:"Campervan Pickup",time:"9:00am",op:"Campervan Rental Shop",ph:"0426 162 776",url:"https://www.google.com/maps/search/2+Redcliffe+Road+Redcliffe+Perth",note:"Sarah Feldman · 2 Redcliffe Rd, Redcliffe"}
+  ],optional:[
+    {icon:"🦭",name:"Jurien Bay Sea Lion Colony",desc:"Snorkel with wild Australian sea lions at Jurien Bay Marine Park. World-class experience.",url:"https://www.jurienbay.com.au"},
+    {icon:"🏔️",name:"Sandy Cape Sand Dunes",desc:"Rolling white dunes — bring a bodyboard to sandboard down. Kids will go nuts.",url:"https://www.google.com/maps/search/Sandy+Cape+Jurien+Bay"},
+    {icon:"🗿",name:"Pinnacles Desert (quick stop)",desc:"If you make good time — the Pinnacles are 20min south of Cervantes. Otherworldly at sunset.",url:"https://www.exploreparks.dbca.wa.gov.au/park/nambung-national-park"}
+  ]},
+  2:{booked:[],optional:[
+    {icon:"🦭",name:"Sea Lion Snorkel Tour",desc:"Swim with wild sea lions. Book at Jurien Bay Dive and Snorkel. 9am & 1pm departures.",url:"https://www.jurienbay.com.au"},
+    {icon:"🪁",name:"Sandboard the Sandy Cape Dunes",desc:"Rent boards from the caravan park or bring bodyboards. Kids love it.",url:"https://www.google.com/maps/search/Sandy+Cape+Jurien+Bay"},
+    {icon:"🎣",name:"Fish from the Jetty",desc:"Whiting, garfish, herring in the bay. BYO rods or hire from the park.",url:"https://www.google.com/maps/search/Jurien+Bay+Jetty"},
+    {icon:"🐧",name:"Little Penguin Walk (evening)",desc:"One of the few mainland penguin colonies in WA — they come ashore at dusk.",url:"https://www.jurienbay.com.au"}
+  ]},
+  3:{booked:[],optional:[
+    {icon:"🚢",name:"HMAS Sydney II Memorial",desc:"Powerful war memorial overlooking the sea in Geraldton. 645 sailors lost 1941. Allow 1 hour.",url:"https://www.google.com/maps/search/HMAS+Sydney+Memorial+Geraldton"},
+    {icon:"🌅",name:"Kalbarri Sunset Walk",desc:"Walk the cliff-top trails at sunset — the reds and oranges are insane.",url:"https://www.google.com/maps/search/Kalbarri+cliffs+walk"}
+  ]},
+  4:{booked:[],optional:[
+    {icon:"🦅",name:"Kalbarri Skywalk ⭐",desc:"100m cantilever over a 100m gorge drop. Opens 9am. $12 adults. Jaw-dropping!",url:"https://www.exploreparks.dbca.wa.gov.au/park/kalbarri-national-park"},
+    {icon:"🐦",name:"Pelican Feeding — 8:45am sharp!",desc:"Free (gold coin donation). Daily on the Foreshore. Don't be late — it's fast!",url:"https://www.australiascoralcoast.com/listing/kalbarri-pelican-feeding/"},
+    {icon:"🧗",name:"Kalbarri Abseil",desc:"Kids 8+ welcome. Morning sessions. Book via Kalbarri Abseil & Adventures.",url:"https://www.kalbarriabseil.com.au"},
+    {icon:"🚣",name:"Kayak the Murchison Gorge",desc:"Paddle through ancient gorge walls. Kalbarri Abseil & Adventures. 0427 995 123",url:"https://www.kalbarriabseil.com.au"},
+    {icon:"👀",name:"Nature's Window & Z Bend",desc:"Iconic photo spot — frames the gorge perfectly. 30min walk return from carpark.",url:"https://www.exploreparks.dbca.wa.gov.au/park/kalbarri-national-park"}
+  ]},
+  5:{booked:[],optional:[
+    {icon:"🪨",name:"Hamelin Pool Stromatolites",desc:"Living fossils 3.5 BILLION years old. Only 2 places on Earth. Boardwalk walk. 1 hour.",url:"https://www.sharkbay.org/hamelin-pool/"},
+    {icon:"🐚",name:"Shell Beach",desc:"10 billion cockle shells 10 metres deep. Walk, swim, wade in hyper-saline water.",url:"https://www.sharkbay.org/shell-beach/"},
+    {icon:"🦅",name:"Eagle Bluff Lookout",desc:"Stunning coastal lookout — spot dugongs, rays and sharks from above.",url:"https://www.google.com/maps/search/Eagle+Bluff+Shark+Bay"}
+  ]},
+  6:{booked:[],optional:[
+    {icon:"💎",name:"Little Lagoon",desc:"5km from town. Crystal shallow lagoon — perfect for the little kids. Kayaks available.",url:"https://www.google.com/maps/search/Little+Lagoon+Denham"},
+    {icon:"🚙",name:"Francois Peron 4WD",desc:"Let tyres down to 18psi at the gate. Stunning red-dirt desert meeting turquoise sea.",url:"https://www.exploreparks.dbca.wa.gov.au/park/francois-peron-national-park"},
+    {icon:"♨️",name:"Peron Homestead Hot Tub",desc:"Natural artesian bore hot tub at the old homestead — families love it.",url:"https://www.google.com/maps/search/Peron+Homestead+hot+tub+Shark+Bay"}
+  ]},
+  7:{booked:[
+    {icon:"🐬",name:"Dolphin Interaction #1 — 7:45am",time:"7:45am",op:"Monkey Mia Dolphin Resort",ph:"1800 241 424",url:"https://www.monkeymia.com.au",note:"Free with resort entry fee. Be there 15 min early."},
+    {icon:"🐬",name:"Dolphin Interaction #2 — 9:15am",time:"9:15am",op:"Monkey Mia Dolphin Resort",ph:"1800 241 424",url:"https://www.monkeymia.com.au",note:"Second feeding if dolphins return."}
+  ],optional:[
+    {icon:"🛶",name:"Kayak with Dolphins",desc:"Self-guided kayak in the bay. Hire from the resort. Dugongs often seen!",url:"https://www.monkeymia.com.au"},
+    {icon:"🦈",name:"Dugong & Wildlife Cruise",desc:"Boat cruise to spot dugongs (12,000 live here!), tiger sharks, sea turtles.",url:"https://www.monkeymia.com.au"}
+  ]},
+  8:{booked:[],optional:[
+    {icon:"♨️",name:"Wooramel Artesian Bore Bath",desc:"33°C mineral water from 240m underground. Wear dark swimmers — minerals stain!",url:"https://www.wooramel.com.au"},
+    {icon:"🌟",name:"Stargazing at Wooramel",desc:"Zero light pollution. Download Stellarium app. Find the Milky Way core — spectacular.",url:"https://stellarium.org"}
+  ]},
+  9:{booked:[],optional:[
+    {icon:"🤿",name:"Reef Snorkel off the Beach",desc:"Ningaloo Reef starts just 100m from shore. Grab fins and go — no boat needed!",url:"https://www.ningaloocoralbay.com"},
+    {icon:"🦈",name:"Coral Bay Boat Tours",desc:"Glass-bottom boat, snorkel tours, manta ray swims. Book on arrival at the main beach.",url:"https://www.coralbaywatersports.com.au"}
+  ]},
+  10:{booked:[
+    {icon:"🦅",name:"Manta Ray Snorkel Tour",time:"8:00am",op:"Coral Bay Adventures",ph:"08 9942 5955",url:"https://www.coralbaywatersports.com.au",note:"Book ahead — fills fast. Morning tour departs 8am."}
+  ],optional:[
+    {icon:"🐢",name:"Turtle Nesting Beach Walk",desc:"Green and hawksbill turtles nest here Oct–Mar. Check with resort for guided walks.",url:"https://www.ningaloocoralbay.com"},
+    {icon:"🏄",name:"Coral Bay Sunset Watch",desc:"The bay faces west for perfect sunsets. Bring wine and cheese.",url:"https://www.google.com/maps/search/Coral+Bay+beach+sunset"}
+  ]},
+  11:{booked:[],optional:[
+    {icon:"🤿",name:"Turquoise Bay Drift Snorkel ⭐",desc:"World-class drift snorkel. Enter upstream, drift over the reef, repeat. $20 NP day pass.",url:"https://www.exploreparks.dbca.wa.gov.au/park/cape-range-national-park"},
+    {icon:"🌅",name:"Vlamingh Head Lighthouse Sunset",desc:"THE iconic sundowner spot for Exmouth. 360° views. Bring drinks.",url:"https://www.google.com/maps/search/Vlamingh+Head+Lighthouse+Exmouth"},
+    {icon:"🦘",name:"Yardie Creek Gorge",desc:"Red limestone gorge — boat tours up the creek. Black-footed rock wallabies visible from shore.",url:"https://www.exploreparks.dbca.wa.gov.au/park/cape-range-national-park"}
+  ]},
+  12:{booked:[
+    {icon:"🦈",name:"Whale Shark Swim (if booked)",time:"6:00am",op:"Three Islands Whale Shark Dive",ph:"08 9949 2403",url:"https://www.threeislands.com.au",note:"March–July season. Spotter plane finds them. Life-changing experience!"}
+  ],optional:[
+    {icon:"🤿",name:"Turquoise Bay (again — it's that good)",desc:"If you didn't get enough yesterday, come back. Different light in the morning.",url:"https://www.exploreparks.dbca.wa.gov.au/park/cape-range-national-park"},
+    {icon:"🌊",name:"Charles Knife Canyon Lookout",desc:"Dramatic lookout over the Cape Range on the way in/out. 5 min stop.",url:"https://www.google.com/maps/search/Charles+Knife+Canyon+Exmouth"},
+    {icon:"🍺",name:"Froth Craft Brewery",desc:"Award-winning local brewery. 16 taps, great food, live music.",url:"https://www.frothbrewingco.com.au"}
+  ]},
+  13:{booked:[],optional:[
+    {icon:"💨",name:"Quobba Blowholes",desc:"Ocean swells shoot 20m into the air through natural rock holes. Dramatic!",url:"https://www.australiascoralcoast.com/listing/quobba-blowholes/"},
+    {icon:"🚢",name:"Korean Star Shipwreck",desc:"1988 cargo ship visible from shore. Eerie and fascinating.",url:"https://www.google.com/maps/search/Korean+Star+shipwreck+Quobba"},
+    {icon:"🏄",name:"Red Bluff Surf",desc:"WA's top 5 surf breaks. Long right-hander off the point. Intermediate+",url:"https://www.google.com/maps/search/Red+Bluff+Quobba+surf"}
+  ]},
+  14:{booked:[],optional:[
+    {icon:"🎂",name:"ARIA'S BIRTHDAY MORNING SURPRISE",desc:"Decorations, balloons, breakfast in bed — make it magical from the moment she wakes up!",url:""},
+    {icon:"🌸",name:"Hutt Lagoon Pink Lake",desc:"Vivid pink from Dunaliella algae. Best 10am–2pm. 8km north at Port Gregory.",url:"https://www.google.com/maps/search/Hutt+Lagoon+Pink+Lake+Port+Gregory"},
+    {icon:"🎉",name:"Birthday Dinner Party",desc:"Set up the campsite beautifully. Birthday cake, streamers, party games, the works!",url:""}
+  ]},
+  15:{booked:[],optional:[
+    {icon:"🤿",name:"Horrocks Reef Snorkel",desc:"Clear water reef right off the beach. Good variety of fish and coral.",url:"https://www.google.com/maps/search/Horrocks+reef+snorkel"},
+    {icon:"🌸",name:"Hutt Lagoon Pink Lake (if missed Day 14)",desc:"Only 8km to Port Gregory. Don't leave without seeing this.",url:"https://www.google.com/maps/search/Hutt+Lagoon+Pink+Lake"},
+    {icon:"🎣",name:"Horrocks Beach Fishing",desc:"Dawn and dusk are best. Snapper, trevally, tailor off the rocks and beach.",url:"https://www.google.com/maps/search/Horrocks+fishing"}
+  ]},
+  16:{booked:[],optional:[
+    {icon:"🗿",name:"Pinnacles Desert at Sunset",desc:"If you haven't done it yet — this is your last chance. Magical at golden hour.",url:"https://www.exploreparks.dbca.wa.gov.au/park/nambung-national-park"},
+    {icon:"🦞",name:"Lobster Shack Cervantes — Last Dinner!",desc:"Celebrate the trip with fresh crayfish! Ocean view deck. Book ahead.",url:"https://www.lobstershack.com.au"}
+  ]},
+  17:{booked:[
+    {icon:"🚐",name:"Campervan Return",time:"by 3:00pm",op:"Campervan Rental Shop",ph:"0426 162 776",url:"https://www.google.com/maps/search/2+Redcliffe+Road+Redcliffe+Perth",note:"2 Redcliffe Rd, Redcliffe. Sarah Feldman."}
+  ],optional:[
+    {icon:"🥂",name:"Trip Recap Drinks (Perth)",desc:"Find a bar in Perth and toast to an epic adventure!",url:"https://www.google.com/maps/search/bars+Perth+CBD"}
+  ]}
 };
 
-// ===== MEALS =====
-const MEALS=[
-  {meal:"BBQ Night #1",loc:"Jurien Bay caravan park",desc:"Arrival BBQ! Get the grills going. BYO snags, burgers, veggie skewers. Kids set up the camping chairs."},
-  {meal:"Fish Tacos Night",loc:"Kalbarri",desc:"Fresh local fish from the fishmonger on Grey St. Soft tacos, slaw, avocado, lime. Simple and delicious!"},
-  {meal:"Monkey Mia Sundowner",loc:"Monkey Mia Beach",desc:"Cheese, dips, crackers, cold drinks on the beach while watching for dolphins in the evening."},
-  {meal:"Wooramel Station Breakfast",loc:"Wooramel Station",desc:"Big cooked brekky after the bore bath. Bacon, eggs, toast, baked beans. Coffee on the camp stove."},
-  {meal:"Coral Bay Pizza Night",loc:"Coral Bay",desc:"Grab takeaway pizzas from Fins Cafe or make your own in the camp kitchen. Early night — snorkelling 6am tomorrow!"},
-  {meal:"Exmouth Cheat Night",loc:"Exmouth town",desc:"Go out! BBQ Father for ribs, or Adrift Cafe for dinner. Families split up and explore."},
-  {meal:"Quobba Station BBQ",loc:"Quobba Station campsite",desc:"Campfire BBQ under the stars. This is the most remote night — really feel the outback. Star gazing after dinner."},
-  {meal:"Aria's Birthday Dinner 🎂",loc:"Horrocks",desc:"Special birthday dinner on April 10! Decorations, birthday cake, the whole nine yards. Make it magical for Aria!"},
-  {meal:"Homeward Bound Feast",loc:"Cervantes or Jurien Bay",desc:"Last big dinner together. Lobster Shack! Splurge on fresh crayfish to celebrate an epic trip."}
+// ── AREA INFO PER DAY ───────────────────────────────────
+const AREA = {
+  1:{title:"Jurien Bay & the Turquoise Coast",history:"The coastal area north of Perth was charted by French explorer Nicolas Baudin in 1801. Jurien Bay was established as a rock lobster fishing port in the 1960s and is home to one of Australia's most diverse marine parks.",facts:["WA's rock lobster capital — crayfish have been fished here since the 1920s","One of only a few places in WA where you can see wild penguins on the mainland","The Jurien Bay Marine Park protects 115,000 hectares of Indian Ocean","Sandy Cape has Aboriginal middens — evidence of 40,000 years of habitation"],wildlife:"Australian sea lions, bottlenose dolphins, little penguins (at dusk), osprey, white-bellied sea eagles.",flora:"Coastal banksia, prickly moses wattle, native pigface groundcover along the dunes."},
+  2:{title:"Jurien Bay Marine Park",history:"Gazetted in 2003, Jurien Bay Marine Park is one of Western Australia's most biodiverse marine environments, with seagrass meadows, rocky reefs and sandy flats supporting a remarkable array of wildlife.",facts:["Home to the world's largest population of Australian sea lions","The sea lion colony at Jurien Island is the only mainland rookery in WA","Rock lobster fishing quotas here are among the most tightly managed in the world","The marine park covers 82,000 hectares of coastal and marine environment"],wildlife:"Australian sea lions, bottlenose dolphins, little penguins, whale sharks (seasonal), rays.",flora:"Posidonia seagrass meadows (ancient — some colonies are 200,000 years old)."},
+  3:{title:"Geraldton to Kalbarri",history:"Geraldton was the centre of a thriving pearling industry in the 1800s and was heavily involved in WWII — the HMAS Sydney II was lost off the coast in 1941 with 645 men. Kalbarri sits where the ancient Murchison River meets the sea, having carved its spectacular gorges over 400 million years.",facts:["HMAS Sydney II was sunk by German raider Kormoran on 19 November 1941","The wreck was only found in 2008 — after 67 years","The Murchison River is 820km long — WA's second longest","Kalbarri was only accessible by boat until the road was built in 1963","Geraldton is the lobster capital of the world"],wildlife:"Ospreys nesting on channel markers near Geraldton, grey kangaroos in the bush, emus along highway.",flora:"Everlasting wildflowers in season, Kalbarri National Park has 800+ species of wildflowers."},
+  4:{title:"Kalbarri National Park",history:"Kalbarri NP was gazetted in 1963 and protects one of Australia's most spectacular landscapes — ancient red-and-white banded Tumblagooda sandstone gorges carved by the Murchison River over millions of years.",facts:["The gorge walls are 400 million years old — among the oldest exposed rock on Earth","The Skywalk opened in 2020 — it's 100m long cantilevered over a 100m drop","Kalbarri has some of WA's best wildflower displays from August to October","The name Kalbarri means 'the place of the pelicans' in the Nanda language","Aboriginal people have lived in the Kalbarri area for at least 30,000 years"],wildlife:"Wedge-tailed eagles, black-and-white fairy-wrens, pelicans, dolphins in the river mouth.",flora:"Wreath leschenaultia (WA's most celebrated wildflower), Banksia, grevillea."},
+  5:{title:"Shark Bay World Heritage Area",history:"Shark Bay was inscribed on the UNESCO World Heritage List in 1991 — one of only a handful of places to meet all four natural criteria. It contains the world's largest seagrass meadows and some of the most ancient life on Earth.",facts:["Shark Bay meets ALL 4 natural World Heritage criteria — extremely rare","The stromatolites at Hamelin Pool are up to 3,500 years old and still living","Shark Bay has 12% of all the world's seagrass species in one area","The dugong population here is 12,000+ — the largest in the world","Shell Beach is 70km long and made entirely of tiny Fragum cockle shells 10m deep"],wildlife:"Dugongs (12,000+), bottlenose dolphins, humpback whales (Jul–Nov), loggerhead sea turtles, tiger sharks.",flora:"One of the world's largest and most diverse seagrass meadows."},
+  6:{title:"Denham & Francois Peron",history:"Denham is the most westerly town in Australia. It was the centre of pearling operations in the late 1800s. The Peron Peninsula was a sheep station until 1990 when it was converted to the Francois Peron National Park.",facts:["Denham is the westernmost town in Australia","The Peron Peninsula's red sand contrasts spectacularly with turquoise water","Francois Peron NP was the first national park created from a former pastoral station in WA","The artesian bore at Peron Homestead flows at 40°C","Little Lagoon is one of the most photographed spots in WA"],wildlife:"Western barred bandicoots, Shark Bay mouse, malleefowl, dugongs offshore.",flora:"Samphire saltmarsh, snakebush, coastal spinifex."},
+  7:{title:"Monkey Mia & the Dolphins",history:"Dolphins first began approaching fishing boats at Monkey Mia in the 1960s and were being hand-fed by the 1970s. A marine reserve was gazetted in 1996. The name 'Monkey Mia' possibly derives from a pearling lugger called 'Monkey' that was anchored here.",facts:["Wild dolphins have been interacting with people here for over 60 years","Only 5–8 specific dolphins regularly participate in the interactions","The interaction program is managed to keep the dolphins wild and healthy — no forced contact","Dolphin calves whose mothers interact are often banned to preserve their wild behaviour","Shark Bay's dolphins are the most studied wild dolphin population in the world"],wildlife:"Indo-Pacific bottlenose dolphins, dugongs, sea turtles, banded stilts, pelicans.",flora:"Mangroves fringing the bay support rich bird life."},
+  8:{title:"Wooramel Station",history:"Wooramel Station has been a working sheep and cattle station since the 1870s. The artesian bore was drilled in 1947 to provide water for stock and has been a traveller attraction ever since.",facts:["The artesian bore reaches 240 metres underground","Water temperature is a constant 33°C year-round — naturally heated by geothermal energy","Wooramel runs 25,000 sheep across 280,000 hectares","The Gascoyne River only flows above ground surface for a few weeks each year","The night sky here is exceptional — zero light pollution for hundreds of kilometres"],wildlife:"Wedge-tailed eagles, emus, red kangaroos, galahs, corellas.",flora:"River red gums lining the Gascoyne River floodplain."},
+  9:{title:"Ningaloo & Coral Bay",history:"Coral Bay was known only to fishermen and divers until the 1980s. The Ningaloo Marine Park was established in 1987 to protect the world's longest fringing reef. Tourism grew rapidly after whale shark tours began in the 1990s.",facts:["Ningaloo Reef is 260km long — the world's longest fringing reef","The reef comes within 100 metres of the shore — you can snorkel straight off the beach","Whale sharks arrive each year in March–July following mass coral spawning events","Ningaloo supports over 500 fish species and 300 coral species","Water visibility can exceed 40 metres"],wildlife:"Whale sharks (Mar–Jul), manta rays, sea turtles (green, hawksbill, loggerhead), reef sharks, dugongs.",flora:"Ningaloo is fringed by mangroves which support critical nursery habitats."},
+  10:{title:"Coral Bay Reef",history:"Coral Bay sits at the southern gateway to the Ningaloo Marine Park. The town has a permanent population of just 200 people but receives 150,000 visitors per year drawn by world-class reef snorkelling.",facts:["You can snorkel with manta rays from a small beach boat tour — rare globally","The Ningaloo current brings nutrient-rich water that drives extraordinary marine productivity","Coral spawning occurs in March–April — this triggers whale shark aggregations","Loggerhead turtles nest on Ningaloo beaches between November and February","The first whale shark was ever photographed at Ningaloo in 1983"],wildlife:"Manta rays, whale sharks, hawksbill turtles, bumphead parrotfish, Napoleon wrasse.",flora:"Ningaloo's kelp forests shelter juvenile fish; seagrass meadows feed dugongs and turtles."},
+  11:{title:"Cape Range & Exmouth Gulf",history:"Exmouth was purpose-built as a US naval communications base in 1967 (Harold E. Holt Naval Communication Station). The US military operated here during the Cold War until 1992. Cape Range NP protects WA's only true canyon country.",facts:["Harold Holt was Australia's Prime Minister who disappeared while swimming in 1967 — the base was named after him the same year","The US VLF transmitter here could communicate with submerged submarines","Cape Range has WA's only true canyons — carved from ancient reef limestone","Exmouth receives 300,000 visitors a year despite a permanent population of only 3,500","Turquoise Bay is consistently voted one of Australia's most beautiful beaches"],wildlife:"Manta rays, sea turtles, reef sharks, black-footed rock wallabies at Yardie Creek.",flora:"Desert wattle, Sturt's desert pea, Cape Range spinifex."},
+  12:{title:"Ningaloo World Heritage Area",history:"The Ningaloo Coast was inscribed on the UNESCO World Heritage List in 2011, recognised for its exceptional natural beauty and extraordinary marine biodiversity.",facts:["Ningaloo is one of the few places on Earth where whale sharks congregate predictably","The Cape Range is formed from an ancient coral reef that was uplifted 5 million years ago","The Exmouth Gulf on the eastern side is a critical nursery for prawns, fish and turtles","Whale sharks can reach 18 metres in length — the largest fish on Earth","Manta ray aggregations at Coral Bay and Ningaloo are among the largest in the Indo-Pacific"],wildlife:"Whale sharks, manta rays, humpback whales (Jun–Nov), sea turtles, dugongs, reef fish.",flora:"Ningaloo coastal vegetation including mangroves, samphire and spinifex."},
+  13:{title:"Quobba Station",history:"Quobba Station is a remote coastal pastoral station famous for its dramatic blowholes and the wreck of the Korean Star. The 1988 grounding remains one of the most dramatic shipwrecks in WA.",facts:["The Korean Star ran aground in a severe storm on 23 July 1988 — the crew was rescued by helicopter","'Blow 5' is the most powerful blowhole — geysers can reach 20 metres high","Red Bluff is rated among WA's top 5 surf breaks","Quobba means 'deep water' in the local Malgana language","The area has some of WA's best land-based fishing — snapper, coral trout, mackerel"],wildlife:"Humpback whales offshore (Jun–Nov), spinner dolphins, sea turtles, osprey.",flora:"Sparse coastal saltbush and spinifex — true arid zone vegetation."},
+  14:{title:"Horrocks & the Pink Lake",history:"Horrocks is a sleepy fishing village named after explorer John Alonzo Horrocks, who led an expedition through this area in 1846. The stunning pink lake at nearby Port Gregory is a naturally occurring phenomenon.",facts:["Hutt Lagoon turns pink due to Dunaliella Salina algae that produces beta-carotene","The lake is commercially harvested for beta-carotene used in food colouring and cosmetics","Best viewed between 10am–2pm when the sun is overhead","The pink colour can range from baby pink to vivid hot pink depending on salinity","Horrocks has a permanent population of just 120 people"],wildlife:"Migratory seabirds, dolphins in the bay, reef fish.",flora:"Samphire and saltmarsh around the lagoon; coastal heath on the dunes."},
+  15:{title:"Horrocks Coast",history:"The Horrocks coastline is part of the Murchison region, one of WA's most productive fishing areas. The area is known for its excellent reef fishing and sheltered snorkelling.",facts:["The Bowes River mouth creates a productive estuary with diverse fish life","Horrocks reef is part of a chain of fringing reefs extending south from Geraldton","The area sits in the transition zone between temperate and tropical marine environments","Local fishermen regularly catch snapper, dhufish and coral trout here"],wildlife:"Reef fish (snapper, wrasse, parrotfish), dolphins, sea eagles.",flora:"Low coastal heath, beach morning glory, coastal banksia."},
+  16:{title:"Cervantes & the Pinnacles",history:"Cervantes was named after an American whaling ship wrecked near here in 1844. The Pinnacles — thousands of limestone pillars rising from yellow sand — mystified early Dutch sailors who thought they were a ruined ancient city.",facts:["The Pinnacles are up to 5 metres tall and formed from ancient seashell deposits leached by rainwater","Early Dutch sailors mapped them as a ruined city and warned ships to stay away","The yellow sand of the Pinnacles is coloured by iron oxide","Nambung National Park was established in 1956 to protect the Pinnacles","The best time to visit is sunrise or sunset when shadows create a dramatic landscape"],wildlife:"Emus and western grey kangaroos in the park, reptiles in the sandy soil.",flora:"Coastal heath, native pea flowers, Nambung's ancient banksia woodland."},
+  17:{title:"Homeward Bound",history:"The journey south retraces some of the earliest European exploration of the WA coastline. Dutch VOC ships mapped this coast in the 1600s, and many wrecked on the treacherous reefs.",facts:["The Batavia wrecked on the Abrolhos Islands (visible from shore near Geraldton) in 1629","The subsequent mutiny on the Abrolhos is one of history's most dramatic maritime disasters","WA's Coral Coast has been inhabited by Aboriginal peoples for over 50,000 years","The Indian Ocean Coastal Drive from Jurien to Perth is one of WA's great scenic drives"],wildlife:"Osprey nesting on coastal rocks, dolphins in the surf zone.",flora:"Coastal tuart woodland south of Jurien Bay — rare and ancient ecosystem."}
+};
+
+// ── PACKING LIST ─────────────────────────────────────────
+const PACK = [
+  {cat:"docs",item:"Driver's licence",ess:true},{cat:"docs",item:"Rental agreement",ess:true},{cat:"docs",item:"Travel insurance",ess:true},{cat:"docs",item:"Medicare cards",ess:true},{cat:"docs",item:"Roadside assistance",ess:false},
+  {cat:"camp",item:"Camp chairs (per person)",ess:true},{cat:"camp",item:"Portable BBQ + gas",ess:true},{cat:"camp",item:"Headtorches + batteries",ess:true},{cat:"camp",item:"Extension cord",ess:false},{cat:"camp",item:"Washing line + pegs",ess:false},
+  {cat:"beach",item:"Snorkel + fins (each person)",ess:true},{cat:"beach",item:"Rashies + wetsuits (kids)",ess:true},{cat:"beach",item:"Beach towels",ess:true},{cat:"beach",item:"Reef-safe sunscreen SPF50+",ess:true},{cat:"beach",item:"Beach shade tent",ess:true},{cat:"beach",item:"Boogie boards",ess:false},{cat:"beach",item:"Dry bags",ess:false},
+  {cat:"med",item:"First aid kit",ess:true},{cat:"med",item:"All prescriptions (full supply)",ess:true},{cat:"med",item:"Insect repellent",ess:true},{cat:"med",item:"Antihistamines",ess:true},{cat:"med",item:"Seasickness tablets",ess:false},
+  {cat:"food",item:"Reusable water bottles (2L+ each)",ess:true},{cat:"food",item:"Coffee gear",ess:true},{cat:"food",item:"Road snack bin",ess:true},{cat:"food",item:"Spice kit",ess:false},
+  {cat:"tech",item:"Phone + cables",ess:true},{cat:"tech",item:"Power bank 20,000mAh+",ess:true},{cat:"tech",item:"Car charger",ess:true},{cat:"tech",item:"Camera",ess:false},{cat:"tech",item:"Bluetooth speaker",ess:false},{cat:"tech",item:"Drone (check regs)",ess:false}
 ];
 
-// ===== PACKING =====
-const PACK=[
-  {cat:"docs",item:"Passports / ID",essential:true},{cat:"docs",item:"Campervan rental agreement",essential:true},{cat:"docs",item:"Travel insurance docs",essential:true},{cat:"docs",item:"Driver's licence",essential:true},{cat:"docs",item:"Roadside assistance membership",essential:false},
-  {cat:"camp",item:"Camp chairs (1 per person)",essential:true},{cat:"camp",item:"Portable BBQ + gas",essential:true},{cat:"camp",item:"Camp kitchen utensils",essential:true},{cat:"camp",item:"Headtorches + spare batteries",essential:true},{cat:"camp",item:"Extension cord",essential:false},{cat:"camp",item:"Washing line + pegs",essential:false},{cat:"camp",item:"Outdoor mat",essential:false},
-  {cat:"beach",item:"Snorkel masks + fins (each person)",essential:true},{cat:"beach",item:"Rashies + wetsuits (kids)",essential:true},{cat:"beach",item:"Beach towels",essential:true},{cat:"beach",item:"Reef-safe sunscreen SPF50+",essential:true},{cat:"beach",item:"Beach tent / sun shelter",essential:true},{cat:"beach",item:"Boogie boards",essential:false},{cat:"beach",item:"Sandboard",essential:false},{cat:"beach",item:"Dry bags",essential:false},
-  {cat:"medical",item:"Comprehensive first aid kit",essential:true},{cat:"medical",item:"Prescription medications (full supply)",essential:true},{cat:"medical",item:"Insect repellent (DEET)",essential:true},{cat:"medical",item:"Antihistamines",essential:true},{cat:"medical",item:"Seasickness tablets",essential:false},{cat:"medical",item:"Sunburn relief gel",essential:false},{cat:"medical",item:"Stingray / jellyfish sting kit",essential:false},
-  {cat:"food",item:"Non-perishable snacks for the road",essential:true},{cat:"food",item:"Reusable water bottles (2L per person)",essential:true},{cat:"food",item:"Coffee gear (plunger/moka/Nespresso)",essential:true},{cat:"food",item:"Breakfast items for early departure days",essential:true},{cat:"food",item:"Road trip snacks bin",essential:false},{cat:"food",item:"Spice kit",essential:false},
-  {cat:"tech",item:"Phone + charging cables",essential:true},{cat:"tech",item:"Power bank (20,000mAh+)",essential:true},{cat:"tech",item:"Car charger adapter",essential:true},{cat:"tech",item:"Camera + memory cards",essential:false},{cat:"tech",item:"Drone (check regs first)",essential:false},{cat:"tech",item:"Bluetooth speaker",essential:false},{cat:"tech",item:"Starlink / WiFi hotspot",essential:false},
-  {cat:"kids",item:"Card games & travel board games",essential:true},{cat:"kids",item:"Kids sunglasses",essential:true},{cat:"kids",item:"Pool noodles / floaties",essential:false},{cat:"kids",item:"Bug catcher kit",essential:false},{cat:"kids",item:"Kids waterproof camera",essential:false},{cat:"kids",item:"Kindles / tablets",essential:false}
+// ── FAMILIES ────────────────────────────────────────────
+const FAM = [
+  {name:"Fortescue",emoji:"🦁",col:"#F59E0B",dad:"Michael (Forty)",dadPh:"0405 223 423",mum:"Laetitia (Tici)",mumPh:"0450 619 593",kids:["Julian (10)","William (7)"],van:"#1",note:"Trip captain!"},
+  {name:"Walker",emoji:"🐬",col:"#0EA5E9",dad:"Matthew (Matty)",dadPh:"0420 887 889",mum:"Anna",mumPh:"0415 165 477",kids:["Byron (12)","Josh (11)"],van:"#2",note:""},
+  {name:"Woolcott",emoji:"🦘",col:"#10B981",dad:"Mark (Pokes)",dadPh:"0403 618 826",mum:"Hannah",mumPh:"0431 348 492",kids:["Blayk (11)"],van:"#3",note:""},
+  {name:"Conroy",emoji:"🐠",col:"#8B5CF6",dad:"Bruce",dadPh:"0467 801 941",mum:"Paula",mumPh:"0435 465 504",kids:["Leo (11)","Isla (9)"],van:"#4",note:""},
+  {name:"Wilson",emoji:"🌺",col:"#F43F5E",dad:"Kevin (Kev)",dadPh:"0413 388 803",mum:"Samantha (Sam)",mumPh:"0428 055 824",kids:["Aria (11 on Apr 10 🎂)","Conor (7)"],van:"#5",note:"Aria's birthday April 10!"}
 ];
+const BROKER={name:"Sarah Feldman",ph:"0426 162 776",email:"sarah@campervanrentalshop.com.au",addr:"2 Redcliffe Rd, Redcliffe Perth 6104",hours:"9am–3pm"};
 
-// ===== GAMES =====
-const GAMES=[
-  {cat:"card",name:"WA Road Trip Bingo",desc:"Print bingo cards with WA wildlife, road signs, and landmarks. First to spot them all wins! Prizes from the lolly bag.",players:"All ages",time:"Whole trip"},
-  {cat:"card",name:"Cards Against Humanity (adults only 😈)",desc:"The classic after-dark game for grown-ups. Wait until all kids are asleep. Mandatory crying from laughing.",players:"Adults",time:"Evenings"},
-  {cat:"card",name:"Uno",desc:"Classic fast-paced card game. Best with 5–10 players. Draw 4 cards, wild cards, reverse. Keep the kids busy for hours!",players:"All ages",time:"30–60 mins"},
-  {cat:"card",name:"Exploding Kittens",desc:"Fast, strategic card game. Avoid the exploding kitten! NSFW deck available for adults. Kids love the regular version.",players:"2–5 players",time:"15–30 mins"},
-  {cat:"trivia",name:"WA Geography Quiz",desc:"Who can name all 10 stops? What's the capital of WA? Which bay has the most sea lions? Prizes for winners!",players:"All ages",time:"20 mins"},
-  {cat:"trivia",name:"Animal Bingo — spot the wildlife!",desc:"First to spot: dolphin, kangaroo, eagle, emu, pelican, sea turtle, manta ray, whale shark. Take a photo as proof!",players:"All ages",time:"Whole trip"},
-  {cat:"outdoor",name:"Beach Cricket",desc:"Classic Aussie beach cricket. Use camp chairs as wickets, a tennis ball, and a plastic bat. Make up the rules as you go!",players:"All ages",time:"1–2 hours"},
-  {cat:"outdoor",name:"Sandcastle Competition",desc:"Teams build the best sandcastle. Judges: the mums. Theme: something from the trip so far. Top prizes!",players:"All ages",time:"1 hour"},
-  {cat:"outdoor",name:"Frisbee Golf",desc:"Set up 9 holes using beach towels, chairs, and eskys as targets. Par 3 for each. Keep score. Get competitive!",players:"All ages",time:"1 hour"},
-  {cat:"outdoor",name:"Campfire Story Circle",desc:"Each person adds one sentence to a growing story around the campfire. Gets wild fast. Record it on your phone!",players:"All ages",time:"Open-ended"},
-  {cat:"night",name:"Star Gazing — Constellation Hunt",desc:"Away from city lights, WA skies are incredible. Download Stellarium app. Find the Southern Cross, Scorpius, Milky Way core.",players:"All ages",time:"Evening"},
-  {cat:"night",name:"Werewolf (Mafia)",desc:"Social deduction game. Villagers vs Werewolves. Takes 20 mins to learn but an hour to stop playing. Great around the campfire.",players:"6+ players",time:"60–90 mins"},
-  {cat:"kids",name:"Snorkelling Scavenger Hunt",desc:"Kids list: find a clownfish, parrotfish, giant clam, starfish, sea cucumber. Camera required for proof. Prizes!",players:"Kids",time:"Snorkel session"},
-  {cat:"kids",name:"Sand Art Competition",desc:"Create the best piece of sand art. Judges vote. Themes: ocean creature, WA animal, something you've seen on the trip.",players:"Kids",time:"30 mins"},
-  {cat:"adults",name:"Campervan Olympics",desc:"Set up challenges: fastest camp chair setup, most accurate frisbee throw, longest skimstone. Families compete. Tally points across the trip!",players:"Adults + teens",time:"Various"}
-];
+// ── STATE ───────────────────────────────────────────────
+let curDay = 0;
+let photos = [];
+let playlist = [];
+let packState = {};
+let customPack = {};
+let fbDb = null;
+let mapInstance = null;
 
-
-
-// ===== STATE =====
-let curTab='home', curDay=0, curExploreFilter='all', curMore='activities';
-let photos=[], playlist=[], fbConfig=null, fbDb=null;
-const packState={};
-let customPack={}; // {cat:[{id,item},...], ...}
-
-// ===== HELPERS =====
+// ======================================================
+// HELPERS
+// ======================================================
 function $(id){return document.getElementById(id);}
-function fmt(d){return d.toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short'});}
-function wIcon(c){
-  if(c<=3)return'☀️';
-  if(c<=45)return'🌤️';
-  if(c<=65)return'🌥️';
-  if(c<=82)return'🌦️';
-  return'🌧️';
-}
-function wLabel(c){
-  const l=['Clear','Mainly clear','Partly cloudy','Overcast','Fog','Drizzle','Rain','Snow','Thunder'];
-  const m={0:'Clear sky',1:'Mainly clear',2:'Partly cloudy',3:'Overcast',45:'Fog',48:'Icy fog',51:'Light drizzle',53:'Drizzle',55:'Heavy drizzle',61:'Light rain',63:'Rain',65:'Heavy rain',71:'Light snow',73:'Snow',75:'Heavy snow',80:'Showers',81:'Heavy showers',95:'Thunderstorm'};
-  return m[c]||'Unknown';
-}
-function bfScale(h){
-  if(h<0.5)return'Calm';
-  if(h<1.25)return'Slight';
-  if(h<2.5)return'Moderate';
-  if(h<4)return'Rough';
-  return'Very rough';
-}
-function toggleCollapse(el){
-  const b=el.nextElementSibling;
-  const open=b.style.maxHeight&&b.style.maxHeight!=='0px';
-  b.style.maxHeight=open?'0px':'2000px';
-  el.classList.toggle('open',!open);
-}
-function goTab(t){
-  curTab=t;
-  document.querySelectorAll('.tab-content').forEach(s=>s.style.display='none');
-  document.querySelectorAll('.tb').forEach(b=>b.classList.remove('active'));
-  $('sec-'+t).style.display='block';
-  const btn=$('tb-'+t);if(btn)btn.classList.add('active');
-  if(t==='home')renderHome();
-  else if(t==='trip')renderTrip();
-  else if(t==='explore')renderExplore();
-  else if(t==='map')renderMap();
-  else if(t==='more')renderMore();
-}
-function showMore(s){
-  curMore=s;
-  document.querySelectorAll('.more-panel').forEach(p=>p.style.display='none');
-  $('mp-'+s).style.display='block';
-  document.querySelectorAll('.more-nav .mn').forEach(b=>b.classList.remove('active'));
-  const nb=$('mn-'+s);if(nb)nb.classList.add('active');
+
+function getCurrentDayIdx(){
+  const now = new Date();
+  const trip_start = new Date('2026-03-28');
+  const trip_end   = new Date('2026-04-13');
+  if(now < trip_start) return 0;
+  if(now > trip_end)   return DAYS.length - 1;
+  const today = now.toISOString().slice(0,10);
+  const idx = DAYS.findIndex(d => d.date === today);
+  return idx >= 0 ? idx : 0;
 }
 
-// ===== HOME =====
-function renderHome(){
-  const now=new Date();
-  const start=new Date('2026-03-28T09:00:00+08:00');
-  const end=new Date('2026-04-13T17:00:00+08:00');
-  let countHtml='';
-  if(now<start){
-    const diff=start-now;
-    const days=Math.floor(diff/86400000);
-    const hrs=Math.floor((diff%86400000)/3600000);
-    const mins=Math.floor((diff%3600000)/60000);
-    countHtml=`<div class="countdown-box"><div class="cd-num">${days}</div><div class="cd-lbl">days</div></div><div class="countdown-box"><div class="cd-num">${hrs}</div><div class="cd-lbl">hours</div></div><div class="countdown-box"><div class="cd-num">${mins}</div><div class="cd-lbl">mins</div></div>`;
-  } else if(now<=end){
-    const elapsed=now-start;
-    const dayNum=Math.min(17,Math.floor(elapsed/86400000)+1);
-    countHtml=`<div class="trip-live">🚐 Day ${dayNum} of 17 — Trip in progress! 🌊</div>`;
-  } else {
-    countHtml=`<div class="trip-live">🏁 What an incredible trip! Until next time! 🦘</div>`;
-  }
-
-  // Today's stop
-  const today=new Date();
-  today.setHours(0,0,0,0);
-  let todayStop=null;
-  for(let d of DAYS){
-    const dd=new Date(d.date);dd.setHours(0,0,0,0);
-    if(dd.getTime()===today.getTime()){todayStop=d;break;}
-  }
-  const todayHtml=todayStop
-    ?`<div class="today-stop-card"><div class="ts-lbl">📍 Today's Stop</div><div class="ts-day">Day ${todayStop.day} — ${todayStop.wday} ${todayStop.lbl} Mar/Apr</div><div class="ts-route">${todayStop.from} → ${todayStop.to}</div><div class="ts-acc">🏕️ ${todayStop.acc}</div></div>`
-    :'';
-
-  // Dad joke
-  const tripDay=todayStop?todayStop.day-1:0;
-  const joke=getJoke(tripDay);
-  const jokeId='hj'+Date.now();
-
-  $('sec-home').innerHTML=`
-<div class="home-hero"><h1>🌊 WA Road Trip 2026</h1><p>28 Mar – 13 Apr · 5 Families · 2,882 km</p></div>
-<div class="home-section">
-  <div class="section-label">⏱️ Countdown to Departure</div>
-  <div class="countdown-wrap">${countHtml}</div>
-</div>
-${todayHtml}
-<div class="home-section">
-  <div class="section-label">😄 Dad Joke of the Day</div>
-  <div class="joke-card" onclick="this.classList.toggle('revealed')">
-    <div class="joke-q">${joke.q}</div>
-    <div class="joke-a">${joke.a}</div>
-    <div class="joke-hint">👆 Tap to reveal punchline</div>
-  </div>
-</div>
-<div class="home-section">
-  <div class="section-label">🗺️ Quick Links</div>
-  <div class="ql-grid">
-    <button class="ql-btn" onclick="goTab('trip')">📅<span>Itinerary</span></button>
-    <button class="ql-btn" onclick="goTab('map')">🗺️<span>Map</span></button>
-    <button class="ql-btn" onclick="goTab('explore')">🔍<span>Explore</span></button>
-    <button class="ql-btn" onclick="goTab('more');showMore('packing')">🎒<span>Packing</span></button>
-    <button class="ql-btn" onclick="goTab('more');showMore('people')">👨‍👩‍👧<span>People</span></button>
-    <button class="ql-btn" onclick="goTab('more');showMore('activities')">🤿<span>Activities</span></button>
-    <button class="ql-btn" onclick="goTab('more');showMore('photos')">📷<span>Photos</span></button>
-    <button class="ql-btn" onclick="goTab('more');showMore('music')">🎵<span>Music</span></button>
-    <button class="ql-btn" onclick="goTab('more');showMore('convoy')">🚐<span>Convoy</span></button>
-  </div>
-</div>
-<div class="home-section">
-  <div class="section-label">📊 Trip Stats</div>
-  <div class="stats-grid">
-    <div class="stat-box"><div class="stat-n">5</div><div class="stat-l">Families</div></div>
-    <div class="stat-box"><div class="stat-n">17</div><div class="stat-l">Days</div></div>
-    <div class="stat-box"><div class="stat-n">2,882</div><div class="stat-l">km</div></div>
-    <div class="stat-box"><div class="stat-n">10</div><div class="stat-l">Stops</div></div>
-    <div class="stat-box"><div class="stat-n">15</div><div class="stat-l">Kids</div></div>
-    <div class="stat-box"><div class="stat-n">1</div><div class="stat-l">Birthday 🎂</div></div>
-  </div>
-</div>
-<div class="home-section">
-  <div class="section-label">🐋 Wildlife to Spot</div>
-  <div class="wildlife-chips">
-    <span class="wc">🐬 Dolphins</span><span class="wc">🦈 Whale sharks</span><span class="wc">🐢 Sea turtles</span>
-    <span class="wc">🦭 Sea lions</span><span class="wc">🦅 Eagles</span><span class="wc">🐦 Pelicans</span>
-    <span class="wc">🦘 Kangaroos</span><span class="wc">🐟 Reef fish</span><span class="wc">🐙 Octopus</span>
-  </div>
-</div>`;
+function isToday(dateStr){
+  return new Date().toISOString().slice(0,10) === dateStr;
 }
 
-// ===== TRIP / ITINERARY =====
-function renderTrip(){
-  const chips=DAYS.map((d,i)=>`<button class="dc${i===curDay?' active':''}" onclick="selectDay(${i})">${d.lbl}</button>`).join('');
-  $('day-chips').innerHTML=chips;
-  renderDayDetail(curDay);
+function brandInitials(brand){
+  if(!brand) return '⛽';
+  const map = {BP:'BP',Caltex:'CT',United:'U',Shell:'SH',Ampol:'AM',Puma:'PM',Roadhouse:'RH',Independent:'IND'};
+  return map[brand] || brand.slice(0,2).toUpperCase();
 }
+
+// ======================================================
+// DAY STRIP
+// ======================================================
+function renderDayStrip(){
+  const strip = $('day-strip');
+  strip.innerHTML = DAYS.map((d,i) => {
+    const parts = d.lbl.split(' ');
+    const dayNum = parts[0];
+    const mon = parts[1] || '';
+    const active = i === curDay ? ' active' : '';
+    const todayCls = isToday(d.date) ? ' today-chip' : '';
+    return `<button class="dc${active}${todayCls}" onclick="selectDay(${i})">
+      <span class="dc-wday">${d.wday}</span>${dayNum} ${mon}</button>`;
+  }).join('');
+  // Scroll active chip into view
+  setTimeout(()=>{
+    const active = strip.querySelector('.dc.active');
+    if(active) active.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});
+  },100);
+}
+
 function selectDay(i){
-  curDay=i;
-  document.querySelectorAll('.dc').forEach((b,j)=>b.classList.toggle('active',j===i));
-  renderDayDetail(i);
+  curDay = i;
+  // Remove old map instance so it reinitialises
+  if(mapInstance){ mapInstance.remove(); mapInstance = null; }
+  renderDayStrip();
+  renderDay(i);
+  window.scrollTo({top:0,behavior:'smooth'});
 }
-function renderDayDetail(i){
-  const d=DAYS[i];
-  const area=AI[d.to]||AI[d.from]||{};
-  const jokeForDay=getJoke(i);
 
-  // Birthday banner
-  const bdayHtml=d.bday?`<div class="bday-banner">🎂 Happy 11th Birthday Aria Wilson! 🎉🌺<br><small>Time to celebrate! Decorations, cake, the whole nine yards!</small></div>`:'';
+// ======================================================
+// MAIN DAY RENDER
+// ======================================================
+function renderDay(i){
+  const d = DAYS[i];
+  const q = QUOTES[i % QUOTES.length];
+  const joke = getJoke(i);
+  const area = AREA[i+1] || {};
+  const acts = ACTS[i+1] || {booked:[],optional:[]};
+  const fuel = FUEL[i+1] || {warn:'',stops:[]};
+  const isBday = d.bday;
+  const beforeTrip = new Date() < new Date('2026-03-28');
 
-  // Live links
-  const accLink=d.accUrl?`<a href="${d.accUrl}" target="_blank" class="place-link">${d.acc} ↗</a>`:d.acc;
-  const foodLink=d.foodUrl?`<a href="${d.foodUrl}" target="_blank" class="place-link">${d.food} ↗</a>`:d.food||'';
-  const coffeeLink=d.coffeeUrl?`<a href="${d.coffeeUrl}" target="_blank" class="place-link">${d.coffee} ↗</a>`:d.coffee||'';
+  let html = '';
 
-  // Area info accordion
-  const areaHtml=area.hist?`
-<button class="coll" onclick="toggleCollapse(this)">📍 About ${d.to}</button>
-<div class="coll-body">
-  <p><strong>History:</strong> ${area.hist}</p>
-  <p><strong>Geography:</strong> ${area.geo}</p>
-  <p><strong>Wildlife:</strong> ${area.wild}</p>
-  <ul>${(area.facts||[]).map(f=>`<li>${f}</li>`).join('')}</ul>
-</div>`:'';
-
-  $('day-detail').innerHTML=`
-${bdayHtml}
-<div class="rhdr">
-  <span class="route-badge">${d.wday} ${d.lbl} ${d.date.slice(5,7)==='03'?'Mar':'Apr'}</span>
-  <span class="day-num">Day ${d.day}</span>
-</div>
-<div class="route-line">${d.from} → ${d.to}${d.via?` via ${d.via}`:''}</div>
-<div class="route-meta">🚗 ${d.km}km &nbsp;·&nbsp; ⏱️ ${d.drv}</div>
-
-<div class="detail-card">
-  <div class="dc-row">🏕️ <strong>Stay:</strong>&nbsp;${accLink}</div>
-  ${foodLink?`<div class="dc-row">🍽️ <strong>Dinner:</strong>&nbsp;${foodLink}</div>`:''}
-  ${coffeeLink?`<div class="dc-row">☕ <strong>Coffee:</strong>&nbsp;${coffeeLink}</div>`:''}
-</div>
-
-<div id="wx-${i}" class="wx-card">
-  <div class="wx-loading">⛅ Loading weather for ${d.date}…</div>
-</div>
-
-${areaHtml}
-
-<button class="coll" onclick="toggleCollapse(this)">😄 Day ${d.day} Dad Joke</button>
-<div class="coll-body">
-  <div class="joke-card" onclick="this.classList.toggle('revealed')">
-    <div class="joke-q">${jokeForDay.q}</div>
-    <div class="joke-a">${jokeForDay.a}</div>
-    <div class="joke-hint">👆 Tap to reveal punchline</div>
+  // ── HERO ──
+  html += `<div id="hero-card">
+  <div class="hero-bg" style="background:${d.grad}">
+    <div class="hero-eyebrow">Day ${d.day} of 17</div>
+    <div class="hero-day">${d.wday}, ${d.lbl}</div>
+    <div class="hero-route">${d.from}${d.to!==d.from?' → '+d.to:' · Explore day'}</div>
+    <div class="hero-meta">
+      ${d.km>0?`<div class="hero-meta-item">🚗 ${d.km}km</div><div class="hero-meta-item">⏱️ ${d.drv}</div>`:`<div class="hero-meta-item">🌊 ${d.drv}</div>`}
+    </div>
+    ${d.acc?`<div class="hero-acc">🏕️ <a href="${d.accUrl||'#'}" target="_blank">${d.acc}</a></div>`:''}
   </div>
 </div>`;
 
-  fetchDayWeather(d, i);
-}
-
-async function fetchDayWeather(d, idx){
-  const el=$('wx-'+idx);
-  if(!el)return;
-  const now=new Date();
-  const tripDate=new Date(d.date+'T00:00:00+08:00');
-  const diffDays=Math.round((tripDate-now)/86400000);
-
-  if(diffDays>16){
-    el.innerHTML=`<div class="wx-note">📅 Forecast available from ${new Date(tripDate-16*86400000).toLocaleDateString('en-AU',{day:'numeric',month:'short'})}</div>`;
-    return;
+  // ── COUNTDOWN (before trip, day 1 only shown) ──
+  if(beforeTrip && i === 0){
+    const diff = new Date('2026-03-28T09:00:00+08:00') - new Date();
+    const days = Math.floor(diff/86400000);
+    const hrs  = Math.floor((diff%86400000)/3600000);
+    const mins = Math.floor((diff%3600000)/60000);
+    html += `<div id="countdown-card">
+  <div class="cd-label">🗓️ Trip starts in</div>
+  <div class="cd-row">
+    <div class="cd-box"><div class="cd-n">${days}</div><div class="cd-u">days</div></div>
+    <div class="cd-box"><div class="cd-n">${hrs}</div><div class="cd-u">hours</div></div>
+    <div class="cd-box"><div class="cd-n">${mins}</div><div class="cd-u">mins</div></div>
+  </div>
+  <div class="cd-sub">28 March 2026 · 5 families · 17 days · 2,882 km 🌊</div>
+</div>`;
   }
 
-  try{
-    let apiBase, extraParams='';
-    if(diffDays>=-1){
-      apiBase='https://api.open-meteo.com/v1/forecast';
-    } else {
-      apiBase='https://archive-api.open-meteo.com/v1/archive';
-    }
-    const ds=d.date, de=d.date;
-    const url=`${apiBase}?latitude=${d.lat}&longitude=${d.lon}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,weathercode,windspeed_10m_max&start_date=${ds}&end_date=${de}&timezone=Australia%2FPerth`;
+  // ── BIRTHDAY ──
+  if(isBday){
+    html += `<div class="bday-card">
+  <div class="bday-title">🎂 Happy 11th Birthday, Aria! 🎉</div>
+  <div class="bday-sub">10 April 2026 · Today is all about you, beautiful girl! 🌺</div>
+  <div class="bday-ideas">
+    <div class="bday-idea">🎊 Surprise decorations the moment she wakes up</div>
+    <div class="bday-idea">🌸 Visit Hutt Lagoon pink lake for birthday photos</div>
+    <div class="bday-idea">🎂 Birthday cake + candles at sunset on the beach</div>
+    <div class="bday-idea">🎁 Special birthday dinner with all 5 families together</div>
+    <div class="bday-idea">📸 Group birthday photo — frame it for her bedroom!</div>
+  </div>
+</div>`;
+  }
 
-    const r=await fetch(url);
-    const j=await r.json();
-    if(!j.daily||!j.daily.temperature_2m_max){throw new Error('No data');}
+  // ── QUOTE ──
+  html += `<div class="card">
+  <div class="ch"><div class="ch-icon">✨</div><div class="ch-title">Quote of the Day</div></div>
+  <div class="cb">
+    <div class="quote-text">${q.text}</div>
+    <div class="quote-attr">— ${q.attr}</div>
+    ${q.src?`<div class="quote-src">${q.src}</div>`:''}
+  </div>
+</div>`;
 
-    const tmax=Math.round(j.daily.temperature_2m_max[0]);
-    const tmin=Math.round(j.daily.temperature_2m_min[0]);
-    const prec=j.daily.precipitation_sum[0]||0;
-    const wc=j.daily.weathercode[0]||0;
-    const wind=Math.round(j.daily.windspeed_10m_max[0]||0);
-    const icon=wIcon(wc);
-    const label=wLabel(wc);
+  // ── DAD JOKE ──
+  html += `<div class="card">
+  <div class="ch"><div class="ch-icon">😄</div><div class="ch-title">Dad Joke</div><span style="font-size:11px;color:var(--txt3);margin-left:auto">changes every 4 hrs</span></div>
+  <div class="cb">
+    <div class="joke-wrap" onclick="this.classList.toggle('open')">
+      <div class="joke-q">${joke.q}</div>
+      <div class="joke-a">${joke.a}</div>
+      <div class="joke-hint">👆 Tap to reveal the punchline</div>
+    </div>
+  </div>
+</div>`;
 
-    // Also fetch surf
-    let surfHtml='';
+  // ── ROUTE + MAP ──
+  const gmUrl = `https://www.google.com/maps/dir/${d.fromLat},${d.fromLon}/${d.lat},${d.lon}`;
+  html += `<div class="card">
+  <div class="ch"><div class="ch-icon">🗺️</div><div class="ch-title">Today's Route</div></div>
+  <div class="cb">
+    <div class="route-info">
+      <div class="ri-item">📍 <strong>${d.from}</strong></div>
+      ${d.to!==d.from?`<div class="ri-item">🏁 <strong>${d.to}</strong></div>`:''}
+      ${d.km>0?`<div class="ri-item">🚗 ${d.km} km</div>`:''} 
+      ${d.drv?`<div class="ri-item">⏱️ ${d.drv}</div>`:''}
+      ${d.via?`<div class="ri-item">↪️ via ${d.via}</div>`:''}
+    </div>
+    ${d.note?`<div style="font-size:13px;color:#B45309;background:#FEF3C7;border-radius:8px;padding:8px 10px;margin-bottom:12px;border:1px solid #FCD34D">${d.note}</div>`:''}
+    <div id="day-map-container" onclick="openGMaps(${i})"></div>
+    <a href="${gmUrl}" target="_blank" class="gmap-btn">📍 Open in Google Maps</a>
+  </div>
+</div>`;
+
+  // ── FUEL ──
+  if(fuel.stops.length > 0){
+    const fuelStopsHtml = fuel.stops.map(s => `<div class="fuel-station${s.imp?' fuel-important':''}">
+    <div class="fuel-brand-dot" style="background:${s.brandColor}">${brandInitials(s.brand)}</div>
+    <div class="fuel-right">
+      <div class="fuel-name"><a href="${s.url}" target="_blank" class="link">${s.name}</a></div>
+      <div class="fuel-addr">${s.addr}</div>
+      ${s.ph?`<div class="fuel-ph">📞 <a href="tel:${s.ph}">${s.ph}</a></div>`:''}
+      ${s.note?`<div class="fuel-note">${s.note}</div>`:''}
+    </div>
+  </div>`).join('');
+    html += `<div class="card">
+  <div class="ch"><div class="ch-icon">⛽</div><div class="ch-title">Diesel Stops</div><span style="font-size:11px;color:var(--aqua);margin-left:auto;font-weight:600">LIVE PRICES →</span></div>
+  <div class="cb">
+    ${fuel.warn?`<div class="fuel-alert"><span>⚠️</span><span>${fuel.warn}</span></div>`:''}
+    ${fuelStopsHtml}
+    <a href="https://www.fuelwatch.wa.gov.au" target="_blank" class="fuelwatch-link">⛽ Check Live WA Fuel Prices on FuelWatch ↗</a>
+  </div>
+</div>`;
+  }
+
+  // ── WEATHER ──
+  html += `<div class="card" id="wx-card-${i}">
+  <div class="ch"><div class="ch-icon">🌤️</div><div class="ch-title">Weather Forecast</div><span style="font-size:11px;color:var(--txt3);margin-left:auto">${d.date}</span></div>
+  <div class="cb"><div id="wx-body-${i}" style="color:var(--txt3);font-size:13px">Loading forecast…</div></div>
+</div>`;
+
+  // ── ACTIVITIES ──
+  let actsHtml = '';
+  if(acts.booked && acts.booked.length > 0){
+    actsHtml += `<div class="act-section-label">✅ Booked & Confirmed</div>`;
+    actsHtml += acts.booked.map(a => `<div class="act-item">
+    <div class="act-icon">${a.icon}</div>
+    <div class="act-right">
+      <a href="${a.url}" target="_blank" class="act-name">${a.name}</a>
+      <div class="act-desc">${a.note||''}</div>
+      <div class="act-meta">
+        ${a.time?`<span class="act-tag">⏰ ${a.time}</span>`:''}
+        <span class="act-booked-badge">BOOKED</span>
+        ${a.ph?`<span class="act-ph">📞 <a href="tel:${a.ph}">${a.ph}</a></span>`:''}
+      </div>
+    </div>
+  </div>`).join('');
+  }
+  if(acts.optional && acts.optional.length > 0){
+    actsHtml += `<div class="act-section-label">🌟 Recommended</div>`;
+    actsHtml += acts.optional.map(a => `<div class="act-item">
+    <div class="act-icon">${a.icon}</div>
+    <div class="act-right">
+      ${a.url?`<a href="${a.url}" target="_blank" class="act-name">${a.name}</a>`:`<div class="act-name">${a.name}</div>`}
+      <div class="act-desc">${a.desc}</div>
+    </div>
+  </div>`).join('');
+  }
+  if(actsHtml){
+    html += `<div class="card">
+  <div class="ch"><div class="ch-icon">🤿</div><div class="ch-title">Activities</div></div>
+  <div class="cb">${actsHtml}</div>
+</div>`;
+  }
+
+  // ── AREA INFO ──
+  if(area.title){
+    const factsHtml = (area.facts||[]).map(f=>`<li>${f}</li>`).join('');
+    html += `<div class="card">
+  <div class="ch"><div class="ch-icon">📖</div><div class="ch-title">${area.title}</div></div>
+  <div class="cb">
+    <p class="area-body-text">${area.history}</p>
+    <button class="coll-trigger" onclick="toggleColl(this)"><span>📌 Did you know?</span><span class="coll-arrow">⌄</span></button>
+    <div class="coll-body"><ul class="area-fact-list">${factsHtml}</ul></div>
+  </div>
+</div>`;
+  }
+
+  // ── WILDLIFE ──
+  if(area.wildlife){
+    html += `<div class="card">
+  <div class="ch"><div class="ch-icon">🦅</div><div class="ch-title">Wildlife & Flora</div></div>
+  <div class="cb">
+    <div class="area-body-text"><strong>Wildlife:</strong> ${area.wildlife}</div>
+    ${area.flora?`<div class="area-body-text"><strong>Flora:</strong> ${area.flora}</div>`:''}
+  </div>
+</div>`;
+  }
+
+  // ── FOOD ──
+  if(d.food){
+    const foodUrl = d.foodUrl || `https://www.google.com/maps/search/${encodeURIComponent(d.food)}`;
+    html += `<div class="card">
+  <div class="ch"><div class="ch-icon">🍽️</div><div class="ch-title">Where to Eat Tonight</div></div>
+  <div class="cb">
+    <div class="act-item" style="border:none;padding:0">
+      <div class="act-icon">🍴</div>
+      <div class="act-right">
+        <a href="${foodUrl}" target="_blank" class="act-name">${d.food}</a>
+        <div class="act-desc">Tap to view on map or website ↗</div>
+      </div>
+    </div>
+  </div>
+</div>`;
+  }
+
+  // ── PHOTOS ──
+  html += `<div class="card">
+  <div class="ch"><div class="ch-icon">📷</div><div class="ch-title">Trip Photos</div><span style="font-size:11px;color:var(--txt3);margin-left:auto" id="photo-count-lbl">${photos.length} photo${photos.length!==1?'s':''}</span></div>
+  <div class="cb">
+    <div id="photo-grid-main" class="photo-grid"></div>
+    <div class="upload-row">
+      <label class="upload-btn">📸 Add Photo<input type="file" accept="image/*" multiple style="display:none" onchange="handlePhotoUpload(this)"></label>
+    </div>
+    <div class="fb-setup" style="margin-top:10px">
+      ${fbDb?'<div style="font-size:12px;color:#065F46;font-weight:600">✅ Firebase connected — photos sync across all families</div>':'<details><summary>⚙️ Connect Firebase for shared photos</summary><div style="padding-top:8px"><input id="fb-url-input" placeholder="Firebase Database URL" style="margin-bottom:6px"><button class="fb-connect-btn" onclick="connectFirebase()">Connect</button></div></details>'}
+    </div>
+  </div>
+</div>`;
+
+  // ── PLAYLIST ──
+  html += `<div class="card">
+  <div class="ch"><div class="ch-icon">🎵</div><div class="ch-title">Trip Playlist</div></div>
+  <div class="cb">
+    <div class="pl-input-row">
+      <input id="pl-url" placeholder="Paste Spotify or SoundCloud URL…" onkeydown="if(event.key==='Enter')addPlaylist()">
+      <button class="pl-add-btn" onclick="addPlaylist()">+</button>
+    </div>
+    <div id="playlist-items"></div>
+  </div>
+</div>`;
+
+  $('day-content').innerHTML = html;
+
+  // Trigger async tasks
+  renderPhotoGrid();
+  renderPlaylists();
+  renderMap(i);
+  fetchWeather(d, i);
+}
+
+// ======================================================
+// MAP
+// ======================================================
+function renderMap(i){
+  const d = DAYS[i];
+  setTimeout(()=>{
+    const el = $('day-map-container');
+    if(!el) return;
     try{
-      const sr=await fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${d.lat}&longitude=${d.lon}&daily=wave_height_max&start_date=${ds}&end_date=${de}&timezone=Australia%2FPerth`);
-      const sj=await sr.json();
+      if(mapInstance){ mapInstance.remove(); mapInstance = null; }
+      mapInstance = L.map('day-map-container', {zoomControl:false, attributionControl:false, dragging:false, scrollWheelZoom:false, doubleClickZoom:false, touchZoom:false});
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:14}).addTo(mapInstance);
+      const mkFrom = L.circleMarker([d.fromLat,d.fromLon],{radius:7,color:'#fff',weight:2,fillColor:d.grad.includes('#0891B2')?'#0891B2':'#06B6D4',fillOpacity:1}).addTo(mapInstance);
+      const mkTo   = L.circleMarker([d.lat,d.lon],{radius:9,color:'#fff',weight:2,fillColor:'#06B6D4',fillOpacity:1}).addTo(mapInstance);
+      if(d.lat !== d.fromLat || d.lon !== d.fromLon){
+        L.polyline([[d.fromLat,d.fromLon],[d.lat,d.lon]],{color:'#06B6D4',weight:3,dashArray:'6,4'}).addTo(mapInstance);
+        mapInstance.fitBounds([[d.fromLat,d.fromLon],[d.lat,d.lon]],{padding:[25,25]});
+      } else {
+        mapInstance.setView([d.lat,d.lon],10);
+      }
+    }catch(e){ if(el) el.innerHTML='<p style="padding:12px;color:var(--txt3);font-size:13px">Map requires internet connection</p>'; }
+  },200);
+}
+
+function openGMaps(i){
+  const d = DAYS[i];
+  const url = `https://www.google.com/maps/dir/${d.fromLat},${d.fromLon}/${d.lat},${d.lon}`;
+  window.open(url,'_blank');
+}
+
+// ======================================================
+// WEATHER
+// ======================================================
+async function fetchWeather(d, i){
+  const el = $('wx-body-'+i);
+  if(!el) return;
+  const now = new Date();
+  const tripDate = new Date(d.date+'T00:00:00+08:00');
+  const diff = Math.round((tripDate - now) / 86400000);
+  if(diff > 16){
+    const avail = new Date(tripDate - 16*86400000).toLocaleDateString('en-AU',{day:'numeric',month:'short'});
+    el.innerHTML = `<span>📅 Forecast available from ${avail}</span>`; return;
+  }
+  try{
+    const base = diff >= -1 ? 'https://api.open-meteo.com/v1/forecast' : 'https://archive-api.open-meteo.com/v1/archive';
+    const url = `${base}?latitude=${d.lat}&longitude=${d.lon}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,weathercode,windspeed_10m_max&start_date=${d.date}&end_date=${d.date}&timezone=Australia%2FPerth`;
+    const resp = await fetch(url);
+    const json = await resp.json();
+    const dd = json.daily;
+    if(!dd || !dd.temperature_2m_max) throw new Error('no data');
+    const tmax = Math.round(dd.temperature_2m_max[0]);
+    const tmin = Math.round(dd.temperature_2m_min[0]);
+    const prec = (dd.precipitation_sum[0]||0).toFixed(1);
+    const wind = Math.round(dd.windspeed_10m_max[0]||0);
+    const code = dd.weathercode[0]||0;
+    const icons = {0:'☀️',1:'🌤️',2:'⛅',3:'☁️',45:'🌫️',48:'🌫️',51:'🌦️',53:'🌦️',55:'🌧️',61:'🌧️',63:'🌧️',65:'⛈️',80:'🌦️',95:'⛈️'};
+    const labels = {0:'Clear',1:'Mainly clear',2:'Partly cloudy',3:'Overcast',45:'Fog',51:'Drizzle',53:'Drizzle',55:'Heavy drizzle',61:'Light rain',63:'Rain',65:'Heavy rain',80:'Showers',95:'Thunderstorm'};
+    const icon = icons[code]||'🌤️';
+    const label = labels[code]||'Variable';
+    const src = diff >= -1 ? 'Live forecast' : 'Historical avg';
+    el.innerHTML = `<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <div style="font-size:32px;line-height:1">${icon}</div>
+      <div>
+        <div style="font-size:16px;font-weight:700;color:var(--txt1)">${tmax}° <span style="font-weight:400;color:var(--txt3)">/ ${tmin}°C</span></div>
+        <div style="font-size:13px;color:var(--txt2)">${label}</div>
+      </div>
+      <div style="margin-left:auto;text-align:right">
+        <div style="font-size:13px;color:var(--txt2)">💧 ${prec}mm · 💨 ${wind}km/h</div>
+        <div style="font-size:11px;color:var(--txt3);margin-top:2px">${src}</div>
+      </div>
+    </div>`;
+    // Try marine/surf
+    try{
+      const sr = await fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${d.lat}&longitude=${d.lon}&daily=wave_height_max&start_date=${d.date}&end_date=${d.date}&timezone=Australia%2FPerth`);
+      const sj = await sr.json();
       if(sj.daily&&sj.daily.wave_height_max){
-        const wh=sj.daily.wave_height_max[0];
-        if(wh!=null){surfHtml=`<div class="wx-surf">🌊 Swell: ${wh.toFixed(1)}m (${bfScale(wh)})</div>`;}
+        const wh = sj.daily.wave_height_max[0];
+        if(wh!=null){
+          const surf = wh<0.5?'Calm':wh<1.25?'Slight':wh<2.5?'Moderate':wh<4?'Rough':'Very rough';
+          el.innerHTML += `<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-size:13px;color:var(--txt2)">🌊 Swell: ${wh.toFixed(1)}m (${surf})</div>`;
+        }
       }
     }catch(e){}
-
-    const source=diffDays>=-1?'Forecast':'Historical avg';
-    el.innerHTML=`
-<div class="wx-header">${icon} ${label} &nbsp;<span class="wx-src">${source}</span></div>
-<div class="wx-temps">${tmax}° / ${tmin}°C</div>
-<div class="wx-detail">💧 ${prec.toFixed(1)}mm &nbsp; 💨 ${wind}km/h</div>
-${surfHtml}`;
   }catch(e){
-    el.innerHTML=`<div class="wx-note">⛅ Weather data unavailable (connect to internet)</div>`;
+    el.innerHTML = `<span>⛅ Connect to the internet for live forecast</span>`;
   }
 }
 
-// ===== EXPLORE =====
-function renderExplore(){
-  const cats=['all','sundowner','nude','surf','brewery','winery','cafe','nature','culture','shop'];
-  const catLabels={all:'All',sundowner:'🌅 Sundown',nude:'🏖️ Clothing-opt',surf:'🏄 Surf',brewery:'🍺 Brewery',winery:'🍷 Winery',cafe:'☕ Cafes',nature:'🌿 Nature',culture:'🏛️ Culture',shop:'🛍️ Shops'};
-  const filterHtml=cats.map(c=>`<button class="filter-chip${c===curExploreFilter?' active':''}" onclick="filterExplore('${c}')">${catLabels[c]||c}</button>`).join('');
-
-  const filtered=curExploreFilter==='all'?XD:XD.filter(x=>x.c===curExploreFilter);
-  const cardsHtml=filtered.map(x=>{
-    const link=x.url?`<a href="${x.url}" target="_blank" class="explore-link">More info ↗</a>`:'';
-    const catLabel=catLabels[x.c]||x.c;
-    return`<div class="explore-card">
-      <div class="ec-top"><span class="ec-cat">${catLabel}</span><span class="ec-area">${x.area}</span></div>
-      <div class="ec-name">${x.name}</div>
-      <div class="ec-desc">${x.desc}</div>
-      ${link}
-    </div>`;
-  }).join('');
-
-  $('explore-filters').innerHTML=filterHtml;
-  $('explore-cards').innerHTML=cardsHtml||'<p style="padding:1rem;color:#666">No items in this category.</p>';
-}
-function filterExplore(cat){
-  curExploreFilter=cat;
-  renderExplore();
+// ======================================================
+// COLLAPSIBLES
+// ======================================================
+function toggleColl(btn){
+  const body = btn.nextElementSibling;
+  const open = body.classList.contains('open');
+  body.classList.toggle('open',!open);
+  btn.classList.toggle('open',!open);
 }
 
-// ===== MAP =====
-let mapInitialized=false;
-function renderMap(){
-  if(mapInitialized)return;
-  mapInitialized=true;
-  setTimeout(()=>{
-    try{
-      const map=L.map('leaflet-map').setView([-24,114],6);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
-
-      const stops=DAYS.filter((d,i,a)=>a.findIndex(x=>x.to===d.to)===i).filter(d=>d.lat);
-      stops.forEach((d,i)=>{
-        const icon=L.divIcon({className:'',html:`<div style="background:#0EA5E9;color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:12px;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3)">${i+1}</div>`,iconSize:[28,28],iconAnchor:[14,14]});
-        const gmUrl=`https://www.google.com/maps/dir/?api=1&destination=${d.lat},${d.lon}`;
-        L.marker([d.lat,d.lon],{icon}).addTo(map)
-          .bindPopup(`<b>${d.to}</b><br>Day ${d.day} · ${d.wday} ${d.lbl}<br>${d.acc}<br><a href="${gmUrl}" target="_blank">📍 Navigate here</a>`);
-      });
-
-      // Draw route
-      const coords=DAYS.filter(d=>d.lat).map(d=>[d.lat,d.lon]);
-      L.polyline(coords,{color:'#0EA5E9',weight:3,opacity:0.7}).addTo(map);
-    }catch(e){$('leaflet-map').innerHTML='<p style="padding:1rem">Map requires internet connection (OpenStreetMap tiles)</p>';}
-  },300);
-}
-
-// ===== MORE =====
-function renderMore(){
-  renderActivities();
-  renderPacking();
-  renderPeople();
-  renderPhotosUI();
-  renderMusicUI();
-  renderGames();
-  renderConvoy();
-  renderMeals();
-  renderVans();
-}
-
-function renderActivities(){
-  const cats=[...new Set(ACT.map(a=>a.cat))];
-  const html=cats.map(cat=>{
-    const items=ACT.filter(a=>a.cat===cat);
-    const catLabel={snorkel:'🤿 Snorkelling',dolphin:'🐬 Dolphins',whale:'🐳 Whale',kayak:'🚣 Kayaking',fishing:'🎣 Fishing',adventure:'🧗 Adventure','4wd':'🚙 4WD',tour:'🗺️ Tours'}[cat]||cat;
-    return`<button class="coll" onclick="toggleCollapse(this)">${catLabel}</button>
-<div class="coll-body">${items.map(a=>`<div class="ac"><div class="ac-name">${a.name}</div><div class="ac-area">${a.area}</div>${a.op?`<div class="ac-op">Operator: ${a.url?`<a href="${a.url}" target="_blank">${a.op} ↗</a>`:a.op}</div>`:''}${a.ph?`<div class="ac-ph">📞 <a href="tel:${a.ph}">${a.ph}</a></div>`:''}${a.note?`<div class="ac-note">💡 ${a.note}</div>`:''}</div>`).join('')}</div>`;
-  }).join('');
-  $('mp-activities').innerHTML=`<div class="mp-title">🤿 Activities & Bookings</div>${html}`;
-}
-
-function renderPacking(){
-  const cats=[...new Set(PACK.map(p=>p.cat))];
-  const catLabels={docs:'📄 Documents',camp:'🏕️ Camping',beach:'🏖️ Beach & Water',medical:'💊 Medical',food:'🍎 Food & Drink',tech:'📱 Tech & Gadgets',kids:'👦 Kids'};
-
-  // Progress across all items
-  const allKeys=[...PACK.map(p=>p.cat+':'+p.item), ...Object.entries(customPack).flatMap(([cat,arr])=>arr.map(ci=>cat+':custom:'+ci.id))];
-  const checkedCount=allKeys.filter(k=>packState[k]).length;
-  const total=allKeys.length;
-  const pct=total?Math.round(checkedCount/total*100):0;
-  const progressHtml=`<div class="pack-progress"><span>${checkedCount}/${total} packed (${pct}%)</span><div class="pack-progress-bar"><div class="pack-progress-fill" style="width:${pct}%"></div></div></div>`;
-
-  const html=cats.map(cat=>{
-    const defaults=PACK.filter(p=>p.cat===cat);
-    const customs=(customPack[cat]||[]);
-    const catLabel=catLabels[cat]||cat;
-
-    const defaultRows=defaults.map(p=>{
-      const key=cat+':'+p.item;
-      const checked=packState[key]?'checked':'';
-      const doneClass=packState[key]?' done':'';
-      return`<div class="ci${doneClass}"><input type="checkbox" ${checked} onchange="toggleCheck('${key}',this.checked,this.closest('.ci'))"><label onclick="this.previousElementSibling.click()">${p.item}${p.essential?' ⭐':''}</label></div>`;
-    }).join('');
-
-    const customRows=customs.map(ci=>{
-      const key=cat+':custom:'+ci.id;
-      const checked=packState[key]?'checked':'';
-      const doneClass=packState[key]?' done':'';
-      const safe=ci.item.replace(/'/g,'&#39;').replace(/"/g,'&quot;');
-      return`<div class="ci ci-custom${doneClass}"><input type="checkbox" ${checked} onchange="toggleCheck('${key}',this.checked,this.closest('.ci'))"><label onclick="this.previousElementSibling.click()">${ci.item}</label><button class="ci-del" onclick="deletePackItem('${cat}','${ci.id}')" title="Remove item">×</button></div>`;
-    }).join('');
-
-    return`<button class="coll" onclick="toggleCollapse(this)">${catLabel}</button>
-<div class="coll-body">
-${defaultRows}${customRows}
-<div class="pack-add">
-  <input type="text" id="pack-input-${cat}" placeholder="Add item to ${catLabel.replace(/[^a-zA-Z &]/g,'')}…" onkeydown="if(event.key==='Enter')addPackItem('${cat}')">
-  <button onclick="addPackItem('${cat}')">+</button>
-</div>
-</div>`;
-  }).join('');
-
-  $('mp-packing').innerHTML=`<div class="mp-title">🎒 Packing List</div><p style="padding:0 1rem .25rem;color:#666;font-size:.82rem">⭐ = Essential · Blue = your additions · Tap to check off</p>${progressHtml}${html}`;
-}
-
-function toggleCheck(key,val,el){
-  packState[key]=val;
-  if(el){el.classList.toggle('done',val);}
-  try{localStorage.setItem('packState',JSON.stringify(packState));}catch(e){}
-  // Update progress bar without full re-render
-  const allKeys=[...PACK.map(p=>p.cat+':'+p.item), ...Object.entries(customPack).flatMap(([cat,arr])=>arr.map(ci=>cat+':custom:'+ci.id))];
-  const checkedCount=allKeys.filter(k=>packState[k]).length;
-  const total=allKeys.length;
-  const pct=total?Math.round(checkedCount/total*100):0;
-  const fill=$('mp-packing')&&$('mp-packing').querySelector('.pack-progress-fill');
-  const lbl=$('mp-packing')&&$('mp-packing').querySelector('.pack-progress');
-  if(fill)fill.style.width=pct+'%';
-  if(lbl)lbl.firstChild.textContent=checkedCount+'/'+total+' packed ('+pct+'%)';
-}
-
-function addPackItem(cat){
-  const inp=$('pack-input-'+cat);
-  if(!inp)return;
-  const text=inp.value.trim();
-  if(!text)return;
-  if(!customPack[cat])customPack[cat]=[];
-  const id=Date.now()+''+Math.floor(Math.random()*1000);
-  customPack[cat].push({id,item:text});
-  try{localStorage.setItem('customPack',JSON.stringify(customPack));}catch(e){}
-  inp.value='';
-  renderPacking();
-  // Re-open the accordion that was just edited
-  const collBtns=$('mp-packing').querySelectorAll('.coll');
-  const cats=[...new Set(PACK.map(p=>p.cat))];
-  const catIdx=cats.indexOf(cat);
-  if(collBtns[catIdx]){
-    const body=collBtns[catIdx].nextElementSibling;
-    body.style.maxHeight='2000px';
-    collBtns[catIdx].classList.add('open');
-  }
-}
-
-function deletePackItem(cat,id){
-  if(!customPack[cat])return;
-  customPack[cat]=customPack[cat].filter(ci=>ci.id!==id);
-  // Also clear its check state
-  delete packState[cat+':custom:'+id];
-  try{
-    localStorage.setItem('customPack',JSON.stringify(customPack));
-    localStorage.setItem('packState',JSON.stringify(packState));
-  }catch(e){}
-  renderPacking();
-}
-
-function renderPeople(){
-  const famCards=FAM.map(f=>`<div class="fcard" style="border-left:4px solid ${f.color}">
-  <div class="fc-head">${f.emoji} <strong>The ${f.name}s</strong></div>
-  <div class="fc-van">🚐 ${f.van}</div>
-  <div class="fc-row">👨 ${f.dad} · <a href="tel:${f.dadPh}">${f.dadPh}</a></div>
-  <div class="fc-row">👩 ${f.mum} · <a href="tel:${f.mumPh}">${f.mumPh}</a></div>
-  <div class="fc-row">👦 ${f.kids.join(', ')}</div>
-  ${f.note?`<div class="fc-note">${f.note}</div>`:''}
-</div>`).join('');
-
-  $('mp-people').innerHTML=`<div class="mp-title">👨‍👩‍👧 The Families</div>
-${famCards}
-<div class="fcard" style="border-left:4px solid #6B7280">
-  <div class="fc-head">🚐 <strong>Campervan Broker</strong></div>
-  <div class="fc-row">👤 Sarah Feldman</div>
-  <div class="fc-row">📞 <a href="tel:${BROKER.ph}">${BROKER.ph}</a></div>
-  <div class="fc-row">✉️ <a href="mailto:${BROKER.email}">${BROKER.email}</a></div>
-  <div class="fc-row">📍 ${BROKER.addr}</div>
-  <div class="fc-row">🕐 Pickup/dropoff: ${BROKER.hours}</div>
-</div>`;
-}
-
-function renderPhotosUI(){
-  const saved=photos.length;
-  $('mp-photos').innerHTML=`<div class="mp-title">📷 Trip Photos</div>
-<div class="photo-setup">
-  <p>Share photos across all 5 families in real-time! Upload a photo and everyone with the app sees it.</p>
-  <div class="photo-upload-area">
-    <label class="upload-btn">
-      📸 Add Photo
-      <input type="file" accept="image/*" multiple style="display:none" onchange="handlePhotoUpload(this)">
-    </label>
-    <span class="photo-count">${saved} photo${saved!==1?'s':''} saved</span>
-  </div>
-  <div id="fb-config-area">${fbDb?'<span style="color:#10B981">✅ Firebase connected — photos shared across all families!</span>':'<details><summary style="cursor:pointer;color:#0EA5E9">⚙️ Set up Firebase for cross-family sharing</summary><div style="padding:1rem"><p>To share photos across all families, enter your Firebase config:</p><input id="fb-url" placeholder="Firebase Database URL (https://...)" style="width:100%;padding:.5rem;margin:.5rem 0;border:1px solid #ddd;border-radius:.5rem"><button onclick="initFirebase()" style="background:#F59E0B;color:#fff;border:none;padding:.5rem 1rem;border-radius:.5rem;cursor:pointer">Connect Firebase</button><p style="font-size:.8rem;color:#666;margin-top:.5rem">Optional: photos also save locally to this device.</p></div></details>'}</div>
-</div>
-<div id="photo-grid" class="photo-grid"></div>
-<div id="photo-lb" class="lightbox" onclick="closeLb()"><img id="lb-img" src=""><div id="lb-cap"></div></div>`;
-  renderPhotoGrid();
-}
-
+// ======================================================
+// PHOTOS
+// ======================================================
 function handlePhotoUpload(input){
-  const files=Array.from(input.files);
-  files.forEach(file=>{
-    const reader=new FileReader();
-    reader.onload=e=>{
-      const img=new Image();
-      img.onload=()=>{
-        const canvas=document.createElement('canvas');
-        const MAX=1200;
-        let w=img.width,h=img.height;
-        if(w>MAX){h=h*MAX/w;w=MAX;}
-        if(h>MAX){w=w*MAX/h;h=MAX;}
-        canvas.width=w;canvas.height=h;
+  Array.from(input.files).forEach(file=>{
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX = 1200;
+        let w = img.width, h = img.height;
+        if(w > MAX){ h = h*MAX/w; w = MAX; }
+        if(h > MAX){ w = w*MAX/h; h = MAX; }
+        canvas.width = w; canvas.height = h;
         canvas.getContext('2d').drawImage(img,0,0,w,h);
-        const dataUrl=canvas.toDataURL('image/jpeg',0.8);
-        const photo={id:Date.now()+Math.random(),url:dataUrl,name:file.name,ts:new Date().toISOString()};
+        const dataUrl = canvas.toDataURL('image/jpeg',0.8);
+        const photo = {id:Date.now()+Math.random(), url:dataUrl, name:file.name, ts:new Date().toISOString()};
         photos.unshift(photo);
-        if(photos.length>50)photos=photos.slice(0,50);
-        try{localStorage.setItem('tripPhotos',JSON.stringify(photos));}catch(e){}
-        if(fbDb){
-          fbDb.ref('photos').push({url:dataUrl,name:file.name,ts:photo.ts});
-        }
+        if(photos.length > 60) photos = photos.slice(0,60);
+        try{ localStorage.setItem('tripPhotos', JSON.stringify(photos)); }catch(e){}
+        if(fbDb) fbDb.ref('photos').push({url:dataUrl,name:file.name,ts:photo.ts});
         renderPhotoGrid();
+        const lbl = $('photo-count-lbl');
+        if(lbl) lbl.textContent = photos.length+' photo'+(photos.length!==1?'s':'');
       };
-      img.src=e.target.result;
+      img.src = e.target.result;
     };
     reader.readAsDataURL(file);
   });
 }
 
 function renderPhotoGrid(){
-  const grid=$('photo-grid');
-  if(!grid)return;
-  if(!photos.length){grid.innerHTML='<p style="padding:1rem;color:#666">No photos yet — be the first to upload one!</p>';return;}
-  grid.innerHTML=photos.map((p,i)=>`<div class="photo-thumb" onclick="openLb(${i})"><img src="${p.url}" alt="${p.name}" loading="lazy"></div>`).join('');
+  const grid = $('photo-grid-main');
+  if(!grid) return;
+  if(!photos.length){ grid.innerHTML=''; return; }
+  grid.innerHTML = photos.map((p,i) => `<div class="photo-thumb" onclick="openLb(${i})"><img src="${p.url}" loading="lazy"></div>`).join('');
 }
 
-function openLb(i){
-  $('lb-img').src=photos[i].url;
-  $('lb-cap').textContent=photos[i].name;
-  $('photo-lb').style.display='flex';
-}
-function closeLb(){$('photo-lb').style.display='none';}
+function openLb(i){ $('lb-img').src=photos[i].url; $('lb-cap').textContent=photos[i].name; $('lb').classList.add('open'); }
+function closeLb(){ $('lb').classList.remove('open'); }
 
-function initFirebase(){
-  const url=$('fb-url').value.trim();
-  if(!url){alert('Please enter your Firebase Database URL');return;}
+function connectFirebase(){
+  const url = ($('fb-url-input')||{}).value;
+  if(!url) return;
   try{
-    if(!window.firebase){alert('Firebase SDK not loaded. Please check your internet connection.');return;}
-    if(!fbConfig){
-      firebase.initializeApp({databaseURL:url});
-    }
-    fbDb=firebase.database();
-    fbDb.ref('photos').on('value',snap=>{
-      const data=snap.val();
+    if(!window.firebase){ alert('Firebase SDK not loaded — check internet connection'); return; }
+    firebase.initializeApp({databaseURL:url});
+    fbDb = firebase.database();
+    fbDb.ref('photos').on('value', snap => {
+      const data = snap.val();
       if(data){
-        const fbPhotos=Object.values(data).sort((a,b)=>new Date(b.ts)-new Date(a.ts));
-        photos=[...fbPhotos,...photos.filter(p=>!fbPhotos.find(f=>f.ts===p.ts))];
+        const fbP = Object.values(data).sort((a,b)=>new Date(b.ts)-new Date(a.ts));
+        photos = [...fbP, ...photos.filter(p=>!fbP.find(f=>f.ts===p.ts))];
         renderPhotoGrid();
       }
     });
-    $('fb-config-area').innerHTML='<span style="color:#10B981">✅ Firebase connected!</span>';
-    try{localStorage.setItem('fbUrl',url);}catch(e){}
-  }catch(e){alert('Firebase error: '+e.message);}
+    try{ localStorage.setItem('fbUrl', url); }catch(e){}
+    renderDay(curDay);
+  }catch(e){ alert('Firebase error: '+e.message); }
 }
 
-function renderMusicUI(){
-  $('mp-music').innerHTML=`<div class="mp-title">🎵 Trip Playlist</div>
-<p style="padding:0 1rem;color:#666">Add a Spotify or SoundCloud link to share the vibe!</p>
-<div style="padding:0 1rem 1rem">
-  <input id="pl-input" placeholder="Paste Spotify or SoundCloud URL" style="width:100%;padding:.6rem;border:1px solid #ddd;border-radius:.5rem;margin-bottom:.5rem;box-sizing:border-box">
-  <button onclick="addPlaylist()" style="background:#10B981;color:#fff;border:none;padding:.5rem 1.2rem;border-radius:.5rem;cursor:pointer">Add ▶</button>
-</div>
-<div id="playlist-embeds"></div>`;
-  renderPlaylists();
-}
-
+// ======================================================
+// PLAYLIST
+// ======================================================
 function addPlaylist(){
-  const url=($('pl-input').value||'').trim();
-  if(!url)return;
-  playlist.unshift({url,id:Date.now()});
-  try{localStorage.setItem('playlist',JSON.stringify(playlist));}catch(e){}
-  $('pl-input').value='';
+  const inp = $('pl-url');
+  const url = (inp||{}).value && inp.value.trim();
+  if(!url) return;
+  playlist.unshift({id:Date.now(), url});
+  try{ localStorage.setItem('playlist', JSON.stringify(playlist)); }catch(e){}
+  inp.value = '';
   renderPlaylists();
 }
-function removePlaylist(id){
-  playlist=playlist.filter(p=>p.id!==id);
-  try{localStorage.setItem('playlist',JSON.stringify(playlist));}catch(e){}
+function removePlaylistItem(id){
+  playlist = playlist.filter(p=>p.id!==id);
+  try{ localStorage.setItem('playlist', JSON.stringify(playlist)); }catch(e){}
   renderPlaylists();
 }
 function renderPlaylists(){
-  const el=$('playlist-embeds');
-  if(!el)return;
-  if(!playlist.length){el.innerHTML='<p style="padding:0 1rem;color:#666">No playlists added yet.</p>';return;}
-  el.innerHTML=playlist.map(p=>{
-    let embed='';
+  const el = $('playlist-items');
+  if(!el) return;
+  if(!playlist.length){ el.innerHTML='<p style="font-size:13px;color:var(--txt3)">No playlists yet — add a Spotify or SoundCloud link above.</p>'; return; }
+  el.innerHTML = playlist.map(p => {
+    let embed = '';
     if(p.url.includes('spotify.com')){
-      const eUrl=p.url.replace('open.spotify.com/','open.spotify.com/embed/');
-      embed=`<iframe src="${eUrl}" width="100%" height="80" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>`;
+      embed = `<iframe src="${p.url.replace('open.spotify.com/','open.spotify.com/embed/')}" width="100%" height="80" frameborder="0" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe>`;
     } else if(p.url.includes('soundcloud.com')){
-      embed=`<iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=${encodeURIComponent(p.url)}&color=%230EA5E9&auto_play=false&hide_related=false&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe>`;
+      embed = `<iframe width="100%" height="120" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=${encodeURIComponent(p.url)}&color=%2306B6D4&auto_play=false&hide_related=true&show_comments=false&show_user=true"></iframe>`;
     } else {
-      embed=`<p style="padding:.5rem;color:#e53e3e">⚠️ Only Spotify and SoundCloud URLs supported</p>`;
+      embed = `<p style="font-size:12px;color:var(--txt3)">⚠️ Spotify or SoundCloud URLs only</p>`;
     }
-    return`<div style="margin:.5rem 1rem;position:relative">${embed}<button onclick="removePlaylist(${p.id})" style="position:absolute;top:4px;right:4px;background:rgba(0,0,0,.5);color:#fff;border:none;border-radius:50%;width:24px;height:24px;cursor:pointer;font-size:14px">×</button></div>`;
+    return `<div class="pl-item">${embed}<button class="pl-del" onclick="removePlaylistItem(${p.id})">×</button></div>`;
   }).join('');
 }
 
-function renderGames(){
-  const cats=[...new Set(GAMES.map(g=>g.cat))];
-  const catLabels={card:'🃏 Card Games',trivia:'🧠 Trivia & Spotting',outdoor:'🏖️ Outdoor',night:'🌙 Evening',kids:'👦 Kids Only',adults:'🍺 Adults & Teens'};
-  $('mp-games').innerHTML=`<div class="mp-title">🎮 Games & Activities</div>`+cats.map(cat=>{
-    const items=GAMES.filter(g=>g.cat===cat);
-    return`<button class="coll" onclick="toggleCollapse(this)">${catLabels[cat]||cat}</button>
-<div class="coll-body">${items.map(g=>`<div class="gc"><div class="gc-name">${g.name}</div><div class="gc-desc">${g.desc}</div><div class="gc-meta">👥 ${g.players} · ⏱️ ${g.time}</div></div>`).join('')}</div>`;
+// ======================================================
+// DRAWER
+// ======================================================
+function openDrawer(){
+  renderDrawer();
+  $('drawer').classList.add('open');
+  $('drawer-overlay').classList.add('open');
+}
+function closeDrawer(){
+  $('drawer').classList.remove('open');
+  $('drawer-overlay').classList.remove('open');
+}
+
+function renderDrawer(){
+  // Packing progress
+  const allKeys = [...PACK.map(p=>p.cat+':'+p.item), ...Object.entries(customPack).flatMap(([c,arr])=>arr.map(ci=>c+':custom:'+ci.id))];
+  const checked = allKeys.filter(k=>packState[k]).length;
+  const total = allKeys.length;
+  const pct = total ? Math.round(checked/total*100) : 0;
+
+  const cats = [...new Set(PACK.map(p=>p.cat))];
+  const catLabels = {docs:'📄 Documents',camp:'🏕️ Camping',beach:'🏖️ Beach & Water',med:'💊 Medical',food:'🍎 Food',tech:'📱 Tech'};
+  const packHtml = cats.map(cat => {
+    const defaults = PACK.filter(p=>p.cat===cat);
+    const customs  = customPack[cat]||[];
+    const rows = [
+      ...defaults.map(p => {
+        const key = cat+':'+p.item;
+        return `<div class="pack-check${packState[key]?' done':''}">
+          <input type="checkbox" ${packState[key]?'checked':''} onchange="packToggle('${key}',this.checked,this.closest('.pack-check'))">
+          <label onclick="this.previousElementSibling.click()">${p.item}${p.ess?' ⭐':''}</label></div>`;
+      }),
+      ...customs.map(ci => {
+        const key = cat+':custom:'+ci.id;
+        const safe = ci.item.replace(/'/g,'&#39;');
+        return `<div class="pack-check${packState[key]?' done':''}">
+          <input type="checkbox" ${packState[key]?'checked':''} onchange="packToggle('${key}',this.checked,this.closest('.pack-check'))">
+          <label onclick="this.previousElementSibling.click()" style="color:var(--aqua)">${ci.item}</label>
+          <button class="pack-del" onclick="packDelete('${cat}','${ci.id}')">×</button></div>`;
+      })
+    ].join('');
+    return `<div style="margin-bottom:6px">
+      <div class="pack-cat-label">${catLabels[cat]||cat}</div>
+      ${rows}
+      <div class="pack-add-row">
+        <input id="pack-inp-${cat}" placeholder="Add item…" onkeydown="if(event.key==='Enter')packAdd('${cat}')">
+        <button onclick="packAdd('${cat}')">+</button>
+      </div>
+    </div>`;
   }).join('');
+
+  const famHtml = FAM.map(f => `<div class="contact-card" style="border-left:3px solid ${f.col};padding-left:10px;margin-bottom:12px">
+    <div class="cc-name">${f.emoji} The ${f.name}s <span style="font-size:11px;color:var(--txt3)">Van ${f.van}</span></div>
+    ${f.note?`<div class="cc-van">${f.note}</div>`:''}
+    <div class="cc-row">👨 ${f.dad} · <a href="tel:${f.dadPh}">${f.dadPh}</a></div>
+    <div class="cc-row">👩 ${f.mum} · <a href="tel:${f.mumPh}">${f.mumPh}</a></div>
+    <div class="cc-row" style="font-size:12px;color:var(--txt3)">👦 ${f.kids.join(', ')}</div>
+  </div>`).join('');
+
+  $('drawer-body').innerHTML = `
+  <div class="drawer-section">
+    <div class="drawer-section-title">👨‍👩‍👧 The Families</div>
+    ${famHtml}
+    <div class="contact-card" style="border-left:3px solid var(--txt3);padding-left:10px">
+      <div class="cc-name">🚐 Campervan Broker</div>
+      <div class="cc-row">Sarah Feldman · <a href="tel:${BROKER.ph}">${BROKER.ph}</a></div>
+      <div class="cc-row"><a href="mailto:${BROKER.email}">${BROKER.email}</a></div>
+      <div class="cc-row" style="font-size:12px;color:var(--txt3)">${BROKER.addr} · ${BROKER.hours}</div>
+    </div>
+  </div>
+  <div class="drawer-section">
+    <div class="drawer-section-title">🎒 Packing List</div>
+    <div class="pack-progress-bar"><div class="pack-progress-fill" style="width:${pct}%"></div></div>
+    <div class="pack-progress-text">${checked}/${total} packed (${pct}%)</div>
+    ${packHtml}
+  </div>`;
 }
 
-function renderConvoy(){
-  $('mp-convoy').innerHTML=`<div class="mp-title">🚐 Convoy Plan</div>
-<button class="coll" onclick="toggleCollapse(this)">📋 Convoy Rules</button>
-<div class="coll-body"><ul>${CONVOY.rules.map(r=>`<li>${r}</li>`).join('')}</ul></div>
-<button class="coll" onclick="toggleCollapse(this)">📡 Communications</button>
-<div class="coll-body"><ul>${CONVOY.comms.map(c=>`<li>${c}</li>`).join('')}</ul></div>
-<button class="coll" onclick="toggleCollapse(this)">⛽ Remote Area Notes</button>
-<div class="coll-body"><ul>${CONVOY.remote.map(r=>`<li>${r}</li>`).join('')}</ul></div>`;
+function packToggle(key, val, el){
+  packState[key] = val;
+  if(el) el.classList.toggle('done', val);
+  try{ localStorage.setItem('packState', JSON.stringify(packState)); }catch(e){}
+  // Update bar
+  const allKeys = [...PACK.map(p=>p.cat+':'+p.item), ...Object.entries(customPack).flatMap(([c,arr])=>arr.map(ci=>c+':custom:'+ci.id))];
+  const checked = allKeys.filter(k=>packState[k]).length;
+  const total = allKeys.length;
+  const pct = total ? Math.round(checked/total*100) : 0;
+  const fill = document.querySelector('.pack-progress-fill');
+  const lbl  = document.querySelector('.pack-progress-text');
+  if(fill) fill.style.width = pct+'%';
+  if(lbl)  lbl.textContent  = checked+'/'+total+' packed ('+pct+'%)';
+}
+function packAdd(cat){
+  const inp = $('pack-inp-'+cat);
+  if(!inp || !inp.value.trim()) return;
+  if(!customPack[cat]) customPack[cat]=[];
+  const id = Date.now()+''+Math.floor(Math.random()*1000);
+  customPack[cat].push({id, item:inp.value.trim()});
+  inp.value = '';
+  try{ localStorage.setItem('customPack', JSON.stringify(customPack)); }catch(e){}
+  renderDrawer();
+}
+function packDelete(cat,id){
+  if(!customPack[cat]) return;
+  customPack[cat] = customPack[cat].filter(ci=>ci.id!==id);
+  delete packState[cat+':custom:'+id];
+  try{ localStorage.setItem('customPack',JSON.stringify(customPack)); localStorage.setItem('packState',JSON.stringify(packState)); }catch(e){}
+  renderDrawer();
 }
 
-function renderMeals(){
-  $('mp-meals').innerHTML=`<div class="mp-title">🍽️ Meal Ideas</div>`+MEALS.map(m=>`<div class="ac"><div class="ac-name">${m.meal}</div><div class="ac-area">${m.loc}</div><div class="ac-op">${m.desc}</div></div>`).join('');
-}
-
-function renderVans(){
-  $('mp-vans').innerHTML=`<div class="mp-title">🚐 Our Campervans</div>
-<div class="van-info">
-  <p><strong>Vehicle:</strong> Maui River Elite 6-Berth</p>
-  <p><strong>Booked via:</strong> Campervan Rental Shop</p>
-  <p><strong>Pickup/dropoff:</strong> ${BROKER.addr}</p>
-  <p><strong>Hours:</strong> ${BROKER.hours}</p>
-  <p><strong>Contact Sarah:</strong> <a href="tel:${BROKER.ph}">${BROKER.ph}</a> · <a href="mailto:${BROKER.email}">${BROKER.email}</a></p>
-</div>
-<button class="coll" onclick="toggleCollapse(this)">🚐 Van Specifications</button>
-<div class="coll-body">
-  <ul>
-    <li>6 berths (sleeps up to 6)</li>
-    <li>Fixed island bed + convertible dinette + overhead bunk</li>
-    <li>Full kitchen: microwave, 2-burner hob, fridge/freezer</li>
-    <li>Shower & toilet (Thetford cassette)</li>
-    <li>Air conditioning + diesel heater</li>
-    <li>Outdoor awning + table/chairs</li>
-    <li>80L fresh water + 20L grey water</li>
-    <li>200Ah AGM leisure batteries + 200W solar</li>
-    <li>Reversing camera + GPS</li>
-    <li>Unlimited km allowance</li>
-    <li>24hr roadside assistance included</li>
-  </ul>
-</div>
-<button class="coll" onclick="toggleCollapse(this)">⛽ Fuel & Running Costs Guide</button>
-<div class="coll-body">
-  <ul>
-    <li>Fuel type: Diesel</li>
-    <li>Tank capacity: ~100L</li>
-    <li>Average consumption: ~12L/100km</li>
-    <li>Total trip fuel (2882km): ~350L per van</li>
-    <li>Fill up together — never let anyone drop below 1/4 tank in remote areas</li>
-    <li>Key remote fuel stops: Carnarvon, Exmouth, Denham</li>
-  </ul>
-</div>`;
-}
-
-// ===== INIT =====
+// ======================================================
+// INIT
+// ======================================================
 function init(){
-  // Load saved state
   try{
-    const sp=localStorage.getItem('packState');
-    if(sp){Object.assign(packState,JSON.parse(sp));}
-    const cp=localStorage.getItem('customPack');
-    if(cp){Object.assign(customPack,JSON.parse(cp));}
-    const ph=localStorage.getItem('tripPhotos');
-    if(ph){photos=JSON.parse(ph);}
-    const pl=localStorage.getItem('playlist');
-    if(pl){playlist=JSON.parse(pl);}
-    // Auto-reconnect Firebase
-    const fbUrl=localStorage.getItem('fbUrl');
-    if(fbUrl&&window.firebase){
+    const sp = localStorage.getItem('packState');    if(sp) Object.assign(packState, JSON.parse(sp));
+    const cp = localStorage.getItem('customPack');   if(cp) Object.assign(customPack, JSON.parse(cp));
+    const ph = localStorage.getItem('tripPhotos');   if(ph) photos = JSON.parse(ph);
+    const pl = localStorage.getItem('playlist');     if(pl) playlist = JSON.parse(pl);
+    const fb = localStorage.getItem('fbUrl');
+    if(fb && window.firebase){
       try{
-        firebase.initializeApp({databaseURL:fbUrl});
-        fbDb=firebase.database();
-        fbDb.ref('photos').on('value',snap=>{
-          const data=snap.val();
-          if(data){
-            const fbP=Object.values(data).sort((a,b)=>new Date(b.ts)-new Date(a.ts));
-            photos=[...fbP,...photos.filter(p=>!fbP.find(f=>f.ts===p.ts))];
-          }
+        firebase.initializeApp({databaseURL:fb});
+        fbDb = firebase.database();
+        fbDb.ref('photos').on('value', snap => {
+          const data = snap.val();
+          if(data){ const fbP=Object.values(data).sort((a,b)=>new Date(b.ts)-new Date(a.ts)); photos=[...fbP,...photos.filter(p=>!fbP.find(f=>f.ts===p.ts))]; }
         });
       }catch(e){}
     }
   }catch(e){}
 
-  goTab('home');
+  curDay = getCurrentDayIdx();
+  renderDayStrip();
+  renderDay(curDay);
 }
 
-window.addEventListener('load',init);
+window.addEventListener('load', init);
 </script>
 </body>
 </html>
