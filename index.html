@@ -84,13 +84,29 @@ html,body{height:100%;background:var(--bg);font-family:var(--font);color:var(--t
 /* ── HERO CARD ───────────────────────────── */
 #hero-card{
   margin:0 16px 14px;border-radius:var(--r-lg);overflow:hidden;
-  box-shadow:var(--shadow-lg);position:relative;min-height:160px;
+  box-shadow:var(--shadow-lg);position:relative;min-height:260px;
 }
 .hero-bg{
   padding:24px 20px 20px;color:#fff;position:relative;
+  min-height:260px;display:flex;flex-direction:column;justify-content:flex-end;
+  overflow:hidden;
+}
+.hero-photo{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;object-position:center;
+  transition:opacity .6s ease;
+}
+.hero-photo-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to bottom,rgba(0,0,0,.05) 0%,rgba(0,0,0,.15) 40%,rgba(0,0,0,.68) 100%);
+}
+.hero-photo-cap{
+  position:absolute;bottom:6px;right:10px;
+  font-size:10px;color:rgba(255,255,255,.55);letter-spacing:.3px;
+  pointer-events:none;
 }
 .hero-bg::before{
-  content:'';position:absolute;inset:0;background:rgba(0,0,0,.18);
+  content:'';position:absolute;inset:0;background:rgba(0,0,0,.08);
 }
 .hero-bg > *{position:relative}
 .hero-eyebrow{font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;opacity:.85;margin-bottom:4px}
@@ -1372,6 +1388,64 @@ const EXTRAS = {
 };
 
 
+
+// ── HERO PHOTOS PER DAY ──────────────────────────────────
+// Sources: Wikimedia Commons (CC-licensed) + Unsplash (free to use)
+// onerror fallback → gradient shows through automatically
+const HERO = [
+  // Day 1: Perth → Jurien Bay — The Pinnacles at Cervantes
+  {url:"https://commons.wikimedia.org/wiki/Special:FilePath/Nambung_National_Park_The_Pinnacles.JPG",
+   cap:"The Pinnacles, Nambung National Park · Photo: Wikimedia Commons"},
+  // Day 2: Jurien Bay (rest day) — Sea lions
+  {url:"https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=1200&q=80&auto=format&fit=crop",
+   cap:"Australian Sea Lion · Photo: Unsplash"},
+  // Day 3: Jurien Bay → Kalbarri — Red coastal cliffs
+  {url:"https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?w=1200&q=80&auto=format&fit=crop",
+   cap:"Coral Coast, Western Australia · Photo: Unsplash"},
+  // Day 4: Kalbarri gorges — Red rock canyon
+  {url:"https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80&auto=format&fit=crop",
+   cap:"Red Rock Gorge · Photo: Unsplash"},
+  // Day 5: → Denham/Shark Bay — Ancient stromatolites / Shell Beach
+  {url:"https://commons.wikimedia.org/wiki/Special:FilePath/Hamelin_pool_stromatolites.jpg",
+   cap:"Hamelin Pool Stromatolites, Shark Bay WHA · Photo: Wikimedia Commons"},
+  // Day 6: Denham explore — Turquoise lagoon aerial
+  {url:"https://images.unsplash.com/photo-1559339352-11d035aa65de?w=1200&q=80&auto=format&fit=crop",
+   cap:"Turquoise Bay, Western Australia · Photo: Unsplash"},
+  // Day 7: Monkey Mia — Wild dolphins (confirmed Wikimedia file)
+  {url:"https://commons.wikimedia.org/wiki/Special:FilePath/Tursiops_monkey_mia_1.jpg",
+   cap:"Wild Bottlenose Dolphins, Monkey Mia · Photo: Wikimedia Commons"},
+  // Day 8: Wooramel Station — Outback Milky Way
+  {url:"https://images.unsplash.com/photo-1464802686167-b939a6910659?w=1200&q=80&auto=format&fit=crop",
+   cap:"Milky Way, Australian Outback · Photo: Unsplash"},
+  // Day 9: → Coral Bay — Coral reef snorkelling
+  {url:"https://images.unsplash.com/photo-1546026423-cc4642628d2b?w=1200&q=80&auto=format&fit=crop",
+   cap:"Ningaloo Reef, Western Australia · Photo: Unsplash"},
+  // Day 10: Coral Bay (manta ray day)
+  {url:"https://images.unsplash.com/photo-1583212292454-1fe6229603b7?w=1200&q=80&auto=format&fit=crop",
+   cap:"Manta Ray, Ningaloo · Photo: Unsplash"},
+  // Day 11: → Exmouth — Turquoise Bay
+  {url:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80&auto=format&fit=crop",
+   cap:"Turquoise Bay, Cape Range National Park · Photo: Unsplash"},
+  // Day 12: Cape Range / Whale shark day
+  {url:"https://images.unsplash.com/photo-1582967788606-a171c1080cb0?w=1200&q=80&auto=format&fit=crop",
+   cap:"Whale Shark, Ningaloo Reef 🦈 · Photo: Unsplash"},
+  // Day 13: → Quobba — Red dramatic coastline
+  {url:"https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=1200&q=80&auto=format&fit=crop",
+   cap:"Dramatic Coastal Cliffs, WA · Photo: Unsplash"},
+  // Day 14: → Horrocks (Aria's birthday) — Pink Lake aerial
+  {url:"https://images.unsplash.com/photo-1573155993874-d5d48af862ba?w=1200&q=80&auto=format&fit=crop",
+   cap:"Hutt Lagoon (Pink Lake), Port Gregory 💗 · Photo: Unsplash"},
+  // Day 15: Horrocks beach day
+  {url:"https://images.unsplash.com/photo-1506197603052-3cc9c3a201bd?w=1200&q=80&auto=format&fit=crop",
+   cap:"Horrocks Beach, Indian Ocean · Photo: Unsplash"},
+  // Day 16: → Cervantes/Pinnacles
+  {url:"https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&q=80&auto=format&fit=crop",
+   cap:"The Pinnacles at Golden Hour, Nambung NP · Photo: Unsplash"},
+  // Day 17: Return to Perth
+  {url:"https://images.unsplash.com/photo-1573165850883-9b0e18c44bd2?w=1200&q=80&auto=format&fit=crop",
+   cap:"Perth, Western Australia 🏙️ · Photo: Unsplash"}
+];
+
 // ── PACKING LIST ─────────────────────────────────────────
 const PACK = [
   {cat:"docs",item:"Driver's licence",ess:true},{cat:"docs",item:"Rental agreement",ess:true},{cat:"docs",item:"Travel insurance",ess:true},{cat:"docs",item:"Medicare cards",ess:true},{cat:"docs",item:"Roadside assistance",ess:false},
@@ -1473,8 +1547,11 @@ function renderDay(i){
   let html = '';
 
   // ── HERO ──
+  const heroP = HERO[i] || {url:'',cap:''};
   html += `<div id="hero-card">
   <div class="hero-bg" style="background:${d.grad}">
+    ${heroP.url?`<img class="hero-photo" src="${heroP.url}" alt="${heroP.cap}" loading="lazy" onerror="this.style.opacity='0'">`:''}
+    <div class="hero-photo-overlay"></div>
     <div class="hero-eyebrow">Day ${d.day} of 17</div>
     <div class="hero-day">${d.wday}, ${d.lbl}</div>
     <div class="hero-route">${d.from}${d.to!==d.from?' → '+d.to:' · Explore day'}</div>
@@ -1482,6 +1559,7 @@ function renderDay(i){
       ${d.km>0?`<div class="hero-meta-item">🚗 ${d.km}km</div><div class="hero-meta-item">⏱️ ${d.drv}</div>`:`<div class="hero-meta-item">🌊 ${d.drv}</div>`}
     </div>
     ${d.acc?`<div class="hero-acc">🏕️ <a href="${d.accUrl||'#'}" target="_blank">${d.acc}</a></div>`:''}
+    ${heroP.cap?`<div class="hero-photo-cap">${heroP.cap} · 📷</div>`:''}
   </div>
 </div>`;
 
@@ -1801,8 +1879,10 @@ function renderDay(i){
 
   // ── PLAYLIST ──
   html += `<div class="card">
-  <div class="ch"><div class="ch-icon">🎵</div><div class="ch-title">Trip Playlist</div></div>
+  <div class="ch"><div class="ch-icon">🎵</div><div class="ch-title">Trip Playlist</div>${fbDb?'<span style="font-size:11px;color:#065F46;font-weight:600;margin-left:auto">🔄 Syncing</span>':''}</div>
   <div class="cb">
+    ${!fbDb?`<div style="font-size:12px;color:var(--txt3);margin-bottom:10px;padding:8px 10px;background:#F0FDFF;border-radius:8px;">💡 Connect Firebase (in Photos section) to share playlists across all family devices.</div>`:''}
+    <div style="font-size:12px;color:var(--txt2);margin-bottom:8px;">Add a <strong>Spotify</strong> or <strong>SoundCloud</strong> link — it plays right here for everyone.</div>
     <div class="pl-input-row">
       <input id="pl-url" placeholder="Paste Spotify or SoundCloud URL…" onkeydown="if(event.key==='Enter')addPlaylist()">
       <button class="pl-add-btn" onclick="addPlaylist()">+</button>
@@ -1949,7 +2029,7 @@ function handlePhotoUpload(input){
         photos.unshift(photo);
         if(photos.length > 60) photos = photos.slice(0,60);
         try{ localStorage.setItem('tripPhotos', JSON.stringify(photos)); }catch(e){}
-        if(fbDb) fbPush({url:dataUrl,name:file.name,ts:photo.ts});
+        if(fbDb) fbPush('photos',{url:dataUrl,name:file.name,ts:photo.ts});
         renderPhotoGrid();
         const lbl = $('photo-count-lbl');
         if(lbl) lbl.textContent = photos.length+' photo'+(photos.length!==1?'s':'');
@@ -1973,37 +2053,63 @@ function closeLb(){ $('lb').classList.remove('open'); }
 // ── Firebase REST API helpers ─────────────────────────────
 let fbPollTimer = null;
 
-function fbRestUrl(){ return fbDb ? fbDb+'/photos.json' : null; }
-
-async function fbPush(photoObj){
-  if(!fbDb) return;
+async function fbPush(collection, obj){
+  if(!fbDb) return null;
   try{
-    await fetch(fbRestUrl(), {
+    const resp = await fetch(`${fbDb}/${collection}.json`,{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify(photoObj)
+      body:JSON.stringify(obj)
     });
-  }catch(e){ console.warn('Firebase push failed',e); }
+    const data = await resp.json();
+    return data.name; // Firebase-generated key
+  }catch(e){ console.warn('Firebase push failed',e); return null; }
+}
+
+async function fbDelete(collection, key){
+  if(!fbDb || !key) return;
+  try{
+    await fetch(`${fbDb}/${collection}/${key}.json`,{method:'DELETE'});
+  }catch(e){ console.warn('Firebase delete failed',e); }
 }
 
 async function fbPoll(){
   if(!fbDb) return;
+  // ── Photos ──
   try{
-    const resp = await fetch(fbRestUrl());
-    if(!resp.ok) return;
-    const data = await resp.json();
-    if(data){
-      const fbP = Object.values(data).sort((a,b)=>new Date(b.ts)-new Date(a.ts));
-      photos = [...fbP, ...photos.filter(p=>!fbP.find(f=>f.ts===p.ts))];
-      renderPhotoGrid();
+    const r = await fetch(`${fbDb}/photos.json`);
+    if(r.ok){
+      const data = await r.json();
+      if(data){
+        const fbP = Object.values(data).sort((a,b)=>new Date(b.ts)-new Date(a.ts));
+        photos = [...fbP,...photos.filter(p=>!fbP.find(f=>f.ts===p.ts))];
+        renderPhotoGrid();
+      }
     }
-  }catch(e){ console.warn('Firebase poll failed',e); }
+  }catch(e){ console.warn('Firebase photos poll failed',e); }
+  // ── Playlists ──
+  try{
+    const r = await fetch(`${fbDb}/playlists.json`);
+    if(r.ok){
+      const data = await r.json();
+      if(data){
+        const fbPl = Object.entries(data)
+          .map(([fbKey,item])=>({...item,fbKey}))
+          .sort((a,b)=>b.id-a.id);
+        // keep any local-only items, merge with Firebase list
+        const localOnly = playlist.filter(p=>!p.fbKey && !fbPl.find(f=>f.id===p.id));
+        playlist = [...fbPl,...localOnly];
+        try{localStorage.setItem('playlist',JSON.stringify(playlist));}catch(e){}
+        renderPlaylists();
+      }
+    }
+  }catch(e){ console.warn('Firebase playlists poll failed',e); }
 }
 
 function startFbPolling(){
-  fbPoll(); // immediate first fetch
+  fbPoll();
   if(fbPollTimer) clearInterval(fbPollTimer);
-  fbPollTimer = setInterval(fbPoll, 15000); // refresh every 15s
+  fbPollTimer = setInterval(fbPoll, 15000);
 }
 
 function connectFirebase(){
@@ -2026,16 +2132,27 @@ function connectFirebase(){
 // ======================================================
 // PLAYLIST
 // ======================================================
-function addPlaylist(){
+async function addPlaylist(){
   const inp = $('pl-url');
   const url = (inp||{}).value && inp.value.trim();
   if(!url) return;
-  playlist.unshift({id:Date.now(), url});
+  if(!url.includes('spotify.com') && !url.includes('soundcloud.com')){
+    alert('Please paste a Spotify or SoundCloud link.');
+    return;
+  }
+  const item = {id:Date.now(), url};
+  if(fbDb){
+    const fbKey = await fbPush('playlists', item);
+    if(fbKey) item.fbKey = fbKey;
+  }
+  playlist.unshift(item);
   try{ localStorage.setItem('playlist', JSON.stringify(playlist)); }catch(e){}
   inp.value = '';
   renderPlaylists();
 }
 function removePlaylistItem(id){
+  const item = playlist.find(p=>p.id===id);
+  if(item && item.fbKey) fbDelete('playlists', item.fbKey);
   playlist = playlist.filter(p=>p.id!==id);
   try{ localStorage.setItem('playlist', JSON.stringify(playlist)); }catch(e){}
   renderPlaylists();
