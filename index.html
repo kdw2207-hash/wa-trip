@@ -387,6 +387,7 @@ a.act-name{color:var(--aqua-d)}
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<!-- Firebase via REST API — no SDK needed -->
 <script>
 'use strict';
 
@@ -1948,7 +1949,7 @@ function handlePhotoUpload(input){
         photos.unshift(photo);
         if(photos.length > 60) photos = photos.slice(0,60);
         try{ localStorage.setItem('tripPhotos', JSON.stringify(photos)); }catch(e){}
-        if(fbDb) fbDb.ref('photos').push({url:dataUrl,name:file.name,ts:photo.ts});
+        if(fbDb) fbPush({url:dataUrl,name:file.name,ts:photo.ts});
         renderPhotoGrid();
         const lbl = $('photo-count-lbl');
         if(lbl) lbl.textContent = photos.length+' photo'+(photos.length!==1?'s':'');
@@ -1969,24 +1970,57 @@ function renderPhotoGrid(){
 function openLb(i){ $('lb-img').src=photos[i].url; $('lb-cap').textContent=photos[i].name; $('lb').classList.add('open'); }
 function closeLb(){ $('lb').classList.remove('open'); }
 
-function connectFirebase(){
-  const url = ($('fb-url-input')||{}).value;
-  if(!url) return;
+// ── Firebase REST API helpers ─────────────────────────────
+let fbPollTimer = null;
+
+function fbRestUrl(){ return fbDb ? fbDb+'/photos.json' : null; }
+
+async function fbPush(photoObj){
+  if(!fbDb) return;
   try{
-    if(!window.firebase){ alert('Firebase SDK not loaded — check internet connection'); return; }
-    firebase.initializeApp({databaseURL:url});
-    fbDb = firebase.database();
-    fbDb.ref('photos').on('value', snap => {
-      const data = snap.val();
-      if(data){
-        const fbP = Object.values(data).sort((a,b)=>new Date(b.ts)-new Date(a.ts));
-        photos = [...fbP, ...photos.filter(p=>!fbP.find(f=>f.ts===p.ts))];
-        renderPhotoGrid();
-      }
+    await fetch(fbRestUrl(), {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(photoObj)
     });
-    try{ localStorage.setItem('fbUrl', url); }catch(e){}
-    renderDay(curDay);
-  }catch(e){ alert('Firebase error: '+e.message); }
+  }catch(e){ console.warn('Firebase push failed',e); }
+}
+
+async function fbPoll(){
+  if(!fbDb) return;
+  try{
+    const resp = await fetch(fbRestUrl());
+    if(!resp.ok) return;
+    const data = await resp.json();
+    if(data){
+      const fbP = Object.values(data).sort((a,b)=>new Date(b.ts)-new Date(a.ts));
+      photos = [...fbP, ...photos.filter(p=>!fbP.find(f=>f.ts===p.ts))];
+      renderPhotoGrid();
+    }
+  }catch(e){ console.warn('Firebase poll failed',e); }
+}
+
+function startFbPolling(){
+  fbPoll(); // immediate first fetch
+  if(fbPollTimer) clearInterval(fbPollTimer);
+  fbPollTimer = setInterval(fbPoll, 15000); // refresh every 15s
+}
+
+function connectFirebase(){
+  let url = (($('fb-url-input')||{}).value||'').trim();
+  if(!url){ alert('Please paste your Firebase Database URL first.'); return; }
+  // Normalise: strip trailing slashes
+  url = url.replace(/\/+$/, '');
+  // Must look like https://xxx.firebaseio.com
+  if(!url.startsWith('https://') || !url.includes('firebaseio.com')){
+    alert('That doesn\'t look like a Firebase Database URL.\n\nIt should look like:\nhttps://your-project-default-rtdb.firebaseio.com');
+    return;
+  }
+  fbDb = url;
+  try{ localStorage.setItem('fbUrl', url); }catch(e){}
+  startFbPolling();
+  renderDay(curDay);
+  alert('✅ Firebase connected! Photos will now sync across all family devices.');
 }
 
 // ======================================================
@@ -2143,15 +2177,9 @@ function init(){
     const ph = localStorage.getItem('tripPhotos');   if(ph) photos = JSON.parse(ph);
     const pl = localStorage.getItem('playlist');     if(pl) playlist = JSON.parse(pl);
     const fb = localStorage.getItem('fbUrl');
-    if(fb && window.firebase){
-      try{
-        firebase.initializeApp({databaseURL:fb});
-        fbDb = firebase.database();
-        fbDb.ref('photos').on('value', snap => {
-          const data = snap.val();
-          if(data){ const fbP=Object.values(data).sort((a,b)=>new Date(b.ts)-new Date(a.ts)); photos=[...fbP,...photos.filter(p=>!fbP.find(f=>f.ts===p.ts))]; }
-        });
-      }catch(e){}
+    if(fb){
+      fbDb = fb.replace(/\/+$/,'');
+      startFbPolling();
     }
   }catch(e){}
 
