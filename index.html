@@ -84,29 +84,24 @@ html,body{height:100%;background:var(--bg);font-family:var(--font);color:var(--t
 /* ── HERO CARD ───────────────────────────── */
 #hero-card{
   margin:0 16px 14px;border-radius:var(--r-lg);overflow:hidden;
-  box-shadow:var(--shadow-lg);position:relative;min-height:260px;
+  box-shadow:var(--shadow-lg);position:relative;min-height:160px;
 }
 .hero-bg{
   padding:24px 20px 20px;color:#fff;position:relative;
-  min-height:260px;display:flex;flex-direction:column;justify-content:flex-end;
   overflow:hidden;
 }
 .hero-photo{
   position:absolute;inset:0;width:100%;height:100%;
   object-fit:cover;object-position:center;
-  transition:opacity .6s ease;
+  transition:opacity .5s ease;
 }
 .hero-photo-overlay{
   position:absolute;inset:0;
-  background:linear-gradient(to bottom,rgba(0,0,0,.05) 0%,rgba(0,0,0,.15) 40%,rgba(0,0,0,.68) 100%);
+  background:linear-gradient(to bottom,rgba(0,0,0,.10) 0%,rgba(0,0,0,.55) 100%);
 }
-.hero-photo-cap{
-  position:absolute;bottom:6px;right:10px;
-  font-size:10px;color:rgba(255,255,255,.55);letter-spacing:.3px;
-  pointer-events:none;
-}
+.hero-photo-cap{display:none}
 .hero-bg::before{
-  content:'';position:absolute;inset:0;background:rgba(0,0,0,.08);
+  content:'';position:absolute;inset:0;background:rgba(0,0,0,.18);
 }
 .hero-bg > *{position:relative}
 .hero-eyebrow{font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;opacity:.85;margin-bottom:4px}
@@ -122,6 +117,24 @@ html,body{height:100%;background:var(--bg);font-family:var(--font);color:var(--t
   font-size:13px;display:flex;align-items:center;gap:6px;
 }
 .hero-acc a{color:#fff;font-weight:600;text-decoration:none}
+.hero-photo-upload-btn{
+  position:absolute;top:12px;right:12px;
+  background:rgba(255,255,255,.22);backdrop-filter:blur(8px);
+  border-radius:50%;width:36px;height:36px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;cursor:pointer;border:1.5px solid rgba(255,255,255,.35);
+  transition:background .2s;z-index:2;
+}
+.hero-photo-upload-btn:hover{background:rgba(255,255,255,.38)}
+.hero-photo-remove-btn{
+  position:absolute;top:12px;right:56px;
+  background:rgba(0,0,0,.35);backdrop-filter:blur(8px);
+  border-radius:50%;width:30px;height:30px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;color:#fff;cursor:pointer;
+  border:1.5px solid rgba(255,255,255,.25);z-index:2;
+  font-family:var(--font);
+}
 
 /* ── COUNTDOWN ───────────────────────────── */
 #countdown-card{background:linear-gradient(135deg,var(--aqua-d),var(--aqua));margin:0 16px 14px;border-radius:var(--r-lg);padding:24px 20px;color:#fff;box-shadow:var(--shadow-lg)}
@@ -1389,63 +1402,6 @@ const EXTRAS = {
 
 
 
-// ── HERO PHOTOS PER DAY ──────────────────────────────────
-// Sources: Wikimedia Commons (CC-licensed) + Unsplash (free to use)
-// onerror fallback → gradient shows through automatically
-const HERO = [
-  // Day 1: Perth → Jurien Bay — The Pinnacles at Cervantes
-  {url:"https://commons.wikimedia.org/wiki/Special:FilePath/Nambung_National_Park_The_Pinnacles.JPG",
-   cap:"The Pinnacles, Nambung National Park · Photo: Wikimedia Commons"},
-  // Day 2: Jurien Bay (rest day) — Sea lions
-  {url:"https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=1200&q=80&auto=format&fit=crop",
-   cap:"Australian Sea Lion · Photo: Unsplash"},
-  // Day 3: Jurien Bay → Kalbarri — Red coastal cliffs
-  {url:"https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?w=1200&q=80&auto=format&fit=crop",
-   cap:"Coral Coast, Western Australia · Photo: Unsplash"},
-  // Day 4: Kalbarri gorges — Red rock canyon
-  {url:"https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80&auto=format&fit=crop",
-   cap:"Red Rock Gorge · Photo: Unsplash"},
-  // Day 5: → Denham/Shark Bay — Ancient stromatolites / Shell Beach
-  {url:"https://commons.wikimedia.org/wiki/Special:FilePath/Hamelin_pool_stromatolites.jpg",
-   cap:"Hamelin Pool Stromatolites, Shark Bay WHA · Photo: Wikimedia Commons"},
-  // Day 6: Denham explore — Turquoise lagoon aerial
-  {url:"https://images.unsplash.com/photo-1559339352-11d035aa65de?w=1200&q=80&auto=format&fit=crop",
-   cap:"Turquoise Bay, Western Australia · Photo: Unsplash"},
-  // Day 7: Monkey Mia — Wild dolphins (confirmed Wikimedia file)
-  {url:"https://commons.wikimedia.org/wiki/Special:FilePath/Tursiops_monkey_mia_1.jpg",
-   cap:"Wild Bottlenose Dolphins, Monkey Mia · Photo: Wikimedia Commons"},
-  // Day 8: Wooramel Station — Outback Milky Way
-  {url:"https://images.unsplash.com/photo-1464802686167-b939a6910659?w=1200&q=80&auto=format&fit=crop",
-   cap:"Milky Way, Australian Outback · Photo: Unsplash"},
-  // Day 9: → Coral Bay — Coral reef snorkelling
-  {url:"https://images.unsplash.com/photo-1546026423-cc4642628d2b?w=1200&q=80&auto=format&fit=crop",
-   cap:"Ningaloo Reef, Western Australia · Photo: Unsplash"},
-  // Day 10: Coral Bay (manta ray day)
-  {url:"https://images.unsplash.com/photo-1583212292454-1fe6229603b7?w=1200&q=80&auto=format&fit=crop",
-   cap:"Manta Ray, Ningaloo · Photo: Unsplash"},
-  // Day 11: → Exmouth — Turquoise Bay
-  {url:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80&auto=format&fit=crop",
-   cap:"Turquoise Bay, Cape Range National Park · Photo: Unsplash"},
-  // Day 12: Cape Range / Whale shark day
-  {url:"https://images.unsplash.com/photo-1582967788606-a171c1080cb0?w=1200&q=80&auto=format&fit=crop",
-   cap:"Whale Shark, Ningaloo Reef 🦈 · Photo: Unsplash"},
-  // Day 13: → Quobba — Red dramatic coastline
-  {url:"https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=1200&q=80&auto=format&fit=crop",
-   cap:"Dramatic Coastal Cliffs, WA · Photo: Unsplash"},
-  // Day 14: → Horrocks (Aria's birthday) — Pink Lake aerial
-  {url:"https://images.unsplash.com/photo-1573155993874-d5d48af862ba?w=1200&q=80&auto=format&fit=crop",
-   cap:"Hutt Lagoon (Pink Lake), Port Gregory 💗 · Photo: Unsplash"},
-  // Day 15: Horrocks beach day
-  {url:"https://images.unsplash.com/photo-1506197603052-3cc9c3a201bd?w=1200&q=80&auto=format&fit=crop",
-   cap:"Horrocks Beach, Indian Ocean · Photo: Unsplash"},
-  // Day 16: → Cervantes/Pinnacles
-  {url:"https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&q=80&auto=format&fit=crop",
-   cap:"The Pinnacles at Golden Hour, Nambung NP · Photo: Unsplash"},
-  // Day 17: Return to Perth
-  {url:"https://images.unsplash.com/photo-1573165850883-9b0e18c44bd2?w=1200&q=80&auto=format&fit=crop",
-   cap:"Perth, Western Australia 🏙️ · Photo: Unsplash"}
-];
-
 // ── PACKING LIST ─────────────────────────────────────────
 const PACK = [
   {cat:"docs",item:"Driver's licence",ess:true},{cat:"docs",item:"Rental agreement",ess:true},{cat:"docs",item:"Travel insurance",ess:true},{cat:"docs",item:"Medicare cards",ess:true},{cat:"docs",item:"Roadside assistance",ess:false},
@@ -1473,6 +1429,7 @@ let playlist = [];
 let packState = {};
 let customPack = {};
 let fbDb = null;
+let dayBgs = {};  // custom hero background photos per day index
 let mapInstance = null;
 
 // ======================================================
@@ -1547,11 +1504,11 @@ function renderDay(i){
   let html = '';
 
   // ── HERO ──
-  const heroP = HERO[i] || {url:'',cap:''};
+  const heroBg = (dayBgs[i]||'');
   html += `<div id="hero-card">
   <div class="hero-bg" style="background:${d.grad}">
-    ${heroP.url?`<img class="hero-photo" src="${heroP.url}" alt="${heroP.cap}" loading="lazy" onerror="this.style.opacity='0'">`:''}
-    <div class="hero-photo-overlay"></div>
+    ${heroBg?`<img class="hero-photo" id="hero-img-${i}" src="${heroBg}" alt="Day ${d.day} photo">`:'<div class="hero-photo" id="hero-img-'+i+'" style="display:none"></div>'}
+    <div class="hero-photo-overlay" style="${heroBg?'':'display:none'}"></div>
     <div class="hero-eyebrow">Day ${d.day} of 17</div>
     <div class="hero-day">${d.wday}, ${d.lbl}</div>
     <div class="hero-route">${d.from}${d.to!==d.from?' → '+d.to:' · Explore day'}</div>
@@ -1559,7 +1516,11 @@ function renderDay(i){
       ${d.km>0?`<div class="hero-meta-item">🚗 ${d.km}km</div><div class="hero-meta-item">⏱️ ${d.drv}</div>`:`<div class="hero-meta-item">🌊 ${d.drv}</div>`}
     </div>
     ${d.acc?`<div class="hero-acc">🏕️ <a href="${d.accUrl||'#'}" target="_blank">${d.acc}</a></div>`:''}
-    ${heroP.cap?`<div class="hero-photo-cap">${heroP.cap} · 📷</div>`:''}
+    <label class="hero-photo-upload-btn" title="Set background photo for this day">
+      📷
+      <input type="file" accept="image/*" style="display:none" onchange="setHeroBg(${i},this)">
+    </label>
+    ${heroBg?`<button class="hero-photo-remove-btn" onclick="removeHeroBg(${i})" title="Remove background photo">✕</button>`:''}
   </div>
 </div>`;
 
@@ -2112,6 +2073,39 @@ function startFbPolling(){
   fbPollTimer = setInterval(fbPoll, 15000);
 }
 
+function setHeroBg(dayIdx, input){
+  const file = input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e){
+    // Compress before storing (max 1400px wide, JPEG 0.82)
+    const img = new Image();
+    img.onload = function(){
+      const canvas = document.createElement('canvas');
+      const maxW = 1400;
+      const scale = img.width > maxW ? maxW/img.width : 1;
+      canvas.width  = Math.round(img.width  * scale);
+      canvas.height = Math.round(img.height * scale);
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+      dayBgs[dayIdx] = dataUrl;
+      try{ localStorage.setItem('dayBgs', JSON.stringify(dayBgs)); }catch(err){
+        alert('Photo too large to save locally — try a smaller image.');
+        return;
+      }
+      renderDay(dayIdx);
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeHeroBg(dayIdx){
+  delete dayBgs[dayIdx];
+  try{ localStorage.setItem('dayBgs', JSON.stringify(dayBgs)); }catch(e){}
+  renderDay(dayIdx);
+}
+
 function connectFirebase(){
   let url = (($('fb-url-input')||{}).value||'').trim();
   if(!url){ alert('Please paste your Firebase Database URL first.'); return; }
@@ -2293,6 +2287,7 @@ function init(){
     const cp = localStorage.getItem('customPack');   if(cp) Object.assign(customPack, JSON.parse(cp));
     const ph = localStorage.getItem('tripPhotos');   if(ph) photos = JSON.parse(ph);
     const pl = localStorage.getItem('playlist');     if(pl) playlist = JSON.parse(pl);
+    const bgs = localStorage.getItem('dayBgs'); if(bgs) dayBgs = JSON.parse(bgs);
     const fb = localStorage.getItem('fbUrl');
     if(fb){
       fbDb = fb.replace(/\/+$/,'');
