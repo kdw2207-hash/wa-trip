@@ -541,6 +541,13 @@ a.act-name{color:var(--aqua-d)}
 .sk-countdown-num{font-size:96px;font-weight:900;color:#fff;line-height:1;text-shadow:0 0 40px rgba(6,182,212,.8)}
 .sk-countdown-label{font-size:16px;font-weight:700;color:#7dd3fc;margin-top:8px;letter-spacing:2px}
 
+
+/* ── GAMES FAB ── */
+#games-fab{position:fixed;bottom:22px;right:16px;z-index:900;width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,#7C3AED,#EC4899);border:none;color:#fff;font-size:26px;cursor:pointer;box-shadow:0 4px 18px rgba(124,58,237,.55),0 2px 8px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;transition:transform .15s,box-shadow .15s}
+#games-fab:active{transform:scale(.91);box-shadow:0 2px 8px rgba(124,58,237,.4)}
+#games-fab .fab-label{position:absolute;top:-24px;left:50%;transform:translateX(-50%);background:rgba(15,23,42,.85);color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:999px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .2s}
+#games-fab:hover .fab-label{opacity:1}
+
 </style>
 </head>
 <body>
@@ -3075,11 +3082,15 @@ let gTouchX = 0, gTouchY = 0;
 function showGames(){
   const el = $('games-overlay');
   if(el){ el.classList.add('open'); showGamesHub(); }
+  const fab=document.getElementById('games-fab');
+  if(fab)fab.style.display='none';
 }
 function hideGames(){
   const el = $('games-overlay');
   if(el) el.classList.remove('open');
   stopGame();
+  const fab=document.getElementById('games-fab');
+  if(fab)fab.style.display='flex';
 }
 function showGamesHub(){
   $('games-hub').style.display = 'grid';
@@ -4020,14 +4031,13 @@ function skInitPlay(){
   const surfY=H*0.52;
   sk.surfer={x:W*0.25,y:surfY-30,angle:0,tricking:false,trickTime:0,trickType:'',trickRot:0,
     hasMermaid:false,shroomTime:0,invincible:0,airY:0,airVY:0};
-  sk.running=false;
+  sk.running=true;
   skUpdateHUD();
   skSetupControls();
   if(sk.raf)cancelAnimationFrame(sk.raf);
   function loop(){if(!sk.running)return;skTick();skDraw();sk.raf=requestAnimationFrame(loop);}
-  // Draw the initial frame so the wave is visible during countdown
-  skDraw();
-  // Countdown before game starts
+  sk.raf=requestAnimationFrame(loop);
+  // Countdown overlay (purely visual - game runs underneath)
   const cdEl=document.getElementById('sk-countdown');
   const cdNum=document.getElementById('sk-countdown-num');
   const cdLbl=document.getElementById('sk-countdown-label');
@@ -4040,9 +4050,9 @@ function skInitPlay(){
       cdCount--;
       setTimeout(cdStep,900);
     } else {
-      if(cdEl)cdEl.style.display='none';
-      sk.running=true;
-      requestAnimationFrame(loop);
+      if(cdNum)cdNum.textContent='GO!';
+      if(cdLbl)cdLbl.textContent='DROP IN!';
+      setTimeout(()=>{if(cdEl)cdEl.style.display='none';},600);
     }
   }
   setTimeout(cdStep,100);
@@ -4505,5 +4515,8 @@ function skRestartFull(){sk.stage=1;sk.score=0;sk.lives=3;skSetScreen('play');}
     <button class="htp-close-btn" onclick="closeHTP()">Got it! 🤙</button>
   </div>
 </div>
+
+<!-- GAMES FAB -->
+<button id="games-fab" onclick="showGames()" aria-label="Open Games Arcade">🎮<span class="fab-label">Games</span></button>
 </body>
 </html>
