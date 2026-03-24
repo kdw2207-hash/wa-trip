@@ -775,6 +775,20 @@ a.act-name{color:var(--aqua-d)}
 <!-- Firebase via REST API — no SDK needed -->
 <script>
 'use strict';
+// ── roundRect polyfill (pre-Chrome-99 / older WebViews) ──
+if(!CanvasRenderingContext2D.prototype.roundRect){
+  CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h,r){
+    const radii=Array.isArray(r)?r:[r,r,r,r];
+    const [tl=0,tr=tl,br=tr,bl=br]=radii;
+    this.moveTo(x+tl,y);
+    this.lineTo(x+w-tr,y); this.quadraticCurveTo(x+w,y,x+w,y+tr);
+    this.lineTo(x+w,y+h-br); this.quadraticCurveTo(x+w,y+h,x+w-br,y+h);
+    this.lineTo(x+bl,y+h); this.quadraticCurveTo(x,y+h,x,y+h-bl);
+    this.lineTo(x,y+tl); this.quadraticCurveTo(x,y,x+tl,y);
+    this.closePath();
+  };
+}
+
 
 // ======================================================
 // DATA
@@ -4015,9 +4029,12 @@ function skInitPlay(){
   const cv=document.getElementById('sk-canvas');
   if(!cv)return;
   sk.canvas=cv; sk.ctx=cv.getContext('2d');
-  const wrap=document.getElementById('sk-canvas-wrap');
-  cv.width=wrap.clientWidth||390;
-  cv.height=wrap.clientHeight||460;
+  // Use the fixed-position overlay for reliable dimensions
+  const ol=document.getElementById('surf-overlay');
+  const hudH=document.getElementById('sk-hdr')?document.getElementById('sk-hdr').offsetHeight||52:52;
+  const ctrlH=document.getElementById('sk-controls')?document.getElementById('sk-controls').offsetHeight||72:72;
+  cv.width=ol.clientWidth||window.innerWidth||390;
+  cv.height=Math.max(200,(ol.clientHeight||window.innerHeight||600)-hudH-ctrlH);
   // Reset state for this stage
   sk.dist=0;
   sk.stageGoal=700+sk.stage*200;
@@ -4417,6 +4434,7 @@ function skDraw(){
   // Surfer
   const sx=sk.surfer.x,sy=sk.surfer.y;
   ctx.save();ctx.translate(sx,sy);
+  try{
   if(sk.surfer.invincible>0&&Math.floor(sk.surfer.invincible/5)%2===0)ctx.globalAlpha=0.25;
   if(sk.surfer.shroomTime>0){ctx.shadowColor=`hsl(${(t*220)%360},100%,60%)`;ctx.shadowBlur=18;}
   ctx.rotate(sk.surfer.angle);
@@ -4447,7 +4465,9 @@ function skDraw(){
   ctx.restore(); // trickScale restore
   // Mermaid on back of board
   if(sk.surfer.hasMermaid){ctx.font='16px sans-serif';ctx.fillText('🧜‍♀️',bL*.32,-14);}
-  ctx.shadowBlur=0;ctx.restore();
+  ctx.shadowBlur=0;
+  }catch(e){}
+  ctx.restore();
   // Particles
   sk.particles.forEach(p=>{
     ctx.globalAlpha=Math.max(0,p.life/35);
