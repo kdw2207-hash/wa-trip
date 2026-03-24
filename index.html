@@ -537,9 +537,10 @@ a.act-name{color:var(--aqua-d)}
 .game-htp-btn{position:absolute;top:8px;right:8px;width:22px;height:22px;border-radius:50%;background:rgba(6,182,212,.18);border:1.5px solid rgba(6,182,212,.4);color:var(--aqua-d);font-size:11px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;z-index:2}
 .game-htp-btn:hover{background:rgba(6,182,212,.35)}
 /* Surf countdown */
-.sk-countdown{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;background:rgba(3,20,50,.7);z-index:10;pointer-events:none}
-.sk-countdown-num{font-size:96px;font-weight:900;color:#fff;line-height:1;text-shadow:0 0 40px rgba(6,182,212,.8)}
-.sk-countdown-label{font-size:16px;font-weight:700;color:#7dd3fc;margin-top:8px;letter-spacing:2px}
+.sk-countdown{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;background:rgba(3,20,50,.6);z-index:10;pointer-events:all;cursor:pointer}
+.sk-countdown-num{font-size:72px;font-weight:900;color:#fff;line-height:1;text-shadow:0 0 40px rgba(6,182,212,.9)}
+.sk-countdown-label{font-size:15px;font-weight:800;color:#7dd3fc;margin-top:14px;letter-spacing:2px;text-align:center;padding:0 20px;text-shadow:0 1px 6px rgba(0,0,0,.8)}
+@keyframes pulse{from{transform:scale(1);opacity:1}to{transform:scale(1.15);opacity:.85}}
 
 
 /* ── GAMES FAB ── */
@@ -4054,25 +4055,25 @@ function skInitPlay(){
   if(sk.raf)cancelAnimationFrame(sk.raf);
   function loop(){if(!sk.running)return;skTick();skDraw();sk.raf=requestAnimationFrame(loop);}
   sk.raf=requestAnimationFrame(loop);
-  // Countdown overlay (purely visual - game runs underneath)
+  // Tap-to-start overlay
   const cdEl=document.getElementById('sk-countdown');
   const cdNum=document.getElementById('sk-countdown-num');
   const cdLbl=document.getElementById('sk-countdown-label');
   if(cdEl){cdEl.style.display='flex';}
-  let cdCount=3;
-  function cdStep(){
-    if(cdCount>0){
-      if(cdNum)cdNum.textContent=cdCount;
-      if(cdLbl)cdLbl.textContent='GET READY';
-      cdCount--;
-      setTimeout(cdStep,900);
-    } else {
-      if(cdNum)cdNum.textContent='GO!';
-      if(cdLbl)cdLbl.textContent='DROP IN!';
-      setTimeout(()=>{if(cdEl)cdEl.style.display='none';},600);
-    }
+  if(cdNum){cdNum.textContent='🏄';cdNum.style.animation='pulse 0.8s ease-in-out infinite alternate';}
+  if(cdLbl){cdLbl.textContent='TAP ANYWHERE TO DROP IN!';}
+  // Dismiss on first tap/click
+  function startSurf(){
+    if(cdEl)cdEl.style.display='none';
+    cv.removeEventListener('click',startSurf);
+    cv.removeEventListener('touchend',startSurf);
+    document.getElementById('sk-controls')&&document.getElementById('sk-controls').removeEventListener('touchend',startSurf);
   }
-  setTimeout(cdStep,100);
+  cv.addEventListener('click',startSurf,{once:true});
+  cv.addEventListener('touchend',startSurf,{once:true});
+  // Also allow tapping the joystick/controls area to start
+  const ctrl=document.getElementById('sk-controls');
+  if(ctrl)ctrl.addEventListener('touchend',startSurf,{once:true});
 }
 function skSetupControls(){
   const island=document.getElementById('sk-island');
@@ -4154,7 +4155,7 @@ function skTick(){
   sk.surfer.x=Math.max(28,Math.min(W-28,sk.surfer.x));
   // Y follows wave
   const targetY=skSurf(sk.surfer.x)-28;
-  sk.surfer.y+=(targetY-sk.surfer.y)*0.18;
+  sk.surfer.y+=(targetY-sk.surfer.y)*0.28;
   // Angle
   const s1=skWave(sk.surfer.x-10,sk.time),s2=skWave(sk.surfer.x+10,sk.time);
   sk.surfer.angle=Math.atan2(s2-s1,20);
@@ -4259,8 +4260,8 @@ function skParts(x,y,col,n){
   for(let i=0;i<n;i++)sk.particles.push({x,y,vx:(Math.random()-.5)*7,vy:(Math.random()-.5)*6-2,col,life:18+Math.random()*20|0,r:2+Math.random()*4});
 }
 function skPopup(text,col){
-  const H=sk.canvas?sk.canvas.height:400;
-  sk.popups.push({text,col,y:H*0.38,life:75,vy:-1.4});
+  const sy=sk.surfer?sk.surfer.y-50:sk.canvas?sk.canvas.height*0.38:200;
+  sk.popups.push({text,col,y:sy,life:75,vy:-1.4,nearSurfer:true});
 }
 function skUpdateHUD(){
   const s=document.getElementById('sk-score'),l=document.getElementById('sk-lives'),st=document.getElementById('sk-stage');
@@ -4345,12 +4346,18 @@ function skDraw(){
     }else if(o.type==='shark'){
       const close=Math.abs(o.x-sk.surfer.x)<110;
       // Fin
-      ctx.fillStyle='#475569';
-      ctx.beginPath();ctx.moveTo(o.x,o.y-(close?35:18));ctx.lineTo(o.x+18,o.y+6);ctx.lineTo(o.x-10,o.y+6);ctx.closePath();ctx.fill();
+      // Fin shadow glow when dangerous
+      if(close){ctx.shadowColor='#dc2626';ctx.shadowBlur=16;}
+      ctx.fillStyle=close?'#1e293b':'#334155';
+      ctx.beginPath();ctx.moveTo(o.x,o.y-(close?40:26));ctx.lineTo(o.x+22,o.y+6);ctx.lineTo(o.x-12,o.y+6);ctx.closePath();ctx.fill();
+      // Fin stripe
+      ctx.strokeStyle=close?'#ef4444':'rgba(255,255,255,.4)';ctx.lineWidth=1.5;
+      ctx.beginPath();ctx.moveTo(o.x-2,o.y-(close?35:22));ctx.lineTo(o.x+14,o.y+4);ctx.stroke();
+      ctx.shadowBlur=0;
       // Wake ripples from fin
-      ctx.strokeStyle='rgba(255,255,255,.3)';ctx.lineWidth=1.5;
-      ctx.beginPath();ctx.moveTo(o.x+5,o.y+3);ctx.lineTo(o.x+25,o.y+8);ctx.stroke();
-      ctx.beginPath();ctx.moveTo(o.x-5,o.y+3);ctx.lineTo(o.x-22,o.y+8);ctx.stroke();
+      ctx.strokeStyle='rgba(255,255,255,.35)';ctx.lineWidth=1.5;
+      ctx.beginPath();ctx.moveTo(o.x+5,o.y+3);ctx.lineTo(o.x+30,o.y+9);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(o.x-5,o.y+3);ctx.lineTo(o.x-26,o.y+9);ctx.stroke();
       if(close){
         // Body
         ctx.fillStyle='#94a3b8';ctx.beginPath();ctx.ellipse(o.x,o.y+12,32,13,0,0,Math.PI*2);ctx.fill();
@@ -4434,6 +4441,8 @@ function skDraw(){
   // Surfer
   const sx=sk.surfer.x,sy=sk.surfer.y;
   ctx.save();ctx.translate(sx,sy);
+  // CRITICAL: Reset filters before drawing surfer
+  ctx.filter='none';
   try{
   if(sk.surfer.invincible>0&&Math.floor(sk.surfer.invincible/5)%2===0)ctx.globalAlpha=0.25;
   if(sk.surfer.shroomTime>0){ctx.shadowColor=`hsl(${(t*220)%360},100%,60%)`;ctx.shadowBlur=18;}
@@ -4454,19 +4463,27 @@ function skDraw(){
     const airH=Math.sin(sk.surfer.trickRot)*18;
     const ts=sk.surfer.trickScale||1;
     ctx.save();ctx.scale(ts,ts);
-    ctx.font='26px sans-serif';ctx.textAlign='center';
+    ctx.fillStyle='#fff';ctx.font='26px sans-serif';ctx.textAlign='center';
     ctx.fillText(SK_SURFERS[sk.surferIdx].emoji,0,-22-Math.abs(airH));
     ctx.fillStyle='#f59e0b';ctx.font='bold 11px sans-serif';ctx.fillText(sk.surfer.trickType,0,-46-Math.abs(airH));
     ctx.restore();
   } else {
-    ctx.font='22px sans-serif';ctx.textAlign='center';
-    ctx.fillText(SK_SURFERS[sk.surferIdx].emoji,0,-18);
+    // Always-visible body shape (fallback + depth)
+    ctx.fillStyle='#fcd34d';ctx.beginPath();ctx.arc(0,-26,9,0,Math.PI*2);ctx.fill(); // head
+    ctx.fillStyle='#ef4444';ctx.fillRect(-5,-22,10,14); // torso
+    ctx.fillStyle='#1d4ed8';ctx.fillRect(-7,-8,6,12);ctx.fillRect(1,-8,6,12); // legs
+    // Emoji on top (brighter, larger)
+    ctx.fillStyle='#fff';ctx.font='24px sans-serif';ctx.textAlign='center';
+    ctx.fillText(SK_SURFERS[sk.surferIdx].emoji,0,-16);
   }
-  ctx.restore(); // trickScale restore
   // Mermaid on back of board
-  if(sk.surfer.hasMermaid){ctx.font='16px sans-serif';ctx.fillText('🧜‍♀️',bL*.32,-14);}
+  if(sk.surfer.hasMermaid){ctx.fillStyle='#fff';ctx.font='18px sans-serif';ctx.fillText('🧜‍♀️',bL*.32,-16);}
   ctx.shadowBlur=0;
-  }catch(e){}
+  }catch(e){
+    // Last-resort fallback: always draw surfer as bright circle
+    ctx.fillStyle='#fbbf24';ctx.beginPath();ctx.arc(0,-20,14,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#0ea5e9';ctx.fillRect(-12,-5,24,8);
+  }
   ctx.restore();
   // Particles
   sk.particles.forEach(p=>{
@@ -4478,7 +4495,10 @@ function skDraw(){
   sk.popups.forEach(p=>{
     ctx.globalAlpha=Math.min(1,p.life/20);
     ctx.fillStyle=p.col||'#fff';ctx.font='bold 15px sans-serif';ctx.textAlign='center';
-    ctx.shadowColor='#000';ctx.shadowBlur=6;ctx.fillText(p.text,W/2,p.y);ctx.shadowBlur=0;
+    ctx.shadowColor='#000';ctx.shadowBlur=6;
+    // Draw near surfer, not at screen centre
+    const px=p.nearSurfer?sk.surfer.x:W/2;
+    ctx.fillText(p.text,px,p.y);ctx.shadowBlur=0;
   });
   ctx.globalAlpha=1;
   // Combo display
