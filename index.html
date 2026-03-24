@@ -519,6 +519,28 @@ a.act-name{color:var(--aqua-d)}
 .game-card:hover{transform:scale(1.04);}
 .game-card:nth-child(5){border:2px solid var(--aqua);box-shadow:var(--shadow),0 0 14px rgba(6,182,212,.3);}
 
+
+/* ── HOW TO PLAY MODAL ── */
+.htp-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9999;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
+.htp-overlay.open{opacity:1;pointer-events:all}
+.htp-sheet{background:var(--card);border-radius:24px 24px 0 0;width:100%;max-width:480px;max-height:80vh;overflow-y:auto;padding:24px 20px 32px;transform:translateY(100%);transition:transform .3s cubic-bezier(.32,0,.67,0)}
+.htp-overlay.open .htp-sheet{transform:translateY(0)}
+.htp-title{font-size:20px;font-weight:800;color:var(--txt1);margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.htp-sub{font-size:13px;color:var(--txt3);margin-bottom:18px}
+.htp-section{margin-bottom:14px}
+.htp-section-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--aqua-d);margin-bottom:6px}
+.htp-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px;font-size:13px;color:var(--txt2);line-height:1.45}
+.htp-row .htp-icon{font-size:16px;flex-shrink:0;width:22px;text-align:center;margin-top:1px}
+.htp-close-btn{width:100%;padding:13px;background:linear-gradient(135deg,#7C3AED,#EC4899);color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;margin-top:8px}
+/* ? button on game cards */
+.game-card{position:relative}
+.game-htp-btn{position:absolute;top:8px;right:8px;width:22px;height:22px;border-radius:50%;background:rgba(6,182,212,.18);border:1.5px solid rgba(6,182,212,.4);color:var(--aqua-d);font-size:11px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;z-index:2}
+.game-htp-btn:hover{background:rgba(6,182,212,.35)}
+/* Surf countdown */
+.sk-countdown{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;background:rgba(3,20,50,.7);z-index:10;pointer-events:none}
+.sk-countdown-num{font-size:96px;font-weight:900;color:#fff;line-height:1;text-shadow:0 0 40px rgba(6,182,212,.8)}
+.sk-countdown-label{font-size:16px;font-weight:700;color:#7dd3fc;margin-top:8px;letter-spacing:2px}
+
 </style>
 </head>
 <body>
@@ -553,36 +575,42 @@ a.act-name{color:var(--aqua-d)}
   </div>
   <div id="games-hub" class="games-hub">
     <div class="game-card" onclick="startGame('math')">
+      <button class="game-htp-btn" onclick="event.stopPropagation();showHTP('math')">?</button>
       <div class="game-icon">🧮</div>
       <div class="game-name">Maths Quest</div>
       <div class="game-desc">Pick your age for maths problems!</div>
       <span class="game-badge badge-edu">Educational</span>
     </div>
     <div class="game-card" onclick="startGame('snake')">
+      <button class="game-htp-btn" onclick="event.stopPropagation();showHTP('snake')">?</button>
       <div class="game-icon">🐍</div>
       <div class="game-name">Snake</div>
       <div class="game-desc">Classic worm — swipe to steer!</div>
       <span class="game-badge badge-classic">Classic</span>
     </div>
     <div class="game-card" onclick="startGame('breakout')">
+      <button class="game-htp-btn" onclick="event.stopPropagation();showHTP('breakout')">?</button>
       <div class="game-icon">🧱</div>
       <div class="game-name">Breakout</div>
       <div class="game-desc">Smash bricks with a surfboard!</div>
       <span class="game-badge badge-classic">Classic</span>
     </div>
     <div class="game-card" onclick="startGame('fishing')">
+      <button class="game-htp-btn" onclick="event.stopPropagation();showHTP('fishing')">?</button>
       <div class="game-icon">🎣</div>
       <div class="game-name">Fishing Frenzy</div>
       <div class="game-desc">Catch WA fish — tap to reel!</div>
       <span class="game-badge badge-trip">Trip Theme</span>
     </div>
     <div class="game-card" onclick="startGame('surf')">
+      <button class="game-htp-btn" onclick="event.stopPropagation();showHTP('surf')">?</button>
       <div class="game-icon">🏄</div>
       <div class="game-name">Surf Legend</div>
       <div class="game-desc">Tricks, mermaids &amp; sharks! 10 stages!</div>
       <span class="game-badge badge-trip">Trip Theme</span>
     </div>
     <div class="game-card" onclick="startGame('pacman')">
+      <button class="game-htp-btn" onclick="event.stopPropagation();showHTP('pacman')">?</button>
       <div class="game-icon">👻</div>
       <div class="game-name">Dot Muncher</div>
       <div class="game-desc">Eat all the dots, dodge ghosts!</div>
@@ -680,7 +708,13 @@ a.act-name{color:var(--aqua-d)}
       <span class="sk-hud-score">⭐ <span id="sk-score">0</span></span>
       <span id="sk-stage">Stage 1</span>
     </div>
-    <div id="sk-canvas-wrap"><canvas id="sk-canvas"></canvas></div>
+    <div id="sk-canvas-wrap" style="position:relative">
+      <canvas id="sk-canvas"></canvas>
+      <div id="sk-countdown" class="sk-countdown" style="display:none">
+        <div class="sk-countdown-num" id="sk-countdown-num">3</div>
+        <div class="sk-countdown-label" id="sk-countdown-label">GET READY</div>
+      </div>
+    </div>
     <div id="sk-controls">
       <div id="sk-island-wrap">
         <div id="sk-island">
@@ -3795,6 +3829,120 @@ let sk={
   canvas:null,ctx:null,running:false,raf:null,
 };
 
+// ======================================================
+// HOW TO PLAY
+// ======================================================
+const HTP_DATA = {
+  math: {
+    icon: '🧮', title: 'Maths Quest', badge: 'Educational',
+    goal: 'Answer as many maths questions as you can before time runs out!',
+    controls: [
+      ['👆','Tap one of the four answer boxes to pick your answer'],
+      ['⏱️','You have 30 seconds — answer fast to build your score!'],
+      ['🎯','Each correct answer scores 1 point. Wrong answers lose a point'],
+    ],
+    tips: [
+      ['🔢','Pick your age group before starting — questions get harder as you go up'],
+      ['🏆','Score 80%+ for AMAZING, 60%+ for Great, 40%+ for Good'],
+    ]
+  },
+  snake: {
+    icon: '🐍', title: 'Snake', badge: 'Classic',
+    goal: 'Eat the food to grow longer — but don\'t crash into the walls or yourself!',
+    controls: [
+      ['👆','Swipe anywhere on the screen to change direction'],
+      ['🍎','Red apples = +1 point, Golden apples = +3 points'],
+      ['❤️','You have 3 lives — hit a wall or yourself and you lose one'],
+    ],
+    tips: [
+      ['💡','The snake speeds up as you score more — stay sharp!'],
+      ['🌀','You can pass through one wall… but only just! It\'s tight.'],
+    ]
+  },
+  breakout: {
+    icon: '🧱', title: 'Breakout', badge: 'Classic',
+    goal: 'Smash all the bricks without letting the ball fall off the bottom!',
+    controls: [
+      ['👆','Drag the paddle left and right along the bottom of the screen'],
+      ['🏄','Your paddle is a surfboard — keep the ball bouncing up into the bricks'],
+      ['💥','Smash all bricks to advance to the next level'],
+    ],
+    tips: [
+      ['⚡','Yellow bricks take 2 hits. Red bricks take 3 hits'],
+      ['🎯','Aim for the sides to get tricky angles and chain more bricks'],
+    ]
+  },
+  fishing: {
+    icon: '🎣', title: 'Fishing Frenzy', badge: 'Trip Theme',
+    goal: 'Catch as many WA fish as you can before time runs out!',
+    controls: [
+      ['👆','Tap the screen to cast your line and drop the hook'],
+      ['🐟','When a fish bites (the line tugs), tap quickly to reel it in!'],
+      ['⚡','Hold to reel faster — but be careful not to let the line snap!'],
+    ],
+    tips: [
+      ['🦈','Bigger fish = more points but harder to reel in'],
+      ['🌊','Different fish appear at different depths — try casting at different spots'],
+      ['🎣','Real WA fish species from your trip route: snapper, pink snapper, baldchin groper and more'],
+    ]
+  },
+  surf: {
+    icon: '🏄', title: 'Surf Legend', badge: 'Trip Theme',
+    goal: 'Surf through 10 stages, rack up points and become a legend of the waves!',
+    controls: [
+      ['🕹️','Island Joystick (bottom left): slide your thumb left/right to steer your board up or down the wave'],
+      ['⚡','TRICK button (bottom right): tap to perform a trick for bonus points — time it on the wave crest for a multiplier!'],
+      ['🏄','After choosing your surfer and board, tap "🏄 DROP IN!" to start surfing'],
+    ],
+    tips: [
+      ['🦈','Sharks: dorsal fin visible from far away — dodge them! Get too close and they leap out with teeth 😬'],
+      ['🪨','Small rocks = -2 points. Big rocks = wipeout (lose a life)'],
+      ['🧜','Mermaids: surf directly over them to rescue one — she joins your board for +5 points!'],
+      ['🐟','Flying fish leap out of the water for +1 point each — tap TRICK as you pass'],
+      ['🍄','Mushrooms: pick one up and the board gets wobbly with a 60s kaleidoscope effect — wild ride!'],
+      ['🌊','Watch for the wave turning aqua — that\'s the power pocket! Trick there for maximum multiplier'],
+      ['📈','Each stage is longer and faster. Survive all 10 to become a Surf Legend!'],
+    ]
+  },
+  pacman: {
+    icon: '👻', title: 'Dot Muncher', badge: 'Classic',
+    goal: 'Eat every dot on the board without getting caught by ghosts!',
+    controls: [
+      ['👆','Swipe on the screen to change direction'],
+      ['🎮','Or use the D-pad arrows at the bottom of the screen'],
+      ['⬤','Big power pellets (flashing): eat one to turn ghosts blue — then eat them for bonus points!'],
+    ],
+    tips: [
+      ['💡','Ghosts turn blue briefly after you eat a power pellet — chase them fast!'],
+      ['🎯','Clear all dots to win the level. Speed increases each level'],
+      ['⚠️','You have 3 lives. Ghosts respawn after being eaten'],
+    ]
+  }
+};
+
+function showHTP(game){
+  const d = HTP_DATA[game];
+  if(!d) return;
+  const el = document.getElementById('htp-content');
+  if(!el) return;
+  el.innerHTML = `
+    <div class="htp-title">${d.icon} ${d.title}</div>
+    <div class="htp-sub">${d.goal}</div>
+    <div class="htp-section">
+      <div class="htp-section-title">🎮 Controls</div>
+      ${d.controls.map(([icon,txt])=>`<div class="htp-row"><span class="htp-icon">${icon}</span><span>${txt}</span></div>`).join('')}
+    </div>
+    <div class="htp-section">
+      <div class="htp-section-title">💡 Tips</div>
+      ${d.tips.map(([icon,txt])=>`<div class="htp-row"><span class="htp-icon">${icon}</span><span>${txt}</span></div>`).join('')}
+    </div>
+  `;
+  document.getElementById('htp-overlay').classList.add('open');
+}
+function closeHTP(){
+  document.getElementById('htp-overlay').classList.remove('open');
+}
+
 function skShow(){
   const ol=document.getElementById('surf-overlay');
   if(ol)ol.classList.add('open');
@@ -3872,12 +4020,32 @@ function skInitPlay(){
   const surfY=H*0.52;
   sk.surfer={x:W*0.25,y:surfY-30,angle:0,tricking:false,trickTime:0,trickType:'',trickRot:0,
     hasMermaid:false,shroomTime:0,invincible:0,airY:0,airVY:0};
-  sk.running=true;
+  sk.running=false;
   skUpdateHUD();
   skSetupControls();
   if(sk.raf)cancelAnimationFrame(sk.raf);
   function loop(){if(!sk.running)return;skTick();skDraw();sk.raf=requestAnimationFrame(loop);}
-  requestAnimationFrame(loop);
+  // Draw the initial frame so the wave is visible during countdown
+  skDraw();
+  // Countdown before game starts
+  const cdEl=document.getElementById('sk-countdown');
+  const cdNum=document.getElementById('sk-countdown-num');
+  const cdLbl=document.getElementById('sk-countdown-label');
+  if(cdEl){cdEl.style.display='flex';}
+  let cdCount=3;
+  function cdStep(){
+    if(cdCount>0){
+      if(cdNum)cdNum.textContent=cdCount;
+      if(cdLbl)cdLbl.textContent='GET READY';
+      cdCount--;
+      setTimeout(cdStep,900);
+    } else {
+      if(cdEl)cdEl.style.display='none';
+      sk.running=true;
+      requestAnimationFrame(loop);
+    }
+  }
+  setTimeout(cdStep,100);
 }
 function skSetupControls(){
   const island=document.getElementById('sk-island');
@@ -4329,5 +4497,13 @@ function skNextStage(){skSetScreen('play');}
 function skRestartFull(){sk.stage=1;sk.score=0;sk.lives=3;skSetScreen('play');}
 
 </script>
+
+<!-- HOW TO PLAY MODAL -->
+<div id="htp-overlay" class="htp-overlay" onclick="if(event.target===this)closeHTP()">
+  <div class="htp-sheet">
+    <div id="htp-content"></div>
+    <button class="htp-close-btn" onclick="closeHTP()">Got it! 🤙</button>
+  </div>
+</div>
 </body>
 </html>
