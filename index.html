@@ -472,7 +472,7 @@ a.act-name{color:var(--aqua-d)}
 .sk-hud-score{flex:1;font-size:15px;font-weight:800;color:#fbbf24}
 /* Canvas */
 #sk-canvas-wrap{flex:1;position:relative;overflow:hidden;background:#0c4a6e}
-#sk-canvas{display:block;width:100%;height:100%}
+#sk-canvas{display:block;width:100%}
 /* Controls */
 #sk-controls{background:rgba(0,0,0,.7);padding:10px 14px;flex-shrink:0;display:flex;align-items:center;gap:10px}
 #sk-island-wrap{flex:1;position:relative;height:48px}
@@ -4036,6 +4036,12 @@ function skInitPlay(){
   const ctrlH=document.getElementById('sk-controls')?document.getElementById('sk-controls').offsetHeight||72:72;
   cv.width=ol.clientWidth||window.innerWidth||390;
   cv.height=Math.max(200,(ol.clientHeight||window.innerHeight||600)-hudH-ctrlH);
+  // FIX: Set explicit pixel dimensions to prevent CSS mismatch
+  cv.style.width=cv.width+'px';
+  cv.style.height=cv.height+'px';
+  // Also ensure wrap has explicit height
+  const wrap=document.getElementById('sk-canvas-wrap');
+  if(wrap)wrap.style.height=cv.height+'px';
   // Reset state for this stage
   sk.dist=0;
   sk.stageGoal=700+sk.stage*200;
@@ -4438,52 +4444,87 @@ function skDraw(){
     }
     ctx.restore();
   });
-  // Surfer
-  const sx=sk.surfer.x,sy=sk.surfer.y;
-  ctx.save();ctx.translate(sx,sy);
-  // CRITICAL: Reset filters before drawing surfer
-  ctx.filter='none';
-  try{
-  if(sk.surfer.invincible>0&&Math.floor(sk.surfer.invincible/5)%2===0)ctx.globalAlpha=0.25;
-  if(sk.surfer.shroomTime>0){ctx.shadowColor=`hsl(${(t*220)%360},100%,60%)`;ctx.shadowBlur=18;}
-  ctx.rotate(sk.surfer.angle);
-  // Shroom wobble tilt
-  const wobb=sk.surfer.shroomTime>0?Math.sin(t*11)*0.15:0;
-  ctx.rotate(wobb);
-  // Board
-  const b=SK_BOARDS[sk.boardIdx];
-  const bL=b.id===1?70:b.id===3?65:52;
-  const bGrad=ctx.createLinearGradient(-bL/2,-3,bL/2,3);
-  bGrad.addColorStop(0,'#0369a1');bGrad.addColorStop(.5,'#06B6D4');bGrad.addColorStop(1,'#0369a1');
-  ctx.fillStyle=bGrad;ctx.beginPath();ctx.roundRect(-bL/2,-3,bL,7,4);ctx.fill();
-  ctx.strokeStyle='rgba(255,255,255,.4)';ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(-bL/2+4,-1,bL-8,3,2);ctx.stroke();
-  // Trick spin
-  if(sk.surfer.tricking){
-    ctx.rotate(sk.surfer.trickRot);
-    const airH=Math.sin(sk.surfer.trickRot)*18;
-    const ts=sk.surfer.trickScale||1;
-    ctx.save();ctx.scale(ts,ts);
-    ctx.fillStyle='#fff';ctx.font='26px sans-serif';ctx.textAlign='center';
-    ctx.fillText(SK_SURFERS[sk.surferIdx].emoji,0,-22-Math.abs(airH));
-    ctx.fillStyle='#f59e0b';ctx.font='bold 11px sans-serif';ctx.fillText(sk.surfer.trickType,0,-46-Math.abs(airH));
-    ctx.restore();
+  // ── SURFER (always visible) ──
+  const sx = sk.surfer.x;
+  const sy = sk.surfer.y;
+  ctx.save();
+  ctx.translate(sx, sy);
+  ctx.filter = 'none';
+  ctx.globalAlpha = (sk.surfer.invincible > 0 && Math.floor(sk.surfer.invincible/5) % 2 === 0) ? 0.3 : 1;
+  ctx.rotate(sk.surfer.angle + (sk.surfer.shroomTime > 0 ? Math.sin(sk.time*11)*0.18 : 0));
+
+  // Board — always draw as filled rectangle (no roundRect dependency)
+  const b = SK_BOARDS[sk.boardIdx] || SK_BOARDS[0];
+  const bL = (b.id === 1 ? 72 : b.id === 3 ? 66 : 54);
+  ctx.fillStyle = '#06B6D4';
+  ctx.fillRect(-bL/2, -3, bL, 8);
+  ctx.fillStyle = 'rgba(255,255,255,0.4)';
+  ctx.fillRect(-bL/2+4, -1, bL-8, 3);
+
+  // Surfer body — solid shapes, no emoji dependency
+  const bodyY = -22;
+  // Legs
+  ctx.fillStyle = '#1d4ed8';
+  ctx.fillRect(-8, bodyY+14, 6, 12);
+  ctx.fillRect(2, bodyY+14, 6, 12);
+  // Torso (wetsuit)
+  ctx.fillStyle = '#0f172a';
+  ctx.fillRect(-7, bodyY, 14, 16);
+  // Arms
+  ctx.fillStyle = '#0f172a';
+  ctx.save();
+  if (sk.surfer.tricking) {
+    ctx.rotate(sk.surfer.trickRot * 0.5);
+    ctx.fillRect(-18, bodyY+2, 10, 5);
+    ctx.fillRect(8, bodyY+2, 10, 5);
   } else {
-    // Always-visible body shape (fallback + depth)
-    ctx.fillStyle='#fcd34d';ctx.beginPath();ctx.arc(0,-26,9,0,Math.PI*2);ctx.fill(); // head
-    ctx.fillStyle='#ef4444';ctx.fillRect(-5,-22,10,14); // torso
-    ctx.fillStyle='#1d4ed8';ctx.fillRect(-7,-8,6,12);ctx.fillRect(1,-8,6,12); // legs
-    // Emoji on top (brighter, larger)
-    ctx.fillStyle='#fff';ctx.font='24px sans-serif';ctx.textAlign='center';
-    ctx.fillText(SK_SURFERS[sk.surferIdx].emoji,0,-16);
+    ctx.fillRect(-14, bodyY+4, 8, 4);
+    ctx.fillRect(6, bodyY+4, 8, 4);
   }
+  ctx.restore();
+  // Head
+  ctx.fillStyle = '#fcd34d';
+  ctx.beginPath();
+  ctx.arc(0, bodyY-8, 9, 0, Math.PI * 2);
+  ctx.fill();
+  // Hair / helmet colour from surfer profile
+  const surferColors = ['#1e40af','#dc2626','#059669','#d97706','#7c3aed','#db2777','#0891b2','#65a30d'];
+  ctx.fillStyle = surferColors[sk.surferIdx % surferColors.length];
+  ctx.beginPath();
+  ctx.arc(0, bodyY-8, 9, Math.PI, Math.PI*2);
+  ctx.fill();
+  // Eyes
+  ctx.fillStyle = '#000';
+  ctx.beginPath(); ctx.arc(3, bodyY-9, 2, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(-3, bodyY-9, 2, 0, Math.PI*2); ctx.fill();
+
+  // Trick label
+  if (sk.surfer.tricking) {
+    ctx.fillStyle = '#fbbf24';
+    ctx.font = 'bold 10px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(sk.surfer.trickType || 'TRICK!', 0, bodyY-22);
+  }
+
   // Mermaid on back of board
-  if(sk.surfer.hasMermaid){ctx.fillStyle='#fff';ctx.font='18px sans-serif';ctx.fillText('🧜‍♀️',bL*.32,-16);}
-  ctx.shadowBlur=0;
-  }catch(e){
-    // Last-resort fallback: always draw surfer as bright circle
-    ctx.fillStyle='#fbbf24';ctx.beginPath();ctx.arc(0,-20,14,0,Math.PI*2);ctx.fill();
-    ctx.fillStyle='#0ea5e9';ctx.fillRect(-12,-5,24,8);
+  if (sk.surfer.hasMermaid) {
+    ctx.fillStyle = '#06B6D4';
+    ctx.font = '16px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('🧜‍♀️', bL*0.3, -14);
   }
+
+  // Shroom glow
+  if (sk.surfer.shroomTime > 0) {
+    ctx.shadowColor = `hsl(${(sk.time*220)%360},100%,60%)`;
+    ctx.shadowBlur = 20;
+    ctx.fillStyle = `hsla(${(sk.time*220)%360},100%,70%,0.4)`;
+    ctx.beginPath(); ctx.arc(0, bodyY-8, 14, 0, Math.PI*2); ctx.fill();
+    ctx.shadowBlur = 0;
+  }
+
+  ctx.globalAlpha = 1;
+  ctx.filter = 'none';
   ctx.restore();
   // Particles
   sk.particles.forEach(p=>{
