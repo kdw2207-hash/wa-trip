@@ -4029,93 +4029,105 @@ function skRenderBoard(){
 function skInitPlay(){
   const cv=document.getElementById('sk-canvas');
   if(!cv)return;
-  sk.canvas=cv; sk.ctx=cv.getContext('2d');
-  // Use the fixed-position overlay for reliable dimensions
-  const ol=document.getElementById('surf-overlay');
-  const hudH=document.getElementById('sk-hdr')?document.getElementById('sk-hdr').offsetHeight||52:52;
-  const ctrlH=document.getElementById('sk-controls')?document.getElementById('sk-controls').offsetHeight||72:72;
-  cv.width=ol.clientWidth||window.innerWidth||390;
-  cv.height=Math.max(200,(ol.clientHeight||window.innerHeight||600)-hudH-ctrlH);
-  // FIX: Set explicit pixel dimensions to prevent CSS mismatch
-  cv.style.width=cv.width+'px';
-  cv.style.height=cv.height+'px';
-  // Also ensure wrap has explicit height
-  const wrap=document.getElementById('sk-canvas-wrap');
-  if(wrap)wrap.style.height=cv.height+'px';
-  // Reset state for this stage
-  sk.dist=0;
-  sk.stageGoal=700+sk.stage*200;
-  sk.scrollSpeed=2.2+sk.stage*0.45;
-  sk.time=0;
-  sk.obstacles=[];sk.particles=[];sk.popups=[];
-  sk.spawnTimer=60;sk.combo=0;sk.comboTimer=0;
-  sk.stageMsgText='STAGE '+sk.stage;sk.stageMsgTimer=120;
-  sk.ctrlX=0;sk.trickQueued=false;
-  const W=cv.width,H=cv.height;
-  const surfY=H*0.52;
-  sk.surfer={x:W*0.25,y:surfY-30,angle:0,tricking:false,trickTime:0,trickType:'',trickRot:0,
-    hasMermaid:false,shroomTime:0,invincible:0,airY:0,airVY:0};
-  sk.running=true;
-  skUpdateHUD();
-  skSetupControls();
+  sk.canvas=cv;
+  sk.ctx=cv.getContext('2d');
+  const overlay=document.getElementById('surf-overlay');
+  requestAnimationFrame(()=>{
+    const hdrH=(document.getElementById('sk-hdr')?.offsetHeight)||52;
+    const ctrlH=(document.getElementById('sk-controls')?.offsetHeight)||90;
+    cv.width=overlay.clientWidth||window.innerWidth||390;
+    cv.height=Math.max(200,(overlay.clientHeight||window.innerHeight||600)-hdrH-ctrlH);
+    cv.style.width=cv.width+'px';
+    cv.style.height=cv.height+'px';
+    const wrap=document.getElementById('sk-canvas-wrap');
+    if(wrap)wrap.style.height=cv.height+'px';
+    sk.dist=0;
+    sk.stageGoal=700+sk.stage*200;
+    sk.scrollSpeed=2.2+sk.stage*0.45;
+    sk.time=0;
+    sk.obstacles=[];
+    sk.particles=[];
+    sk.popups=[];
+    sk.spawnTimer=60;
+    sk.combo=0;
+    sk.comboTimer=0;
+    sk.stageMsgText='STAGE '+sk.stage;
+    sk.stageMsgTimer=60;
+    sk.ctrlX=0;
+    sk.trickQueued=false;
+    const W=cv.width,H=cv.height;
+    const surfY=H*0.55;
+    sk.surfer={x:W*0.25,y:surfY-35,angle:0,tricking:false,trickTime:0,trickType:'',trickRot:0,trickScale:1,
+      hasMermaid:false,shroomTime:0,invincible:0};
+    sk.running=true;
+    skUpdateHUD();
+    skSetupControls();
+    skStartLoop();
+  });
+}
+function skStartLoop(){
   if(sk.raf)cancelAnimationFrame(sk.raf);
-  function loop(){if(!sk.running)return;skTick();skDraw();sk.raf=requestAnimationFrame(loop);}
-  sk.raf=requestAnimationFrame(loop);
-  // Tap-to-start overlay
-  const cdEl=document.getElementById('sk-countdown');
-  const cdNum=document.getElementById('sk-countdown-num');
-  const cdLbl=document.getElementById('sk-countdown-label');
-  if(cdEl){cdEl.style.display='flex';}
-  if(cdNum){cdNum.textContent='🏄';cdNum.style.animation='pulse 0.8s ease-in-out infinite alternate';}
-  if(cdLbl){cdLbl.textContent='TAP ANYWHERE TO DROP IN!';}
-  // Dismiss on first tap/click
-  function startSurf(){
-    if(cdEl)cdEl.style.display='none';
-    cv.removeEventListener('click',startSurf);
-    cv.removeEventListener('touchend',startSurf);
-    document.getElementById('sk-controls')&&document.getElementById('sk-controls').removeEventListener('touchend',startSurf);
+  function loop(){
+    if(!sk.running)return;
+    skTick();
+    skDraw();
+    sk.raf=requestAnimationFrame(loop);
   }
-  cv.addEventListener('click',startSurf,{once:true});
-  cv.addEventListener('touchend',startSurf,{once:true});
-  // Also allow tapping the joystick/controls area to start
-  const ctrl=document.getElementById('sk-controls');
-  if(ctrl)ctrl.addEventListener('touchend',startSurf,{once:true});
+  sk.raf=requestAnimationFrame(loop);
 }
 function skSetupControls(){
   const island=document.getElementById('sk-island');
   const thumb=document.getElementById('sk-thumb');
   if(!island)return;
-  function getX(touch){
+  let touching=false;
+  function updateJoystick(touch){
     const rect=island.getBoundingClientRect();
-    return Math.max(0,Math.min(1,(touch.clientX-rect.left)/rect.width));
-  }
-  function update(e){
-    const t=e.touches?e.touches[0]:e;
-    const x=getX(t);
+    const x=Math.max(0,Math.min(1,(touch.clientX-rect.left)/rect.width));
     sk.ctrlX=(x-0.5)*2;
-    if(thumb)thumb.style.left=Math.max(5,Math.min(95,x*100))+'%';
+    thumb.style.left=(x*100)+'%';
   }
-  function reset(){sk.ctrlX=0;if(thumb)thumb.style.left='50%';}
-  island.ontouchstart=e=>{update(e);e.preventDefault();};
-  island.ontouchmove=e=>{update(e);e.preventDefault();};
-  island.ontouchend=reset;island.ontouchcancel=reset;
-  island.onmousedown=e=>{
-    update(e);
-    const mm=e2=>{update(e2);};
-    const mu=()=>{document.removeEventListener('mousemove',mm);document.removeEventListener('mouseup',mu);reset();};
-    document.addEventListener('mousemove',mm);document.addEventListener('mouseup',mu);
-  };
+  island.addEventListener('touchstart',(e)=>{
+    e.preventDefault();
+    touching=true;
+    updateJoystick(e.touches[0]);
+  },{passive:false});
+  island.addEventListener('touchmove',(e)=>{
+    e.preventDefault();
+    if(touching)updateJoystick(e.touches[0]);
+  },{passive:false});
+  island.addEventListener('touchend',(e)=>{
+    e.preventDefault();
+    touching=false;
+    sk.ctrlX=0;
+    thumb.style.left='50%';
+  },{passive:false});
+  island.addEventListener('mousedown',(e)=>{
+    touching=true;
+    updateJoystick(e);
+    const mm=(e2)=>updateJoystick(e2);
+    const mu=()=>{
+      touching=false;
+      sk.ctrlX=0;
+      thumb.style.left='50%';
+      document.removeEventListener('mousemove',mm);
+      document.removeEventListener('mouseup',mu);
+    };
+    document.addEventListener('mousemove',mm);
+    document.addEventListener('mouseup',mu,{once:true});
+  });
 }
-function skQueueTrick(){if(sk.running&&sk.screen==='play')sk.trickQueued=true;}
-
+function skQueueTrick(){
+  if(sk.running&&sk.screen==='play')sk.trickQueued=true;
+}
 function skWave(x,t){
-  return Math.sin(x*0.018+t)*22+Math.sin(x*0.032+t*1.4)*13+Math.sin(x*0.008+t*0.6)*8;
+  return Math.sin(x*0.015+t)*25+Math.sin(x*0.03+t*1.3)*12;
 }
-function skSurf(x){return sk.canvas.height*0.52+skWave(x,sk.time);}
-
+function skSurfY(x){
+  return sk.canvas.height*0.55+skWave(x,sk.time);
+}
 function skSpawn(){
   const W=sk.canvas.width,H=sk.canvas.height;
-  const surf=skSurf(W+70);
+  const surf=skSurfY(W+70);
   const pool=['rock_small','rock_small'];
   if(sk.stage>=1)pool.push('fish','fish');
   if(sk.stage>=2){pool.push('shark');if(sk.stage>=4)pool.push('shark');}
@@ -4144,32 +4156,29 @@ function skSpawn(){
   }
   sk.obstacles.push(o);
 }
-
 function skTick(){
   const W=sk.canvas.width,H=sk.canvas.height;
   const board=SK_BOARDS[sk.boardIdx];
   const pro=SK_SURFERS[sk.surferIdx];
-  sk.time+=0.025;sk.dist++;
+  sk.time+=0.025;
+  sk.dist++;
   if(sk.comboTimer>0)sk.comboTimer--;else sk.combo=0;
   if(sk.stageMsgTimer>0)sk.stageMsgTimer--;
-
-  // Move surfer
   let ctrl=sk.ctrlX;
   if(sk.surfer.shroomTime>0){sk.surfer.shroomTime--;ctrl+=Math.sin(sk.time*9)*0.65;}
   const maxSpd=3.8*board.speed*(pro.speedMult||1);
   sk.surfer.x+=ctrl*maxSpd*board.ctrl;
   sk.surfer.x=Math.max(28,Math.min(W-28,sk.surfer.x));
-  // Y follows wave
-  const targetY=skSurf(sk.surfer.x)-28;
+  const targetY=skSurfY(sk.surfer.x)-35;
   sk.surfer.y+=(targetY-sk.surfer.y)*0.28;
-  // Angle
   const s1=skWave(sk.surfer.x-10,sk.time),s2=skWave(sk.surfer.x+10,sk.time);
   sk.surfer.angle=Math.atan2(s2-s1,20);
-  // Invincible countdown
   if(sk.surfer.invincible>0)sk.surfer.invincible--;
-  // Trick
   if(sk.trickQueued&&!sk.surfer.tricking){
-    sk.trickQueued=false;sk.surfer.tricking=true;sk.surfer.trickTime=45;sk.surfer.trickRot=0;
+    sk.trickQueued=false;
+    sk.surfer.tricking=true;
+    sk.surfer.trickTime=45;
+    sk.surfer.trickRot=0;
     const opts=sk.surfer.hasMermaid?[...SK_TRICKS,'MERMAID_DANCE','MERMAID_DANCE']:SK_TRICKS;
     if(Math.abs(ctrl)<0.15)sk.surfer.trickType='AERIAL';
     else sk.surfer.trickType=opts[Math.floor(Math.random()*opts.length)];
@@ -4177,7 +4186,7 @@ function skTick(){
   if(sk.surfer.tricking){
     sk.surfer.trickTime--;
     sk.surfer.trickRot+=Math.PI*2/45;
-    sk.surfer.trickScale=1+Math.abs(Math.sin(sk.surfer.trickRot))*.25;
+    sk.surfer.trickScale=1+Math.abs(Math.sin(sk.surfer.trickRot))*0.25;
     if(sk.surfer.trickTime<=0){
       sk.surfer.tricking=false;
       let pts=Math.round((SK_TRICK_PTS[sk.surfer.trickType]||5)*board.tricks*(pro.trickMult||1));
@@ -4189,19 +4198,17 @@ function skTick(){
       skUpdateHUD();
     }
   }
-  // Spawn
   if(--sk.spawnTimer<=0){
     skSpawn();
     sk.spawnTimer=Math.max(22,70-sk.stage*4)+Math.floor(Math.random()*30);
   }
-  // Update obstacles
   for(let i=sk.obstacles.length-1;i>=0;i--){
     const o=sk.obstacles[i];
     o.x-=sk.scrollSpeed;
     if(o.type==='mushroom')o.bob+=0.05;
     if(o.type==='mermaid')o.wave+=0.04;
     if(o.type==='fish'){o.arc+=o.arcS;o.y=o.sy-Math.sin(Math.max(0,Math.min(Math.PI,o.arc)))*o.arcH;}
-    if(o.type==='dolphin'){o.ph+=0.09;o.y=skSurf(o.x)-Math.abs(Math.sin(o.ph))*65;}
+    if(o.type==='dolphin'){o.ph+=0.09;o.y=skSurfY(o.x)-Math.abs(Math.sin(o.ph))*65;}
     if(o.type==='seagull')o.flap+=0.14;
     if(o.type==='jelly')o.pulse+=0.07;
     if(o.type==='shark'){const d=Math.abs(o.x-sk.surfer.x);o.charge=d<110;if(o.charge&&d>50)o.x-=1.5;}
@@ -4211,7 +4218,8 @@ function skTick(){
     const dx=sk.surfer.x-o.x,dy=sk.surfer.y-o.y;
     const dist=Math.sqrt(dx*dx+dy*dy);
     if(dist<20+o.r){
-      o.alive=false;sk.obstacles.splice(i,1);
+      o.alive=false;
+      sk.obstacles.splice(i,1);
       if(o.type==='rock_small'){
         if(sk.surfer.invincible<=0){sk.score=Math.max(0,sk.score-2);sk.surfer.invincible=55;skPopup('-2 pts 🪨','#ef4444');skParts(o.x,o.y,'#64748b',7);skUpdateHUD();}
       }else if(o.type==='rock_big'){
@@ -4225,13 +4233,11 @@ function skTick(){
       }else if(o.type==='fish'){
         sk.score+=1;skPopup('🐟 Flying fish! +1','#38bdf8');skUpdateHUD();
       }else if(o.type==='dolphin'){
-        const pts=sk.surfer.tricking?10:3;sk.score+=pts;
-        skPopup('🐬 '+(sk.surfer.tricking?'Dolphin combo! +10':'Dolphin! +3'),'#06B6D4');skUpdateHUD();
+        const pts=sk.surfer.tricking?10:3;sk.score+=pts;skPopup('🐬 '+(sk.surfer.tricking?'Dolphin combo! +10':'Dolphin! +3'),'#06B6D4');skUpdateHUD();
       }else if(o.type==='barrel'){
         sk.score+=12;skPopup('🌊 BARREL RIDE! +12!','#0891B2');skUpdateHUD();
       }else if(o.type==='chest'){
-        const pts=8+Math.floor(Math.random()*22);sk.score+=pts;
-        skPopup('💰 TREASURE! +'+pts+'!','#fbbf24');skParts(o.x,o.y,'#fbbf24',14);skUpdateHUD();
+        const pts=8+Math.floor(Math.random()*22);sk.score+=pts;skPopup('💰 TREASURE! +'+pts+'!','#fbbf24');skParts(o.x,o.y,'#fbbf24',14);skUpdateHUD();
       }else if(o.type==='seagull'){
         if(sk.surfer.invincible<=0){sk.score=Math.max(0,sk.score-1);sk.surfer.invincible=45;skPopup('🐦 Seagull poop! -1','#fbbf24');skUpdateHUD();}
       }else if(o.type==='jelly'){
@@ -4241,29 +4247,31 @@ function skTick(){
       }
     }
   }
-  // Particles
   for(let i=sk.particles.length-1;i>=0;i--){
-    const p=sk.particles[i];p.x+=p.vx;p.y+=p.vy;p.vy+=0.25;p.life--;
+    const p=sk.particles[i];
+    p.x+=p.vx;
+    p.y+=p.vy;
+    p.vy+=0.25;
+    p.life--;
     if(p.life<=0)sk.particles.splice(i,1);
   }
-  // Popups
   sk.popups=sk.popups.filter(p=>p.life>0);
   sk.popups.forEach(p=>{p.y+=p.vy;p.life--;});
-  // Stage clear
   if(sk.dist>=sk.stageGoal){
     sk.running=false;
     setTimeout(()=>skSetScreen(sk.stage>=10?'gameover':'stageclear'),300);
   }
 }
-
 function skLoseLife(){
-  sk.lives--;sk.surfer.hasMermaid=false;sk.surfer.invincible=90;
+  sk.lives--;
+  sk.surfer.hasMermaid=false;
+  sk.surfer.invincible=90;
   skPopup('💥 WIPEOUT! Lives: '+'❤️'.repeat(Math.max(0,sk.lives)),'#ef4444');
   if(sk.lives<=0){sk.running=false;setTimeout(()=>skSetScreen('gameover'),600);}
   skUpdateHUD();
 }
 function skParts(x,y,col,n){
-  for(let i=0;i<n;i++)sk.particles.push({x,y,vx:(Math.random()-.5)*7,vy:(Math.random()-.5)*6-2,col,life:18+Math.random()*20|0,r:2+Math.random()*4});
+  for(let i=0;i<n;i++)sk.particles.push({x,y,vx:(Math.random()-0.5)*7,vy:(Math.random()-0.5)*6-2,col,life:18+Math.random()*20|0,r:2+Math.random()*4});
 }
 function skPopup(text,col){
   const sy=sk.surfer?sk.surfer.y-50:sk.canvas?sk.canvas.height*0.38:200;
@@ -4278,7 +4286,7 @@ function skUpdateHUD(){
 
 function skDraw(){
   const ctx=sk.ctx,W=sk.canvas.width,H=sk.canvas.height,t=sk.time;
-  const surf=H*0.52;
+  const surf=H*0.55;
   // Shroom filter
   ctx.filter=sk.surfer.shroomTime>0?`hue-rotate(${(t*180)%360}deg) saturate(${2.5+Math.sin(t*4)*1.5})`:'none';
   // Sky
@@ -4376,7 +4384,7 @@ function skDraw(){
       }
     }else if(o.type==='mushroom'){
       const by=o.y+Math.sin(o.bob)*5;
-      ctx.fillStyle='#fef3c7';ctx.beginPath();ctx.roundRect(o.x-5,by,10,14,2);ctx.fill();
+      ctx.fillStyle='#fef3c7';ctx.fillRect(o.x-5,by,10,14);
       ctx.fillStyle='#dc2626';ctx.beginPath();ctx.arc(o.x,by,o.r,Math.PI,Math.PI*2);ctx.fill();
       ctx.fillStyle='#fff';[[0,-7],[7,-3],[-7,-3]].forEach(([dx,dy])=>{ctx.beginPath();ctx.arc(o.x+dx,by+dy,3,0,Math.PI*2);ctx.fill();});
       ctx.fillStyle='rgba(255,255,255,.9)';ctx.font='bold 9px sans-serif';ctx.textAlign='center';ctx.fillText('🍄 GRAB!',o.x,by-o.r-8);
@@ -4556,14 +4564,15 @@ function skDraw(){
   }
   // Progress bar
   const pw=W-32;
-  ctx.fillStyle='rgba(0,0,0,.35)';ctx.beginPath();ctx.roundRect(16,H-7,pw,5,3);ctx.fill();
+  ctx.fillStyle='rgba(0,0,0,.35)';ctx.fillRect(16,H-7,pw,5);
   const prog=Math.min(1,sk.dist/sk.stageGoal);
   const pg=ctx.createLinearGradient(16,0,16+pw,0);pg.addColorStop(0,'#06B6D4');pg.addColorStop(1,'#10B981');
-  ctx.fillStyle=pg;ctx.beginPath();ctx.roundRect(16,H-7,pw*prog,5,3);ctx.fill();
+  ctx.fillStyle=pg;ctx.fillRect(16,H-7,pw*prog,5);
   // Stage progress label
   ctx.fillStyle='rgba(255,255,255,.6)';ctx.font='bold 9px sans-serif';ctx.textAlign='right';
   ctx.fillText('Stage '+sk.stage+'/10',W-8,H-12);
   ctx.filter='none';
+  ctx.globalAlpha=1;
 }
 
 function skRenderStageClear(){
@@ -4584,7 +4593,7 @@ function skRenderGameOver(){
     sk.score>=150?'Rad waves! Getting better every time! 🌊':
     'The ocean always has the last word... 🌀';
 }
-function skNextStage(){skSetScreen('play');}
+function skNextStage(){sk.stage++;skSetScreen('play');}
 function skRestartFull(){sk.stage=1;sk.score=0;sk.lives=3;skSetScreen('play');}
 
 </script>
